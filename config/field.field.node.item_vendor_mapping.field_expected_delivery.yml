@@ -1,0 +1,23 @@
+uuid: 1d30585b-f0de-4208-aa09-b753eeadc516
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_expected_delivery
+    - node.type.item_vendor_mapping
+id: node.item_vendor_mapping.field_expected_delivery
+field_name: field_expected_delivery
+entity_type: node
+bundle: item_vendor_mapping
+label: 'Expected Delivery'
+description: 'Expected delivery in days'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

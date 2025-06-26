@@ -1,0 +1,14 @@
+uuid: c527e0e6-af42-4840-9045-69f3045dabe8
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.unit_manager
+  module:
+    - user
+id: user_add_role_action.unit_manager
+label: 'Add the Unit Manager role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: unit_manager

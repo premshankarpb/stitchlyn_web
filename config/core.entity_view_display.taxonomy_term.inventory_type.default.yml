@@ -1,0 +1,30 @@
+uuid: f6316a15-7ff2-43c4-826c-53e41d651b35
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.inventory_type.field_inventory_type_id
+    - taxonomy.vocabulary.inventory_type
+  module:
+    - text
+id: taxonomy_term.inventory_type.default
+targetEntityType: taxonomy_term
+bundle: inventory_type
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_inventory_type_id:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

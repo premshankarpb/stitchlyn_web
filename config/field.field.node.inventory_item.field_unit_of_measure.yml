@@ -1,0 +1,29 @@
+uuid: e447995b-c5ac-4509-b822-3dd1618e8582
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_unit_of_measure
+    - node.type.inventory_item
+    - taxonomy.vocabulary.unit_measurement
+id: node.inventory_item.field_unit_of_measure
+field_name: field_unit_of_measure
+entity_type: node
+bundle: inventory_item
+label: 'Unit of Measure'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      unit_measurement: unit_measurement
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

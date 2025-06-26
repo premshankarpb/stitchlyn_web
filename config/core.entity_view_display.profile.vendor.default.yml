@@ -1,0 +1,68 @@
+uuid: 9c064acf-7260-4535-9b7a-c05def2bbf78
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.profile.vendor.field_billing_address
+    - field.field.profile.vendor.field_contact_person
+    - field.field.profile.vendor.field_gst_number
+    - field.field.profile.vendor.field_phone_number
+    - field.field.profile.vendor.field_status
+    - field.field.profile.vendor.field_vendor_name
+    - profile.type.vendor
+  module:
+    - phonenumber
+id: profile.vendor.default
+targetEntityType: profile
+bundle: vendor
+mode: default
+content:
+  field_billing_address:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_contact_person:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_gst_number:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_phone_number:
+    type: phone_international
+    label: above
+    settings:
+      title: ''
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_status:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_vendor_name:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

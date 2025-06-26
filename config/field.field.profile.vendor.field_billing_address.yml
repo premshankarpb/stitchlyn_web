@@ -1,0 +1,19 @@
+uuid: a3948d58-c6c3-4f26-bfcf-23c5fe7d71df
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_billing_address
+    - profile.type.vendor
+id: profile.vendor.field_billing_address
+field_name: field_billing_address
+entity_type: profile
+bundle: vendor
+label: 'Billing Address'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

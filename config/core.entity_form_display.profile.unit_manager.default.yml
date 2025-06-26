@@ -1,0 +1,57 @@
+uuid: 75c927e1-ecbd-4320-bf59-b898254b29e3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.profile.unit_manager.field_name
+    - field.field.profile.unit_manager.field_phone_number
+    - field.field.profile.unit_manager.field_unit
+    - profile.type.unit_manager
+  module:
+    - phonenumber
+id: profile.unit_manager.default
+targetEntityType: profile
+bundle: unit_manager
+mode: default
+content:
+  field_name:
+    type: string_textfield
+    weight: 26
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_phone_number:
+    type: phone_default
+    weight: 28
+    region: content
+    settings:
+      initial_country: auto
+      preferred_countries:
+        - US
+        - GB
+      allow_dropdown: true
+      fix_dropdown_width: true
+      separate_dial_code: false
+      show_flags: true
+      country_search: true
+      format_as_you_type: true
+      format_on_display: true
+      use_fullscreen_popup: true
+      remove_start_zero: true
+      mask_formatter: true
+      show_error: false
+    third_party_settings: {  }
+  field_unit:
+    type: entity_reference_autocomplete
+    weight: 29
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  is_default: true

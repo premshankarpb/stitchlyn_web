@@ -1,0 +1,9 @@
+uuid: 2d9caaf0-601d-4418-84b3-cb70c069be67
+langcode: en
+status: true
+dependencies: {  }
+name: 'Item Category'
+vid: item_category
+description: 'Category of the Item'
+weight: 0
+new_revision: false

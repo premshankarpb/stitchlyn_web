@@ -1,0 +1,23 @@
+uuid: b2fa8ac5-1b59-4ee0-b4f6-74222949a84d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_opening_stock
+    - node.type.inventory_item
+id: node.inventory_item.field_opening_stock
+field_name: field_opening_stock
+entity_type: node
+bundle: inventory_item
+label: 'Opening Stock'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: float

@@ -1,0 +1,9 @@
+uuid: 478eced2-1117-4483-9cb1-804a85c77d2c
+langcode: en
+status: true
+dependencies: {  }
+name: 'Production Units'
+vid: production_units
+description: 'Listing of all the avaialble Production Unit details'
+weight: 0
+new_revision: false

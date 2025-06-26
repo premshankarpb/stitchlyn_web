@@ -1,0 +1,79 @@
+uuid: 1829aaf0-3851-4d37-b6ca-355dc3ed2b52
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.item_vendor_mapping.body
+    - field.field.node.item_vendor_mapping.field_expected_delivery
+    - field.field.node.item_vendor_mapping.field_inventory_item
+    - field.field.node.item_vendor_mapping.field_preferred
+    - field.field.node.item_vendor_mapping.field_quoted_rate
+    - field.field.node.item_vendor_mapping.field_vendor_related
+    - node.type.item_vendor_mapping
+  module:
+    - text
+    - user
+id: node.item_vendor_mapping.default
+targetEntityType: node
+bundle: item_vendor_mapping
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_expected_delivery:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_inventory_item:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_preferred:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_quoted_rate:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_vendor_related:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

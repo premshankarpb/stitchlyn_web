@@ -1,0 +1,9 @@
+uuid: 918b0469-e3ff-41e8-8e4e-f3e2f11ddb78
+langcode: en
+status: true
+dependencies: {  }
+name: 'Unit Measurement'
+vid: unit_measurement
+description: 'Unit of measurement'
+weight: 0
+new_revision: false

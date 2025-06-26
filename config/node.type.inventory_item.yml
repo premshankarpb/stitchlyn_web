@@ -1,0 +1,17 @@
+uuid: ad1428a5-2943-4586-b0aa-a5088277379c
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Inventory Item'
+type: inventory_item
+description: null
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

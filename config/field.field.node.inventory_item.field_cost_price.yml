@@ -1,0 +1,23 @@
+uuid: e5dbbd15-f2ca-412a-abef-6d58efeba7ef
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cost_price
+    - node.type.inventory_item
+id: node.inventory_item.field_cost_price
+field_name: field_cost_price
+entity_type: node
+bundle: inventory_item
+label: 'Cost Price'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: float

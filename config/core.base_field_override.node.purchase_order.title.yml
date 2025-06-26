@@ -1,0 +1,18 @@
+uuid: 73029f08-9898-46b4-aede-ebd1eeabf0ac
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.purchase_order
+id: node.purchase_order.title
+field_name: title
+entity_type: node
+bundle: purchase_order
+label: 'Purchase Order'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

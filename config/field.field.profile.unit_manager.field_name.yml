@@ -1,0 +1,19 @@
+uuid: 1286a2b4-d797-4854-ad66-43fbf958bdec
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_name
+    - profile.type.unit_manager
+id: profile.unit_manager.field_name
+field_name: field_name
+entity_type: profile
+bundle: unit_manager
+label: Name
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

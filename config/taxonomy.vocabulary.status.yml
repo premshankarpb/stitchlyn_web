@@ -1,0 +1,9 @@
+uuid: af1d33d8-855e-475c-9529-70a459512b18
+langcode: en
+status: true
+dependencies: {  }
+name: Status
+vid: status
+description: 'Status for the line item'
+weight: 0
+new_revision: false

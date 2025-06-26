@@ -1,0 +1,22 @@
+uuid: ce9bb1d8-43d2-4c30-9477-ae48e5079474
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.inventory_item
+id: node.inventory_item.promote
+field_name: promote
+entity_type: node
+bundle: inventory_item
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

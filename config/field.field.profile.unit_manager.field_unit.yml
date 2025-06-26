@@ -1,0 +1,29 @@
+uuid: 61b71a0b-fe05-4205-8f20-a74fca69c629
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_unit
+    - profile.type.unit_manager
+    - taxonomy.vocabulary.production_units
+id: profile.unit_manager.field_unit
+field_name: field_unit
+entity_type: profile
+bundle: unit_manager
+label: Unit
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      production_units: production_units
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

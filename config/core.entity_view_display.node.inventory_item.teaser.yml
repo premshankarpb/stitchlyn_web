@@ -1,0 +1,46 @@
+uuid: f15c1a76-6190-4e13-b336-ef3fd92f48c8
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.inventory_item.body
+    - field.field.node.inventory_item.field_category
+    - field.field.node.inventory_item.field_cost_price
+    - field.field.node.inventory_item.field_inventory_type
+    - field.field.node.inventory_item.field_item_name
+    - field.field.node.inventory_item.field_opening_stock
+    - field.field.node.inventory_item.field_reorder_level
+    - field.field.node.inventory_item.field_sku_code
+    - field.field.node.inventory_item.field_unit_of_measure
+    - node.type.inventory_item
+  module:
+    - text
+    - user
+id: node.inventory_item.teaser
+targetEntityType: node
+bundle: inventory_item
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_category: true
+  field_cost_price: true
+  field_inventory_type: true
+  field_item_name: true
+  field_opening_stock: true
+  field_reorder_level: true
+  field_sku_code: true
+  field_unit_of_measure: true

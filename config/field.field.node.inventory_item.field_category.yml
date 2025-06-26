@@ -1,0 +1,29 @@
+uuid: ecec6cea-fdfa-4979-a986-dfbd4cfcff43
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_category
+    - node.type.inventory_item
+    - taxonomy.vocabulary.item_category
+id: node.inventory_item.field_category
+field_name: field_category
+entity_type: node
+bundle: inventory_item
+label: Category
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      item_category: item_category
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: item_category
+field_type: entity_reference

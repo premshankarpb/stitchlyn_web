@@ -1,0 +1,23 @@
+uuid: f6ce9bee-5474-453d-bb9b-1d80552a9c43
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_preferred
+    - node.type.item_vendor_mapping
+id: node.item_vendor_mapping.field_preferred
+field_name: field_preferred
+entity_type: node
+bundle: item_vendor_mapping
+label: 'Preferred Vendor'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

@@ -1,0 +1,9 @@
+uuid: 2db4f52e-e8e5-4381-9c08-c2167979cb9e
+langcode: en
+status: true
+dependencies: {  }
+id: unit_manager
+label: 'Unit Manager'
+weight: 5
+is_admin: null
+permissions: {  }

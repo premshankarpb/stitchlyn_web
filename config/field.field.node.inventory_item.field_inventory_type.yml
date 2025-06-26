@@ -1,0 +1,33 @@
+uuid: 0e8b225a-9e84-4ffe-8839-f415d8095f1b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_inventory_type
+    - node.type.inventory_item
+    - taxonomy.vocabulary.inventory_type
+  content:
+    - 'taxonomy_term:inventory_type:3cebdd4c-2e8d-489a-bb31-c16df2e04e81'
+id: node.inventory_item.field_inventory_type
+field_name: field_inventory_type
+entity_type: node
+bundle: inventory_item
+label: 'Inventory Type'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    target_uuid: 3cebdd4c-2e8d-489a-bb31-c16df2e04e81
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      inventory_type: inventory_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

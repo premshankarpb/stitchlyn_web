@@ -1,0 +1,9 @@
+uuid: 4b21a719-e955-478a-8acf-09c0415e8734
+langcode: en
+status: true
+dependencies: {  }
+name: 'Vendor Status'
+vid: vendor_status
+description: 'Status for the vendor'
+weight: 0
+new_revision: false

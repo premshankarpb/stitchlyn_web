@@ -1,0 +1,28 @@
+uuid: 57762929-6b17-4b2d-a253-d4ea2b920bc7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.purchase_order.body
+    - node.type.purchase_order
+  module:
+    - text
+    - user
+id: node.purchase_order.default
+targetEntityType: node
+bundle: purchase_order
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

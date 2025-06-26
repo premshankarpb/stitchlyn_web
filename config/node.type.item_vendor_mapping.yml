@@ -1,0 +1,17 @@
+uuid: 260e0c63-b6d1-499a-9ba2-0408a63f2cb2
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Item Vendor Mapping'
+type: item_vendor_mapping
+description: 'Content to map between inventory Item to Vendor'
+help: null
+new_revision: true
+preview_mode: 0
+display_submitted: true

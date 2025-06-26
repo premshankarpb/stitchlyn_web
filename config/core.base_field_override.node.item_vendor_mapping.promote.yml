@@ -1,0 +1,22 @@
+uuid: 504c4006-d4a8-43b2-9ca6-43dbdfcdb8d4
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.item_vendor_mapping
+id: node.item_vendor_mapping.promote
+field_name: promote
+entity_type: node
+bundle: item_vendor_mapping
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

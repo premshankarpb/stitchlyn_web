@@ -1,0 +1,18 @@
+uuid: e9c2e25c-e6dc-4ec3-bd54-3b4097b4b5fd
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.item_vendor_mapping
+id: node.item_vendor_mapping.title
+field_name: title
+entity_type: node
+bundle: item_vendor_mapping
+label: 'Inventory Mapping Title'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

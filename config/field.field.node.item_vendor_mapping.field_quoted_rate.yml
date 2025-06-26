@@ -1,0 +1,23 @@
+uuid: e404f230-0a0f-4f49-93ea-019630596c8c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_quoted_rate
+    - node.type.item_vendor_mapping
+id: node.item_vendor_mapping.field_quoted_rate
+field_name: field_quoted_rate
+entity_type: node
+bundle: item_vendor_mapping
+label: 'Quoted rate'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

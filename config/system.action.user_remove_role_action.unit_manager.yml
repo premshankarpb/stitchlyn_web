@@ -1,0 +1,14 @@
+uuid: b5d0c8a1-9156-414b-9246-218177930d86
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.unit_manager
+  module:
+    - user
+id: user_remove_role_action.unit_manager
+label: 'Remove the Unit Manager role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: unit_manager

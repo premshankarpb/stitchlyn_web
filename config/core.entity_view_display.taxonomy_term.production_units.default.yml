@@ -1,0 +1,49 @@
+uuid: 26a7155f-9759-451e-94c7-683efb20629d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.production_units.field_contact_number
+    - field.field.taxonomy_term.production_units.field_status
+    - field.field.taxonomy_term.production_units.field_unit_address
+    - taxonomy.vocabulary.production_units
+  module:
+    - phonenumber
+    - text
+id: taxonomy_term.production_units.default
+targetEntityType: taxonomy_term
+bundle: production_units
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_contact_number:
+    type: phone_international
+    label: above
+    settings:
+      title: ''
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_status:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_unit_address:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

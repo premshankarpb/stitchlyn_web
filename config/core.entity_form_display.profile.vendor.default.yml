@@ -1,0 +1,80 @@
+uuid: f5c8e27e-13f7-4d2e-8a8d-1a3ab1765b7f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.profile.vendor.field_billing_address
+    - field.field.profile.vendor.field_contact_person
+    - field.field.profile.vendor.field_gst_number
+    - field.field.profile.vendor.field_phone_number
+    - field.field.profile.vendor.field_status
+    - field.field.profile.vendor.field_vendor_name
+    - profile.type.vendor
+  module:
+    - phonenumber
+id: profile.vendor.default
+targetEntityType: profile
+bundle: vendor
+mode: default
+content:
+  field_billing_address:
+    type: string_textarea
+    weight: 30
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_contact_person:
+    type: string_textfield
+    weight: 27
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_gst_number:
+    type: string_textfield
+    weight: 29
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_phone_number:
+    type: phone_default
+    weight: 28
+    region: content
+    settings:
+      initial_country: auto
+      preferred_countries:
+        - US
+        - GB
+      allow_dropdown: true
+      fix_dropdown_width: true
+      separate_dial_code: false
+      show_flags: true
+      country_search: true
+      format_as_you_type: true
+      format_on_display: true
+      use_fullscreen_popup: true
+      remove_start_zero: true
+      mask_formatter: true
+      show_error: false
+    third_party_settings: {  }
+  field_status:
+    type: options_select
+    weight: 31
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_vendor_name:
+    type: string_textfield
+    weight: 26
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  is_default: true

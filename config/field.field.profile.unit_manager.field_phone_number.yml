@@ -1,0 +1,36 @@
+uuid: 78c4f6c4-6ad6-4b9b-801e-9b973351b98c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_phone_number
+    - profile.type.unit_manager
+  module:
+    - phonenumber
+id: profile.unit_manager.field_phone_number
+field_name: field_phone_number
+entity_type: profile
+bundle: unit_manager
+label: 'Phone number'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  strict_mode: 1
+  national_mode: 1
+  allowed: all
+  countries: {  }
+  geo_ip_lookup: ipapi
+  api_key: ''
+  validation_number_type: MOBILE
+  placeholder_number_type: MOBILE
+  custom_placeholder: ''
+  container_class: ''
+  extension_field: 0
+  country_order: {  }
+  auto_placeholder: polite
+  enabled_localisation: false
+  localized_countries: {  }
+field_type: phone
