@@ -1,0 +1,9 @@
+uuid: 60b86c9f-33ac-4340-9e0b-aa23327787c2
+langcode: en
+status: true
+dependencies: {  }
+name: 'Order Type'
+vid: order_type
+description: null
+weight: 0
+new_revision: false

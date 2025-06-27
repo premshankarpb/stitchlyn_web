@@ -1,23 +1,21 @@
-uuid: 3e6c6eed-1d76-4390-bf8c-33dfffc0fb99
+uuid: fb5b472d-f699-4e18-bf59-fa604ee503ca
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.purchase_order.body
-    - field.field.node.purchase_order.field_date_of_purchase
-    - field.field.node.purchase_order.field_payment_status
-    - field.field.node.purchase_order.field_subtotal_amount
-    - field.field.node.purchase_order.field_tax_amount
-    - field.field.node.purchase_order.field_total_amount
-    - field.field.node.purchase_order.field_vendor
-    - node.type.purchase_order
+    - field.field.node.inventory_transaction_log.body
+    - field.field.node.inventory_transaction_log.field_inventory_item
+    - field.field.node.inventory_transaction_log.field_order_type
+    - field.field.node.inventory_transaction_log.field_purchase_order
+    - field.field.node.inventory_transaction_log.field_quantity
+    - field.field.node.inventory_transaction_log.field_transaction_type
+    - node.type.inventory_transaction_log
   module:
-    - datetime
     - path
     - text
-id: node.purchase_order.default
+id: node.inventory_transaction_log.default
 targetEntityType: node
-bundle: purchase_order
+bundle: inventory_transaction_log
 mode: default
 content:
   body:
@@ -36,15 +34,9 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_date_of_purchase:
-    type: datetime_default
-    weight: 123
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_payment_status:
+  field_inventory_item:
     type: entity_reference_autocomplete
-    weight: 124
+    weight: 122
     region: content
     settings:
       match_operator: CONTAINS
@@ -52,28 +44,34 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_subtotal_amount:
-    type: number
+  field_order_type:
+    type: entity_reference_autocomplete
     weight: 125
     region: content
     settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_tax_amount:
+  field_purchase_order:
+    type: entity_reference_autocomplete
+    weight: 122
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_quantity:
     type: number
-    weight: 126
+    weight: 124
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-  field_total_amount:
-    type: number
-    weight: 127
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_vendor:
+  field_transaction_type:
     type: entity_reference_autocomplete
     weight: 122
     region: content

@@ -1,23 +1,22 @@
-uuid: 57762929-6b17-4b2d-a253-d4ea2b920bc7
+uuid: 291a2186-401b-4064-9890-e62236a444e0
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.purchase_order.body
-    - field.field.node.purchase_order.field_date_of_purchase
-    - field.field.node.purchase_order.field_payment_status
-    - field.field.node.purchase_order.field_subtotal_amount
-    - field.field.node.purchase_order.field_tax_amount
-    - field.field.node.purchase_order.field_total_amount
-    - field.field.node.purchase_order.field_vendor
-    - node.type.purchase_order
+    - field.field.node.purchase_order_items.body
+    - field.field.node.purchase_order_items.field_item_rate
+    - field.field.node.purchase_order_items.field_item_reference
+    - field.field.node.purchase_order_items.field_purchase_order
+    - field.field.node.purchase_order_items.field_quantity
+    - field.field.node.purchase_order_items.field_tax_amount
+    - field.field.node.purchase_order_items.field_total_amount
+    - node.type.purchase_order_items
   module:
-    - datetime
     - text
     - user
-id: node.purchase_order.default
+id: node.purchase_order_items.default
 targetEntityType: node
-bundle: purchase_order
+bundle: purchase_order_items
 mode: default
 content:
   body:
@@ -27,24 +26,7 @@ content:
     third_party_settings: {  }
     weight: 101
     region: content
-  field_date_of_purchase:
-    type: datetime_default
-    label: above
-    settings:
-      timezone_override: ''
-      format_type: medium
-    third_party_settings: {  }
-    weight: 103
-    region: content
-  field_payment_status:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 104
-    region: content
-  field_subtotal_amount:
+  field_item_rate:
     type: number_decimal
     label: above
     settings:
@@ -54,6 +36,33 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 105
+    region: content
+  field_item_reference:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_purchase_order:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_quantity:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 104
     region: content
   field_tax_amount:
     type: number_decimal
@@ -76,14 +85,6 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 107
-    region: content
-  field_vendor:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 102
     region: content
   links:
     settings: {  }

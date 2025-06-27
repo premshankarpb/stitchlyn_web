@@ -1,0 +1,76 @@
+uuid: a30fbf30-be51-4bc6-88d1-4e8786897ced
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.inventory_transaction_log.body
+    - field.field.node.inventory_transaction_log.field_inventory_item
+    - field.field.node.inventory_transaction_log.field_order_type
+    - field.field.node.inventory_transaction_log.field_purchase_order
+    - field.field.node.inventory_transaction_log.field_quantity
+    - field.field.node.inventory_transaction_log.field_transaction_type
+    - node.type.inventory_transaction_log
+  module:
+    - text
+    - user
+id: node.inventory_transaction_log.default
+targetEntityType: node
+bundle: inventory_transaction_log
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_inventory_item:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_order_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_purchase_order:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_quantity:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_transaction_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

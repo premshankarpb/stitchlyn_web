@@ -1,0 +1,29 @@
+uuid: 09e49031-8be6-474b-83b9-4971382d9e24
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_transaction_type
+    - node.type.inventory_transaction_log
+    - taxonomy.vocabulary.transaction_type
+id: node.inventory_transaction_log.field_transaction_type
+field_name: field_transaction_type
+entity_type: node
+bundle: inventory_transaction_log
+label: 'Transaction Type'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      transaction_type: transaction_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: inventory_type
+field_type: entity_reference

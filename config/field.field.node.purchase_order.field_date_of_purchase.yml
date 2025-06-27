@@ -1,0 +1,24 @@
+uuid: 42e47598-cb7b-4c61-8b0b-515d80d7a6e7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_date_of_purchase
+    - node.type.purchase_order
+  module:
+    - datetime
+id: node.purchase_order.field_date_of_purchase
+field_name: field_date_of_purchase
+entity_type: node
+bundle: purchase_order
+label: 'Date of purchase '
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    default_date_type: now
+    default_date: now
+default_value_callback: ''
+settings: {  }
+field_type: datetime

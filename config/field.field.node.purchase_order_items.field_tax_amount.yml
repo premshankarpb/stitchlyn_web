@@ -1,0 +1,23 @@
+uuid: ebaa276e-4a67-4ed1-bd1f-4e1f44ca1a97
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tax_amount
+    - node.type.purchase_order_items
+id: node.purchase_order_items.field_tax_amount
+field_name: field_tax_amount
+entity_type: node
+bundle: purchase_order_items
+label: 'Tax Amount'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

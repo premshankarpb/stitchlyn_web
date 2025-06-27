@@ -1,0 +1,9 @@
+uuid: d2e1379a-3e81-405e-ae79-81ebe52379a2
+langcode: en
+status: true
+dependencies: {  }
+name: 'Transaction type'
+vid: transaction_type
+description: null
+weight: 0
+new_revision: false

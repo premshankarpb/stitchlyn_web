@@ -1,0 +1,28 @@
+uuid: 81f5770e-070d-4244-8510-b3de3a2f5378
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.work_order.body
+    - node.type.work_order
+  module:
+    - text
+    - user
+id: node.work_order.default
+targetEntityType: node
+bundle: work_order
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

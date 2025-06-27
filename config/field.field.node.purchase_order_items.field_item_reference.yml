@@ -1,0 +1,29 @@
+uuid: ae67638c-446e-479a-af5a-eece5f35e984
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_item_reference
+    - node.type.inventory_item
+    - node.type.purchase_order_items
+id: node.purchase_order_items.field_item_reference
+field_name: field_item_reference
+entity_type: node
+bundle: purchase_order_items
+label: 'Item Reference'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      inventory_item: inventory_item
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,23 +1,22 @@
-uuid: 3e6c6eed-1d76-4390-bf8c-33dfffc0fb99
+uuid: 6aac58d5-6b86-4821-871b-dceafcc47186
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.purchase_order.body
-    - field.field.node.purchase_order.field_date_of_purchase
-    - field.field.node.purchase_order.field_payment_status
-    - field.field.node.purchase_order.field_subtotal_amount
-    - field.field.node.purchase_order.field_tax_amount
-    - field.field.node.purchase_order.field_total_amount
-    - field.field.node.purchase_order.field_vendor
-    - node.type.purchase_order
+    - field.field.node.purchase_order_items.body
+    - field.field.node.purchase_order_items.field_item_rate
+    - field.field.node.purchase_order_items.field_item_reference
+    - field.field.node.purchase_order_items.field_purchase_order
+    - field.field.node.purchase_order_items.field_quantity
+    - field.field.node.purchase_order_items.field_tax_amount
+    - field.field.node.purchase_order_items.field_total_amount
+    - node.type.purchase_order_items
   module:
-    - datetime
     - path
     - text
-id: node.purchase_order.default
+id: node.purchase_order_items.default
 targetEntityType: node
-bundle: purchase_order
+bundle: purchase_order_items
 mode: default
 content:
   body:
@@ -36,15 +35,16 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_date_of_purchase:
-    type: datetime_default
-    weight: 123
+  field_item_rate:
+    type: number
+    weight: 125
     region: content
-    settings: {  }
+    settings:
+      placeholder: ''
     third_party_settings: {  }
-  field_payment_status:
+  field_item_reference:
     type: entity_reference_autocomplete
-    weight: 124
+    weight: 123
     region: content
     settings:
       match_operator: CONTAINS
@@ -52,9 +52,19 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_subtotal_amount:
+  field_purchase_order:
+    type: entity_reference_autocomplete
+    weight: 122
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_quantity:
     type: number
-    weight: 125
+    weight: 124
     region: content
     settings:
       placeholder: ''
@@ -71,16 +81,6 @@ content:
     weight: 127
     region: content
     settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_vendor:
-    type: entity_reference_autocomplete
-    weight: 122
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
       placeholder: ''
     third_party_settings: {  }
   path:

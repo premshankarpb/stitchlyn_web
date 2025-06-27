@@ -5,6 +5,12 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.purchase_order.body
+    - field.field.node.purchase_order.field_date_of_purchase
+    - field.field.node.purchase_order.field_payment_status
+    - field.field.node.purchase_order.field_subtotal_amount
+    - field.field.node.purchase_order.field_tax_amount
+    - field.field.node.purchase_order.field_total_amount
+    - field.field.node.purchase_order.field_vendor
     - node.type.purchase_order
   module:
     - text
@@ -27,4 +33,10 @@ content:
     third_party_settings: {  }
     weight: 100
     region: content
-hidden: {  }
+hidden:
+  field_date_of_purchase: true
+  field_payment_status: true
+  field_subtotal_amount: true
+  field_tax_amount: true
+  field_total_amount: true
+  field_vendor: true

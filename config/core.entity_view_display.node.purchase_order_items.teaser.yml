@@ -1,0 +1,42 @@
+uuid: 9f7dcbbd-6f66-4524-ab1f-fa94037eb91a
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.purchase_order_items.body
+    - field.field.node.purchase_order_items.field_item_rate
+    - field.field.node.purchase_order_items.field_item_reference
+    - field.field.node.purchase_order_items.field_purchase_order
+    - field.field.node.purchase_order_items.field_quantity
+    - field.field.node.purchase_order_items.field_tax_amount
+    - field.field.node.purchase_order_items.field_total_amount
+    - node.type.purchase_order_items
+  module:
+    - text
+    - user
+id: node.purchase_order_items.teaser
+targetEntityType: node
+bundle: purchase_order_items
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_item_rate: true
+  field_item_reference: true
+  field_purchase_order: true
+  field_quantity: true
+  field_tax_amount: true
+  field_total_amount: true

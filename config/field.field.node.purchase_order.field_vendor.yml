@@ -1,0 +1,34 @@
+uuid: 0b47eea1-4614-45a0-818f-a661556f6816
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_vendor
+    - node.type.purchase_order
+id: node.purchase_order.field_vendor
+field_name: field_vendor
+entity_type: node
+bundle: purchase_order
+label: Vendor
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    filter:
+      type: role
+      role:
+        vendor: vendor
+        content_editor: '0'
+        administrator: '0'
+        unit_manager: '0'
+    include_anonymous: false
+field_type: entity_reference

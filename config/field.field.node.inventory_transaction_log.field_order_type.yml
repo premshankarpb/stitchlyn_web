@@ -1,0 +1,29 @@
+uuid: c8424b3d-1640-46a5-b480-e6789f0a8e20
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_order_type
+    - node.type.inventory_transaction_log
+    - taxonomy.vocabulary.order_type
+id: node.inventory_transaction_log.field_order_type
+field_name: field_order_type
+entity_type: node
+bundle: inventory_transaction_log
+label: 'Order Type'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      order_type: order_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,17 @@
+uuid: 6646beec-3548-49f8-9310-c54c38941749
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Purchase Order Items'
+type: purchase_order_items
+description: 'Content model for the purchase order items'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

@@ -1,0 +1,23 @@
+uuid: cf06cf75-b026-4647-a154-238293cf012c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_item_rate
+    - node.type.purchase_order_items
+id: node.purchase_order_items.field_item_rate
+field_name: field_item_rate
+entity_type: node
+bundle: purchase_order_items
+label: 'Item rate'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

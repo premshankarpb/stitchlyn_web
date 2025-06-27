@@ -1,0 +1,17 @@
+uuid: 1893e3f0-b74f-4987-83b6-31aee1c122b8
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Inventory Transaction Log'
+type: inventory_transaction_log
+description: 'Content model for logging the Inventory Transactions'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

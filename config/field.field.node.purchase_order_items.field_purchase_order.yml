@@ -1,0 +1,29 @@
+uuid: c8de8470-8f9c-4692-a10f-45f20cb5d186
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_purchase_order
+    - node.type.purchase_order
+    - node.type.purchase_order_items
+id: node.purchase_order_items.field_purchase_order
+field_name: field_purchase_order
+entity_type: node
+bundle: purchase_order_items
+label: 'Purchase Order'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      purchase_order: purchase_order
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

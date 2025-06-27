@@ -1,0 +1,22 @@
+uuid: 040973ad-85ab-4c70-b330-a1291cc86598
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.inventory_transaction_log
+id: node.inventory_transaction_log.promote
+field_name: promote
+entity_type: node
+bundle: inventory_transaction_log
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

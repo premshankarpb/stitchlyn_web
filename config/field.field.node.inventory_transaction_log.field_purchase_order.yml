@@ -1,0 +1,31 @@
+uuid: aad0dceb-ee81-496a-ad5a-cf2d5e2a4f9a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_purchase_order
+    - node.type.inventory_transaction_log
+    - node.type.purchase_order
+    - node.type.work_order
+id: node.inventory_transaction_log.field_purchase_order
+field_name: field_purchase_order
+entity_type: node
+bundle: inventory_transaction_log
+label: 'Purchase Order'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      purchase_order: purchase_order
+      work_order: work_order
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: purchase_order
+field_type: entity_reference

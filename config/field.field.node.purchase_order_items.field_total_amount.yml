@@ -1,0 +1,23 @@
+uuid: 056d4fc0-92ce-4788-a6b1-62d697ff78bd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_total_amount
+    - node.type.purchase_order_items
+id: node.purchase_order_items.field_total_amount
+field_name: field_total_amount
+entity_type: node
+bundle: purchase_order_items
+label: 'Total Amount'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

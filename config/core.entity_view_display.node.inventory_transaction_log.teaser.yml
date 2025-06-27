@@ -1,0 +1,40 @@
+uuid: fe919c7c-3858-4787-a79b-0eaec9c1f812
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.inventory_transaction_log.body
+    - field.field.node.inventory_transaction_log.field_inventory_item
+    - field.field.node.inventory_transaction_log.field_order_type
+    - field.field.node.inventory_transaction_log.field_purchase_order
+    - field.field.node.inventory_transaction_log.field_quantity
+    - field.field.node.inventory_transaction_log.field_transaction_type
+    - node.type.inventory_transaction_log
+  module:
+    - text
+    - user
+id: node.inventory_transaction_log.teaser
+targetEntityType: node
+bundle: inventory_transaction_log
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_inventory_item: true
+  field_order_type: true
+  field_purchase_order: true
+  field_quantity: true
+  field_transaction_type: true

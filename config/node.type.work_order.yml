@@ -1,0 +1,17 @@
+uuid: fcb4b755-2cc7-439c-a144-ad0c68e9ece2
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Work Order'
+type: work_order
+description: null
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true
