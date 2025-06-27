@@ -8,7 +8,6 @@ dependencies:
     - image.style.thumbnail
   module:
     - image
-    - profile
     - user
 _core:
   default_config_hash: FaQ9Ptcpxpg30AtiqRDtl_8zbJArHP1LPfug_s59TOA
@@ -29,13 +28,6 @@ content:
   timezone:
     weight: 6
     region: content
-  unit_manager_profiles:
-    type: profile_form
-    weight: 90
-    region: content
-    settings:
-      form_mode: default
-    third_party_settings: {  }
   user_picture:
     type: image_image
     weight: -1
@@ -44,11 +36,6 @@ content:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
-  vendor_profiles:
-    type: profile_form
-    weight: 90
-    region: content
-    settings:
-      form_mode: default
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  unit_manager_profiles: true
+  vendor_profiles: true

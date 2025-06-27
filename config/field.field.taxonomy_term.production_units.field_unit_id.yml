@@ -1,0 +1,19 @@
+uuid: 6191585f-3593-4bed-8207-d9937f7bbb88
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_unit_id
+    - taxonomy.vocabulary.production_units
+id: taxonomy_term.production_units.field_unit_id
+field_name: field_unit_id
+entity_type: taxonomy_term
+bundle: production_units
+label: 'Unit Id'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

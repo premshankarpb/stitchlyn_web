@@ -1,12 +1,12 @@
-uuid: f6c81989-9f5d-427a-a018-ab899181303b
+uuid: 21dc42cb-7968-47a6-85c1-2d15bfc2b79e
 langcode: en
 status: true
 dependencies:
   module:
-    - node
-id: node.field_item_name
-field_name: field_item_name
-entity_type: node
+    - taxonomy
+id: taxonomy_term.field_unit_code
+field_name: field_unit_code
+entity_type: taxonomy_term
 type: string
 settings:
   max_length: 255

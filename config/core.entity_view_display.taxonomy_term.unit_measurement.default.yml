@@ -1,0 +1,30 @@
+uuid: 2a3bd5a8-cd8b-43cd-b1f5-d2453f7e254f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.unit_measurement.field_unit_code
+    - taxonomy.vocabulary.unit_measurement
+  module:
+    - text
+id: taxonomy_term.unit_measurement.default
+targetEntityType: taxonomy_term
+bundle: unit_measurement
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_unit_code:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

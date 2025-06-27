@@ -1,0 +1,19 @@
+uuid: 309a9812-1be8-4cd4-9ad5-2f11fe98d600
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_unit_code
+    - taxonomy.vocabulary.unit_measurement
+id: taxonomy_term.unit_measurement.field_unit_code
+field_name: field_unit_code
+entity_type: taxonomy_term
+bundle: unit_measurement
+label: 'Unit Code'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

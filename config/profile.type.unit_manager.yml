@@ -6,7 +6,7 @@ id: unit_manager
 label: 'Unit Manager'
 display_label: 'Unit Manager Profile'
 multiple: false
-registration: true
+registration: false
 roles:
   unit_manager: unit_manager
 allow_revisions: true

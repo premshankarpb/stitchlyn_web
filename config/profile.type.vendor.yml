@@ -6,7 +6,7 @@ id: vendor
 label: Vendor
 display_label: 'Vendor profile'
 multiple: false
-registration: true
+registration: false
 roles:
   vendor: vendor
 allow_revisions: true

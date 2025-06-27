@@ -6,6 +6,7 @@ dependencies:
     - field.field.taxonomy_term.production_units.field_contact_number
     - field.field.taxonomy_term.production_units.field_status
     - field.field.taxonomy_term.production_units.field_unit_address
+    - field.field.taxonomy_term.production_units.field_unit_id
     - taxonomy.vocabulary.production_units
   module:
     - phonenumber
@@ -45,5 +46,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 1
+    region: content
+  field_unit_id:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
     region: content
 hidden: {  }
