@@ -19,6 +19,7 @@ module:
   dynamic_page_cache: 0
   editor: 0
   entity: 0
+  entity_reference_revisions: 0
   field: 0
   field_ui: 0
   file: 0
@@ -32,6 +33,7 @@ module:
   node: 0
   options: 0
   page_cache: 0
+  paragraphs_type_permissions: 0
   path: 0
   path_alias: 0
   phonenumber: 0
@@ -45,8 +47,10 @@ module:
   user: 0
   views_ui: 0
   views: 10
+  paragraphs: 11
   standard: 1000
 theme:
   olivero: 0
   claro: 0
+  stitchlyn_theme: 0
 profile: standard
