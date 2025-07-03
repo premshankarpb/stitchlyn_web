@@ -1,19 +1,18 @@
-uuid: 6d45a6c3-6acc-4f76-a209-640ad27746a2
+uuid: 0d3e8b93-f728-46b9-a5ef-e722475e6908
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_basic_page_content
-    - node.type.page
+    - field.storage.paragraph.field_feature_item
+    - paragraphs.paragraphs_type.feature_item
     - paragraphs.paragraphs_type.features
-    - paragraphs.paragraphs_type.home_banner
   module:
     - entity_reference_revisions
-id: node.page.field_basic_page_content
-field_name: field_basic_page_content
-entity_type: node
-bundle: page
-label: Content
+id: paragraph.features.field_feature_item
+field_name: field_feature_item
+entity_type: paragraph
+bundle: features
+label: 'Feature Item'
 description: ''
 required: false
 translatable: false
@@ -23,20 +22,19 @@ settings:
   handler: 'default:paragraph'
   handler_settings:
     target_bundles:
-      home_banner: home_banner
-      features: features
+      feature_item: feature_item
     negate: 0
     target_bundles_drag_drop:
       banner_item:
-        weight: 3
+        weight: 5
         enabled: false
       feature_item:
         weight: 7
-        enabled: false
+        enabled: true
       features:
         weight: 6
-        enabled: true
+        enabled: false
       home_banner:
-        weight: 4
-        enabled: true
+        weight: 8
+        enabled: false
 field_type: entity_reference_revisions
