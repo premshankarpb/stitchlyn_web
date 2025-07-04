@@ -1,0 +1,18 @@
+uuid: cf694e57-4907-477b-9144-709e1d713989
+langcode: en
+status: true
+dependencies:
+  theme:
+    - stitchlyn_theme
+id: stitchlyn_theme_pagetitle
+theme: stitchlyn_theme
+region: header
+weight: 0
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  label_display: '0'
+  provider: core
+visibility: {  }

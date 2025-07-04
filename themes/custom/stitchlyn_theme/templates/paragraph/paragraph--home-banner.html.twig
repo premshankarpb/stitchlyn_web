@@ -1,0 +1,9 @@
+<section class="hero-section">
+  <div class="hero-slider">
+    {% for key, item in content.field_banner_item %}
+      {% if key|first != '#' %}
+        {{ item }}
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
