@@ -37,4 +37,10 @@ settings:
       home_banner:
         weight: 8
         enabled: false
+      st:
+        weight: 11
+        enabled: false
+      stats:
+        weight: 12
+        enabled: false
 field_type: entity_reference_revisions

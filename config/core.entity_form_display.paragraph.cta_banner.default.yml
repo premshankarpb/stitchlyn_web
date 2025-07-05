@@ -1,0 +1,52 @@
+uuid: a2d520dd-8d9e-405c-a8f4-ae7796ca5a19
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.cta_banner.field_banner_button_1
+    - field.field.paragraph.cta_banner.field_banner_button_2
+    - field.field.paragraph.cta_banner.field_banner_description
+    - field.field.paragraph.cta_banner.field_banner_title
+    - paragraphs.paragraphs_type.cta_banner
+  module:
+    - link
+id: paragraph.cta_banner.default
+targetEntityType: paragraph
+bundle: cta_banner
+mode: default
+content:
+  field_banner_button_1:
+    type: link_default
+    weight: 2
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_banner_button_2:
+    type: link_default
+    weight: 3
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_banner_description:
+    type: string_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_banner_title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

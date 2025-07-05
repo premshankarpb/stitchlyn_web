@@ -1,0 +1,19 @@
+uuid: 7130c546-f73f-4d02-a815-6582234147dd
+langcode: en
+status: true
+dependencies:
+  module:
+    - link
+    - paragraphs
+id: paragraph.field_banner_button_2
+field_name: field_banner_button_2
+entity_type: paragraph
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

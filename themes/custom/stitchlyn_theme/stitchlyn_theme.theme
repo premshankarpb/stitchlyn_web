@@ -26,6 +26,28 @@ function stitchlyn_theme_preprocess_paragraph(array &$variables) {
       $stat_label = $paragraph->get('field_stat_label')->value;
       $variables['stat_number_label'] = $stat_label;
     }
-  }  
+  }
+
+  if ($paragraph->bundle() == 'cta_banner') {
+
+    if (!$paragraph->get('field_banner_button_1')->isEmpty()) {
+      $link_item = $paragraph->get('field_banner_button_1')->first();
+      $url = $link_item->getUrl();
+      $title = $link_item->title;
+
+      // Get actual URL as a string.
+      $variables['link_url_1'] = $url->toString();
+      $variables['link_title_1'] = $title ?: $url->toString(); // fallback to URL if no title
+    }
+    if (!$paragraph->get('field_banner_button_2')->isEmpty()) {
+      $link_item = $paragraph->get('field_banner_button_2')->first();
+      $url = $link_item->getUrl();
+      $title = $link_item->title;
+
+      // Get actual URL as a string.
+      $variables['link_url_2'] = $url->toString();
+      $variables['link_title_2'] = $title ?: $url->toString(); // fallback to URL if no title
+    }    
+  }
 
 }
