@@ -1,0 +1,18 @@
+<section id="features" class="features-section">
+  <div class="container">
+    <h2 class="section-title">{{ content.field_feature_title }}</h2>
+    <div class="section-subtitle">
+      {{ content.field_feature_description }}.
+    </div>
+
+    <div class="row g-4">
+      {% for key, item in content.field_feature_item %}
+        {% if key|first != '#' %}
+          {{ item }}
+        {% endif %}
+      {% endfor %}
+    </div>
+
+
+  </div>
+</section>

@@ -6,10 +6,7 @@ dependencies:
     - field.field.paragraph.feature_item.field_feature_description
     - field.field.paragraph.feature_item.field_feature_title
     - field.field.paragraph.feature_item.field_icon
-    - image.style.thumbnail
     - paragraphs.paragraphs_type.feature_item
-  module:
-    - image
 id: paragraph.feature_item.default
 targetEntityType: paragraph
 bundle: feature_item
@@ -32,12 +29,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_icon:
-    type: image_image
+    type: string_textfield
     weight: 2
     region: content
     settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
 hidden:
   created: true

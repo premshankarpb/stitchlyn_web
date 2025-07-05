@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * Implements hook_preprocess_paragraph__feature_item().
+ */
+function stitchlyn_theme_preprocess_paragraph__feature_item(array &$variables) {
+  $paragraph = $variables['paragraph'];
+
+  if ($paragraph->bundle() === 'feature_item') {
+    // Make sure the field_icon is not empty.
+    if (!$paragraph->get('field_icon')->isEmpty()) {
+      // Get the string value from the text field.
+      $icon_value = $paragraph->get('field_icon')->value;
+
+      // Pass it to the Twig template.
+      $variables['icon'] = $icon_value;
+    }
+  }
+
+}

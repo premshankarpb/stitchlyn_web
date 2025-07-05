@@ -1,27 +1,18 @@
-uuid: ff18744e-a724-4b55-8908-8d4729863341
+uuid: af194467-0133-49b7-a13b-f0fc245bb847
 langcode: en
 status: true
 dependencies:
   module:
-    - file
-    - image
     - paragraphs
 id: paragraph.field_icon
 field_name: field_icon
 entity_type: paragraph
-type: image
+type: string
 settings:
-  target_type: file
-  display_field: false
-  display_default: true
-  uri_scheme: public
-  default_image:
-    uuid: ''
-    alt: ''
-    title: ''
-    width: null
-    height: null
-module: image
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
 locked: false
 cardinality: 1
 translatable: true
