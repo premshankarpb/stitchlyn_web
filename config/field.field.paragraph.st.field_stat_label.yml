@@ -1,0 +1,19 @@
+uuid: ab815e45-ac56-42c5-ab77-438b8709d37b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_stat_label
+    - paragraphs.paragraphs_type.st
+id: paragraph.st.field_stat_label
+field_name: field_stat_label
+entity_type: paragraph
+bundle: st
+label: 'Stat Label'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
