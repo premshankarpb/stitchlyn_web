@@ -1,0 +1,7 @@
+name: 'Stitchlyn Vendor'
+type: module
+description: 'Manages vendor listing and master data for Stitchlyn ERP'
+package: 'Stitchlyn'
+core_version_requirement: ^9 || ^10
+dependencies:
+  - node

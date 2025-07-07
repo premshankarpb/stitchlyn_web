@@ -1,0 +1,8 @@
+name: 'Stitchlyn Unit'
+type: module
+description: 'Manages Unit Manager user with profile.'
+core_version_requirement: ^9 || ^10
+package: 'Stitchlyn'
+dependencies:
+  - profile
+  - user

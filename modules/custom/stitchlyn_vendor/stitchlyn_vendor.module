@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
+  return [
+    'vendor_add_form' => [
+      'render element' => 'form',
+      'template'       => 'vendor-form', // maps to vendor-form.html.twig
+      'path'           => $path . '/templates',
+    ],
+    'stitchlyn_vendor_edit_form' => [
+      'render element' => 'form',
+      'template'       => 'vendor-edit-form', // maps to vendor-edit-form.html.twig
+      'path'           => $path . '/templates',
+    ],
+  ];
+}

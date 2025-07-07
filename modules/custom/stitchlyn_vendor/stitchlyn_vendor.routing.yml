@@ -1,0 +1,19 @@
+stitchlyn_vendor.add_vendor:
+  path: '/add/vendor'
+  defaults:
+    _form: '\Drupal\stitchlyn_vendor\Form\AddVendorForm'
+    _title: 'Add Vendor'
+  requirements:
+    _permission: 'administer users'
+stitchlyn_vendor.edit_form:
+  path: '/edit/vendor/{user}'
+  defaults:
+    _form: '\Drupal\stitchlyn_vendor\Form\VendorEditForm'
+    _title: 'Edit Vendor'
+  requirements:
+    _permission: 'administer users'
+    _entity_access: 'user.update'
+  options:
+    parameters:
+      user:
+        type: entity:user

@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function stitchlyn_unit_theme($existing, $type, $theme, $path) {
+  return [
+    'unit_manager_add_form' => [
+      'render element' => 'form',
+      'template'       => 'unit-manager-form',
+      'path'           => $path . '/templates',
+    ],
+    'stitchlyn_unit_manager_edit_form' => [
+      'render element' => 'form',
+      'template'       => 'unit-manager-edit-form',
+      'path'           => $path . '/templates',
+    ],
+  ];
+}
