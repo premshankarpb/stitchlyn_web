@@ -15,5 +15,15 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
       'template'       => 'vendor-edit-form', // maps to vendor-edit-form.html.twig
       'path'           => $path . '/templates',
     ],
+    'purchase_order_form' => [
+      'render element' => 'form',
+      'template'       => 'purchase-order-form',
+      'path'           => $path . '/templates',
+    ],
+    'inventory_item_form' => [
+      'render element' => 'form',
+      'template'       => 'inventory-item-form',
+      'path'           => $path . '/templates',
+    ],
   ];
 }

@@ -1,0 +1,50 @@
+<div class="purchase-order-wrapper">
+  <h2>Create Purchase Order</h2>
+
+  <div class="form-section">
+    {{ form.field_date_of_purchase }}
+    {{ form.field_vendor }}
+    {{ form.field_payment_status }}
+    {{ form.body }}
+  </div>
+
+  <div class="form-section">
+    <table class="purchase-order-items">
+      <thead>
+        <tr>
+          <th>Item Name</th>
+          <th>Quantity</th>
+          <th>Item Rate</th>
+          <th>Tax Amount</th>
+          <th>Total</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="items-wrapper">
+        {% for row in form.items %}
+          <tr>
+            <td>{{ row.item_reference }}</td>
+            <td>{{ row.quantity }}</td>
+            <td>{{ row.item_rate }}</td>
+            <td>{{ row.tax_amount }}</td>
+            <td>{{ row.total_amount }}</td>
+            <td>{{ row.remove_row }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="form-add-row">
+      {{ form.add_row }}
+    </div>
+  </div>
+
+  <div class="form-section">
+    {{ form.field_subtotal_amount }}
+    {{ form.field_tax_amount }}
+    {{ form.field_total_amount }}
+  </div>
+
+  <div class="form-actions">
+    {{ form.actions }}
+  </div>
+</div>

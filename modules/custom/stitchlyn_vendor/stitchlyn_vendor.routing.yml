@@ -17,3 +17,17 @@ stitchlyn_vendor.edit_form:
     parameters:
       user:
         type: entity:user
+stitchlyn_vendor.purchase_order_form:
+  path: '/dashboard/add/purchase-order'
+  defaults:
+    _form: '\Drupal\stitchlyn_vendor\Form\PurchaseOrderForm'
+    _title: 'Create Purchase Order'
+  requirements:
+    _permission: 'access content'
+stitchlyn_vendor.inventory_item_form:
+  path: '/dashboard/add/inventory'
+  defaults:
+    _form: '\Drupal\stitchlyn_vendor\Form\InventoryItemForm'
+    _title: 'Add Inventory Item'
+  requirements:
+    _permission: 'access content'
