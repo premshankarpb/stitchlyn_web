@@ -1,0 +1,41 @@
+uuid: d5997261-923c-4333-b425-c17148222c45
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.simple_card_item.field_icon
+    - field.field.paragraph.simple_card_item.field_subtext
+    - field.field.paragraph.simple_card_item.field_title
+    - paragraphs.paragraphs_type.simple_card_item
+id: paragraph.simple_card_item.default
+targetEntityType: paragraph
+bundle: simple_card_item
+mode: default
+content:
+  field_icon:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_subtext:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

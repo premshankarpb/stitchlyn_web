@@ -1,0 +1,24 @@
+uuid: efeeed8f-d987-4e93-8de8-cad0a2bf325b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.simple_card.field_card_item
+    - paragraphs.paragraphs_type.simple_card
+  module:
+    - entity_reference_revisions
+id: paragraph.simple_card.default
+targetEntityType: paragraph
+bundle: simple_card
+mode: default
+content:
+  field_card_item:
+    type: entity_reference_revisions_entity_view
+    label: visually_hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

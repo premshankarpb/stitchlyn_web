@@ -1,0 +1,10 @@
+uuid: 2b292070-73a6-465a-beff-67bb7a3f86f5
+langcode: en
+status: true
+dependencies: {  }
+id: type_a_card_cta
+label: 'Type A Card CTA'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }
