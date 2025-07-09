@@ -8,6 +8,7 @@ dependencies:
     - paragraphs.paragraphs_type.cta_banner
     - paragraphs.paragraphs_type.features
     - paragraphs.paragraphs_type.home_banner
+    - paragraphs.paragraphs_type.simple_card
     - paragraphs.paragraphs_type.stats
     - paragraphs.paragraphs_type.type_a_card_cta
   module:
@@ -30,6 +31,7 @@ settings:
       features: features
       cta_banner: cta_banner
       stats: stats
+      simple_card: simple_card
       type_a_card_cta: type_a_card_cta
     negate: 0
     target_bundles_drag_drop:
@@ -48,6 +50,12 @@ settings:
       home_banner:
         weight: 4
         enabled: true
+      simple_card:
+        weight: 16
+        enabled: true
+      simple_card_item:
+        weight: 17
+        enabled: false
       st:
         weight: 11
         enabled: false

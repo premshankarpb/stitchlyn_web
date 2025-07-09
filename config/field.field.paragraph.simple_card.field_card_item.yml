@@ -1,0 +1,58 @@
+uuid: 6a0f1d7b-6932-49d6-852a-4c117083c893
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_card_item
+    - paragraphs.paragraphs_type.simple_card
+    - paragraphs.paragraphs_type.simple_card_item
+  module:
+    - entity_reference_revisions
+id: paragraph.simple_card.field_card_item
+field_name: field_card_item
+entity_type: paragraph
+bundle: simple_card
+label: 'Card Item'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      simple_card_item: simple_card_item
+    negate: 0
+    target_bundles_drag_drop:
+      banner_item:
+        weight: 11
+        enabled: false
+      cta_banner:
+        weight: 12
+        enabled: false
+      feature_item:
+        weight: 14
+        enabled: false
+      features:
+        weight: 13
+        enabled: false
+      home_banner:
+        weight: 15
+        enabled: false
+      simple_card:
+        weight: 16
+        enabled: false
+      simple_card_item:
+        weight: 17
+        enabled: true
+      st:
+        weight: 18
+        enabled: false
+      stats:
+        weight: 19
+        enabled: false
+      type_a_card_cta:
+        weight: 20
+        enabled: false
+field_type: entity_reference_revisions

@@ -1,0 +1,37 @@
+uuid: 9e854afe-933e-49bb-b381-2df169d189f4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.simple_card.field_card_item
+    - paragraphs.paragraphs_type.simple_card
+  module:
+    - paragraphs
+id: paragraph.simple_card.default
+targetEntityType: paragraph
+bundle: simple_card
+mode: default
+content:
+  field_card_item:
+    type: paragraphs
+    weight: 0
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: simple_card_item
+      features:
+        add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        convert: '0'
+        duplicate: duplicate
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
