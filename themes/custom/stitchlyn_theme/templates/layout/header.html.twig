@@ -1,0 +1,42 @@
+<header class="site-header">
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="{{ path('<front>') }}">
+        <i class="fa-solid fa-people-arrows"></i> StitchLyn
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        {# Main Navigation #}
+        {% if page.main_menu %}
+          <ul class="navbar-nav mx-auto">
+            {{ page.main_menu }}
+          </ul>
+        {% endif %}
+
+        {# User Account Menu #}
+        {% if page.account_menu %}
+          <div class="profile-dropdown dropdown">
+            <a
+              class="profile-avatar d-flex align-items-center justify-content-center rounded-circle"
+              href="#"
+              id="profileDropdown"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              style="width: 40px; height: 40px; background: #25374e; color: #fff; font-size: 1.3rem;"
+            >
+              <i class="fas fa-user"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              {{ page.account_menu }}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+</header>

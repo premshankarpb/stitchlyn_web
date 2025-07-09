@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="{{ language.getId }}">
+  <head>
+    <head-placeholder token="{{ placeholder_token|raw }}">
+    <title>{{ head_title|safe_join(' | ') }}</title>
+    <css-placeholder token="{{ placeholder_token|raw }}">
+    <js-placeholder token="{{ placeholder_token|raw }}">
+  </head>
+  <body{{ attributes.addClass(body_classes) }}>
+
+    <a href="#main-content" class="visually-hidden focusable skip-link">
+      {{ 'Skip to main content'|t }}
+    </a>
+
+    {# Include Header Navigation #}
+    {% include "@stitchlyn_theme/layout/header.html.twig" %}
+
+    {# Page Banner or Custom Section (optional) #}
+    {% if page.highlighted %}
+      <div class="highlighted">{{ page.highlighted }}</div>
+    {% endif %}
+
+    <main id="main-content" role="main">
+      <div class="main-content py-5">
+        <div class="container">
+          {% if messages %}
+            <div class="messages">{{ messages }}</div>
+          {% endif %}
+
+          {% if page.breadcrumb %}
+            <nav class="breadcrumb-wrapper" aria-label="breadcrumb">{{ page.breadcrumb }}</nav>
+          {% endif %}
+
+          <div class="row">
+            {% if page.sidebar_first %}
+              <aside class="col-md-3" role="complementary">
+                {{ page.sidebar_first }}
+              </aside>
+            {% endif %}
+
+            <div class="{% if page.sidebar_first and page.sidebar_second %}col-md-6{% elseif page.sidebar_first or page.sidebar_second %}col-md-9{% else %}col-md-12{% endif %}">
+              {{ page.content }}
+            </div>
+
+            {% if page.sidebar_second %}
+              <aside class="col-md-3" role="complementary">
+                {{ page.sidebar_second }}
+              </aside>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </main>
+
+    {% if page.footer %}
+      {% include "@stitchlyn_theme/layout/footer.html.twig" %}
+    {% endif %}
+
+    <js-bottom-placeholder token="{{ placeholder_token|raw }}">
+  </body>
+</html>

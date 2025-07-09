@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Menu\MenuTreeParameters;
+
 /**
  * Implements hook_preprocess_paragraph__feature_item().
  */
@@ -50,4 +52,41 @@ function stitchlyn_theme_preprocess_paragraph(array &$variables) {
     }    
   }
 
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function stitchlyn_theme_preprocess_page(array &$variables) {
+  $main_menu = \Drupal::menuTree()->load('main', new MenuTreeParameters());
+  $main_menu_tree = \Drupal::menuTree()->build($main_menu);
+  $variables['page']['main_menu'] = $main_menu_tree;
+
+  $account_menu = \Drupal::menuTree()->load('account', new MenuTreeParameters());
+  $account_menu_tree = \Drupal::menuTree()->build($account_menu);
+  $variables['page']['account_menu'] = $account_menu_tree;
+
+   // Load social-links menu items.
+  $variables['page']['social_links'] = \Drupal::menuTree()->load('social-links', new \Drupal\Core\Menu\MenuTreeParameters());
+
+  // Load support menu items.
+  $variables['page']['support_menu'] = \Drupal::menuTree()->load('support', new \Drupal\Core\Menu\MenuTreeParameters());
+
+  // Render them into link data (title and url).
+  foreach (['social_links', 'support_menu'] as $menu_key) {
+    $menu_items = [];
+    $tree = $variables['page'][$menu_key];
+    $manipulated = \Drupal::menuTree()->transform($tree, []);
+    $rendered = \Drupal::menuTree()->build($manipulated);
+    $variables['page'][$menu_key] = [];
+
+    foreach ($manipulated as $item) {
+      if (isset($item->link)) {
+        $variables['page'][$menu_key][] = [
+          'title' => $item->link->getTitle(),
+          'url' => $item->link->getUrlObject()->toString(),
+        ];
+      }
+    }
+  }
 }

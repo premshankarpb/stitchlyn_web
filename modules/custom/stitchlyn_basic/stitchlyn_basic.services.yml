@@ -1,0 +1,6 @@
+services:
+  stitchlyn_basic.login_subscriber:
+    class: Drupal\stitchlyn_basic\EventSubscriber\LoginRedirectSubscriber
+    arguments: ['@current_user', '@url_generator']
+    tags:
+      - { name: event_subscriber }

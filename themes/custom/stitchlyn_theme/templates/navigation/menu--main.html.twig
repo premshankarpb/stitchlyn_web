@@ -1,0 +1,30 @@
+{#
+ * Main navigation menu (Bootstrap 5 compatible)
+ * Place in: themes/custom/stitchlyn_theme/templates/navigation/menu--main.html.twig
+#}
+
+<ul class="navbar-nav mx-auto">
+  {% for item in items %}
+    <li class="nav-item {{ item.below ? 'dropdown' }}">
+      <a
+        href="{{ item.url }}"
+        class="nav-link {{ item.in_active_trail ? 'active' }} {{ item.below ? 'dropdown-toggle' }}"
+        {{ item.below ? 'data-bs-toggle="dropdown" aria-expanded="false"' }}
+      >
+        {{ item.title }}
+      </a>
+
+      {% if item.below %}
+        <ul class="dropdown-menu">
+          {% for sub_item in item.below %}
+            <li>
+              <a class="dropdown-item" href="{{ sub_item.url }}">
+                {{ sub_item.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>

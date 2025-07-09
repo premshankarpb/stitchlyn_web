@@ -4,6 +4,9 @@ base theme: olivero
 description: 'A custom theme for Stitchlyn.'
 core_version_requirement: ^10 || ^11
 package: Custom
+twig:
+  namespace:
+    stitchlyn_theme: "templates"
 libraries:
   - stitchlyn_theme/global-styling
 

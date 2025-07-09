@@ -1,0 +1,7 @@
+<ul class="footer-links">
+  {% for item in items %}
+    <li class="{{ item.attributes.class }}">
+      <a href="{{ item.url }}">{{ item.title }}</a>
+    </li>
+  {% endfor %}
+</ul>

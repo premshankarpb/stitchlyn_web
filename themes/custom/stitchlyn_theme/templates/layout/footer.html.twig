@@ -1,0 +1,50 @@
+<footer class="footer" data-aos="fade-up">
+  <div class="container">
+    <div class="row">
+      <!-- Brand and Social -->
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="footer-brand">StitchLyn</div>
+        <p class="footer-description">
+          Leading textile and umbrella manufacturing company committed to
+          delivering exceptional quality products with innovative designs
+          and superior craftsmanship.
+        </p>
+
+        {% if page.social_links %}
+          <div class="social-links">
+            <ul class="list-inline">
+              {% for item in page.social_links %}
+                <li class="list-inline-item">
+                  <a href="{{ item.url }}" class="social-link" target="_blank" rel="noopener">
+                    <i class="fab fa-{{ item.title|lower }}"></i>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Quick Links -->
+      {% if page.footer_menu %}
+        <div class="col-lg-2 col-md-6 mb-4 ms-auto">
+          <h5 class="footer-title">Quick Links</h5>
+          {{ page.footer_menu }}
+        </div>
+      {% endif %}
+
+      <!-- Support Menu -->
+      {% if page.support_menu %}
+        <div class="col-lg-2 col-md-6 mb-4">
+          <h5 class="footer-title">Support</h5>
+          {{ page.support_menu }}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <p>&copy; {{ "now"|date("Y") }} StitchLyn. All rights reserved. Crafted with passion and precision.</p>
+    </div>
+  </div>
+</footer>
