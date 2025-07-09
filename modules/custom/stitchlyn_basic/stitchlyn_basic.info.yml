@@ -1,0 +1,8 @@
+name: 'Stitchlyn Basic'
+type: module
+description: 'Provides dashboard functionality for inventory and order tracking.'
+package: 'Stitchlyn'
+core_version_requirement: ^10
+dependencies:
+  - node
+  - taxonomy

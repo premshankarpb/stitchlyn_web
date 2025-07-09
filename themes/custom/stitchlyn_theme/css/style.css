@@ -103,6 +103,8 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   padding: 15px 0;
+  box-shadow: 0 4px 12px -6px rgba(37, 55, 78, 0.12), 0 1.5px 0 0 rgba(37, 55, 78, 0.08);
+  /* Subtle shadow for header threat identification */
 }
 
 .navbar.scrolled {
@@ -850,6 +852,87 @@ body {
     padding: 25px 20px;
   }
 }
+.admin-layout {
+  display: grid;
+  grid-template-areas: "header header" "sidebar main" "footer footer";
+  grid-template-rows: 70px 1fr 60px;
+  grid-template-columns: 20% 80%;
+  height: 100vh;
+  overflow: hidden;
+}
+.admin-layout .admin-header {
+  grid-area: header;
+  background: #ffffff;
+  border-bottom: 1px solid #cccbcd;
+  padding: 1rem 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+}
+.admin-layout .admin-header .logo {
+  height: 40px;
+}
+.admin-layout .admin-header .logo img {
+  height: 100%;
+  width: auto;
+}
+.admin-layout .admin-sidebar {
+  grid-area: sidebar;
+  background: #f8f9fa;
+  border-right: 1px solid #cccbcd;
+  padding: 2rem;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  bottom: 60px;
+  width: 20%;
+  overflow-y: auto;
+}
+.admin-layout .admin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-layout .admin-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(37, 55, 78, 0.2);
+  border-radius: 3px;
+}
+.admin-layout .admin-main {
+  grid-area: main;
+  padding: 2rem;
+  margin-top: 70px;
+  margin-bottom: 60px;
+  margin-left: 20%;
+  overflow-y: auto;
+  height: calc(100vh - 130px);
+}
+.admin-layout .admin-main::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-layout .admin-main::-webkit-scrollbar-thumb {
+  background: rgba(37, 55, 78, 0.2);
+  border-radius: 3px;
+}
+.admin-layout .admin-footer {
+  grid-area: footer;
+  background: #ffffff;
+  border-top: 1px solid #cccbcd;
+  padding: 1rem 2rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .font-primary {
   font-family: "Lato", sans-serif;
   font-weight: 400;

@@ -1,0 +1,7 @@
+stitchlyn_basic.dashboard:
+  path: '/dashboard'
+  defaults:
+    _controller: '\Drupal\stitchlyn_basic\Controller\DashboardController::view'
+    _title: 'Dashboard'
+  requirements:
+    _permission: 'access content'
