@@ -31,13 +31,15 @@ class DashboardController extends ControllerBase {
   private function getInventoryCountByType($type_name) {
     $query = \Drupal::entityQuery('node')
       ->condition('type', 'inventory_item')
-      ->condition('field_inventory_type.entity.name', $type_name);
+      ->condition('field_inventory_type.entity.name', $type_name)
+      ->accessCheck(TRUE); // or FALSE if used in admin context
     return $query->count()->execute();
   }
 
   private function getContentTypeCount($content_type) {
     $query = \Drupal::entityQuery('node')
-      ->condition('type', $content_type);
+      ->condition('type', $content_type)
+      ->accessCheck(TRUE); // or FALSE if used in admin context
     return $query->count()->execute();
   }
 }

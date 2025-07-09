@@ -89,4 +89,24 @@ function stitchlyn_theme_preprocess_page(array &$variables) {
       }
     }
   }
+
+  // Load backend (admin sidebar) menu items.
+  $backend_menu = \Drupal::menuTree()->load('backend', new \Drupal\Core\Menu\MenuTreeParameters());
+  $manipulated_backend = \Drupal::menuTree()->transform($backend_menu, []);
+  $variables['page']['backend_menu'] = [];
+
+  foreach ($manipulated_backend as $item) {
+    if (isset($item->link)) {
+      $variables['page']['backend_menu'][] = [
+        'title' => $item->link->getTitle(),
+        'url' => $item->link->getUrlObject()->toString(),
+      ];
+    }
+  }
+}
+
+function stitchlyn_theme_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  if (strpos(\Drupal::request()->getPathInfo(), '/dashboard') === 0) {
+    $suggestions[] = 'page__dashboard';
+  }
 }

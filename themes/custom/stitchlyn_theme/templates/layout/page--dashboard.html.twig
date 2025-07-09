@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="{{ language.getId }}">
+  <head>
+    <head-placeholder token="{{ placeholder_token|raw }}">
+    <title>{{ head_title|safe_join(' | ') }}</title>
+    <css-placeholder token="{{ placeholder_token|raw }}">
+    <js-placeholder token="{{ placeholder_token|raw }}">
+  </head>
+  <body{{ attributes.addClass(body_classes) }}>
+
+    {% include "@stitchlyn_theme/layout/header.html.twig" %}
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        {% include "@stitchlyn_theme/navigation/menu--backend.html.twig" with {
+          backend_menu: page.backend_menu
+        } %}
+      </aside>
+
+      <main class="admin-main">
+        {% if messages %}
+          <div class="messages">{{ messages }}</div>
+        {% endif %}
+
+        {{ page.content }}
+      </main>
+
+      {% if page.footer %}
+        {% include "@stitchlyn_theme/layout/admin-footer.html.twig" %}
+      {% endif %}
+    </div>
+
+    <js-bottom-placeholder token="{{ placeholder_token|raw }}">
+  </body>
+</html>

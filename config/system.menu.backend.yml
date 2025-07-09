@@ -1,0 +1,8 @@
+uuid: 92b88047-8b63-4946-9733-a3c509a1988b
+langcode: en
+status: true
+dependencies: {  }
+id: backend
+label: Backend
+description: 'CRM admin menu for managment'
+locked: false
