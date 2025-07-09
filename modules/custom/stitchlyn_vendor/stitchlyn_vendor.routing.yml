@@ -31,3 +31,10 @@ stitchlyn_vendor.inventory_item_form:
     _title: 'Add Inventory Item'
   requirements:
     _permission: 'access content'
+stitchlyn_vendor.autocomplete_inventory:
+  path: '/autocomplete/inventory'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\VendorController::handleAutocomplete'
+    _title: 'Inventory Autocomplete'
+  requirements:
+    _permission: 'access content'
