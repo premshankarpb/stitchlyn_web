@@ -8,7 +8,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
 function stitchlyn_theme_preprocess_paragraph(array &$variables) {
   $paragraph = $variables['paragraph'];
 
-  if ($paragraph->bundle() === 'feature_item') {
+  if ($paragraph->bundle() === 'feature_item' || $paragraph->bundle() === 'simple_card_item' ) {
     // Make sure the field_icon is not empty.
     if (!$paragraph->get('field_icon')->isEmpty()) {
       // Get the string value from the text field.
