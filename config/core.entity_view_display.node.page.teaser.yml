@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.field.node.page.body
     - field.field.node.page.field_basic_page_content
+    - field.field.node.page.field_header_content
     - node.type.page
   module:
     - text
@@ -30,3 +31,4 @@ content:
     region: content
 hidden:
   field_basic_page_content: true
+  field_header_content: true
