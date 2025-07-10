@@ -26,20 +26,25 @@
       </div>
 
       <!-- Quick Links -->
-      {% if page.footer_menu %}
-        <div class="col-lg-2 col-md-6 mb-4 ms-auto">
-          <h5 class="footer-title">Quick Links</h5>
-          {{ page.footer_menu }}
-        </div>
-      {% endif %}
+      <div class="col-lg-2 col-md-6 mb-4 ms-auto">
+        <h5 class="footer-title">Quick Links</h5>
+        <ul class="list-unstyled footer-menu">
+          {% for item in page.footer_menu %}
+            <li><a href="{{ item.url }}">{{ item.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
 
       <!-- Support Menu -->
-      {% if page.support_menu %}
-        <div class="col-lg-2 col-md-6 mb-4">
-          <h5 class="footer-title">Support</h5>
-          {{ page.support_menu }}
-        </div>
-      {% endif %}
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h5 class="footer-title">Support</h5>
+        <ul class="list-unstyled footer-menu">
+          {% for item in page.support_menu %}
+            <li><a href="{{ item.url }}">{{ item.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+
     </div>
 
     <!-- Bottom Bar -->

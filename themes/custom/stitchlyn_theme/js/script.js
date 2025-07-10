@@ -25,6 +25,10 @@ $(document).ready(function () {
     adaptiveHeight: false,
   });
 
+  AOS.init({
+    duration: 800,
+    once: true,
+  });
 
   // Product Detail Main & Thumbnail Slick Sliders with Magnific Popup
   var $mainSlider = $(".product-slider");
@@ -77,15 +81,19 @@ $(window).on("scroll", function () {
 
 // Smooth scrolling for navigation links
 $('a[href^="#"]').on("click", function (e) {
-  e.preventDefault();
-  const target = $($(this).attr("href"));
-  if (target.length) {
-    $("html, body").animate(
-      {
-        scrollTop: target.offset().top,
-      },
-      600
-    );
+  var href = $(this).attr("href");
+  // Only scroll if href is not just '#' or empty
+  if (href && href.length > 1 && href !== "#") {
+    e.preventDefault();
+    const target = $(href);
+    if (target.length) {
+      $("html, body").animate(
+        {
+          scrollTop: target.offset().top,
+        },
+        600
+      );
+    }
   }
 });
 
@@ -114,12 +122,7 @@ function animateOnScroll() {
 $(window).on("scroll resize", animateOnScroll);
 $(document).ready(animateOnScroll);
 
-  // AOS.init({
-  //   duration: 800,
-  //   once: true,
-  // });
-
-  setupTShirtQuoteFunctionality();
+setupTShirtQuoteFunctionality();
 // ----------------------------------------------------------------------------------------------
 
 function setupTShirtQuoteFunctionality() {
@@ -131,6 +134,11 @@ function setupTShirtQuoteFunctionality() {
   const colorSelect = document.getElementById("tshirtColor");
   const quoteModal = document.getElementById("quoteModal");
   const addItemBtn = document.getElementById("addItemBtn");
+
+  // If the quote functionality elements don't exist, exit early
+  if (!quoteModal) {
+    return; // Exit if we're not on a page with quote functionality
+  }
 
   // Modal specific DOM elements
   const quoteAccordion = document.getElementById("quoteAccordion");
@@ -311,7 +319,7 @@ function setupTShirtQuoteFunctionality() {
   /**
    * Removes an item from the quote array (in modal) and re-renders the accordion.
    */
-  window.removeItem = function(index) {
+  window.removeItem = function (index) {
     quoteItems.splice(index, 1);
     renderQuoteAccordion();
   };
@@ -331,17 +339,30 @@ function setupTShirtQuoteFunctionality() {
     addItemBtn.addEventListener("click", addItemToQuote);
   }
 
-  // Render the modal accordion when it's first opened.
-  quoteModal.addEventListener("shown.bs.modal", renderQuoteAccordion);
-
-  // When the modal is closed, transfer the data to the main page.
-  quoteModal.addEventListener("hidden.bs.modal", function () {
-    renderFinalQuoteSummary(); // Render the summary on the main page.
-    quoteItems = []; // Clear the array for the next time the modal is opened.
-    resetDropdowns(); // Reset dropdowns for next use.
-    renderQuoteAccordion(); // Clears the modal's view and shows the "empty" message.
-  });
+  // Remove modal-specific event listeners for inline version
+  // The quote builder is now always visible and persistent
+  // No need to clear quoteItems or reset UI on modal close
 }
 
 // Call the function to initialize the T-Shirt Quote functionality
 
+// Sidebar dropdown toggle logic (robust, supports nested and keyboard)
+$(function() {
+  $(document).off('click keydown', '.sidebar-parent[data-toggle="sidebar-dropdown"]');
+  $(document).on('click keydown', '.sidebar-parent[data-toggle="sidebar-dropdown"]', function(e) {
+    if (e.type === 'click' || (e.type === 'keydown' && (e.key === 'Enter' || e.key === ' '))) {
+      e.preventDefault();
+      var $group = $(this).closest('li');
+      var $submenu = $group.children('.sidebar-sublist').first();
+      var $arrow = $(this).find('.sidebar-arrow');
+      if ($submenu.is(':visible')) {
+        $submenu.slideUp(180);
+        $arrow.removeClass('fa-chevron-down').addClass('fa-chevron-right');
+      } else {
+        $submenu.slideDown(180);
+        $arrow.removeClass('fa-chevron-right').addClass('fa-chevron-down');
+      }
+    }
+  });
+  $('.sidebar-parent[data-toggle="sidebar-dropdown"]').css('cursor', 'pointer');
+});

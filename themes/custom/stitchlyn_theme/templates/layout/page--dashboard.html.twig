@@ -11,7 +11,7 @@
     {% include "@stitchlyn_theme/layout/header.html.twig" %}
 
     <div class="admin-layout">
-      <aside class="admin-sidebar">
+      <aside class="admin-sidebar dark-sidebar">
         {% include "@stitchlyn_theme/navigation/menu--backend.html.twig" with {
           backend_menu: page.backend_menu
         } %}
@@ -25,9 +25,7 @@
         {{ page.content }}
       </main>
 
-      {% if page.footer %}
-        {% include "@stitchlyn_theme/layout/admin-footer.html.twig" %}
-      {% endif %}
+    {% include "@stitchlyn_theme/layout/footer.html.twig" %}
     </div>
 
     <js-bottom-placeholder token="{{ placeholder_token|raw }}">

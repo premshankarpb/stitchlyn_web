@@ -1,5 +1,5 @@
 stitchlyn_vendor.add_vendor:
-  path: '/add/vendor'
+  path: '/dashboard/add/vendor'
   defaults:
     _form: '\Drupal\stitchlyn_vendor\Form\AddVendorForm'
     _title: 'Add Vendor'
