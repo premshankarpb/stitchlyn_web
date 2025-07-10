@@ -114,21 +114,6 @@ function _stitchlyn_prepare_menu_array($menu_name) {
   $manipulated = \Drupal::menuTree()->transform($tree, []);
   foreach ($manipulated as $item) {
     if (isset($item->link)) {
-      $items[] = [
-        'title' => $item->link->getTitle(),
-        'url' => $item->link->getUrlObject()->toString(),
-      ];
-    }
-  }
-  return $items;
-}
-
-function _stitchlyn_prepare_menu_child_array($menu_name) {
-  $items = [];
-  $tree = \Drupal::menuTree()->load($menu_name, new MenuTreeParameters());
-  $manipulated = \Drupal::menuTree()->transform($tree, []);
-  foreach ($manipulated as $item) {
-    if (isset($item->link)) {
       $menu_item = [
         'title' => $item->link->getTitle(),
         'url' => $item->link->getUrlObject()->toString(),

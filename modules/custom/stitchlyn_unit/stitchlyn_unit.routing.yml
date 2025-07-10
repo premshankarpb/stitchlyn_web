@@ -1,12 +1,12 @@
 stitchlyn_unit.add_unitmanager:
-  path: '/add/unitmanager'
+  path: '/dashboard/add/unitmanager'
   defaults:
     _form: '\Drupal\stitchlyn_unit\Form\AddUnitManagerForm'
     _title: 'Add Unit Manager'
   requirements:
     _permission: 'administer users'
 stitchlyn_unit.unit_manager_edit:
-  path: '/edit/unit-manager/{user}'
+  path: '/dashboard/edit/unit-manager/{user}'
   defaults:
     _form: '\Drupal\stitchlyn_unit\Form\UnitManagerEditForm'
     _title: 'Edit Unit Manager'
