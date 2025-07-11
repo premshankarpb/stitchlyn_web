@@ -3,31 +3,34 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.banner_item.field_banner_description
     - field.field.paragraph.banner_item.field_banner_image
+    - field.field.paragraph.banner_item.field_banner_note
     - field.field.paragraph.banner_item.field_banner_title
+    - field.field.paragraph.banner_item.field_cta_button
     - paragraphs.paragraphs_type.banner_item
   module:
     - image
+    - link
+    - text
 id: paragraph.banner_item.default
 targetEntityType: paragraph
 bundle: banner_item
 mode: default
 content:
-  field_banner_description:
-    type: basic_string
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 1
-    region: content
   field_banner_image:
     type: image_url
     label: hidden
     settings:
-      image_style: ''
+      image_style: large
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_banner_note:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
     region: content
   field_banner_title:
     type: string
@@ -36,5 +39,17 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_cta_button:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 3
     region: content
 hidden: {  }

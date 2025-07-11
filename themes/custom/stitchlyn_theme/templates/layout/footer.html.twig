@@ -28,7 +28,7 @@
       <!-- Quick Links -->
       <div class="col-lg-2 col-md-6 mb-4 ms-auto">
         <h5 class="footer-title">Quick Links</h5>
-        <ul class="list-unstyled footer-menu">
+        <ul class="footer-links">
           {% for item in page.footer_menu %}
             <li><a href="{{ item.url }}">{{ item.title }}</a></li>
           {% endfor %}
@@ -38,7 +38,7 @@
       <!-- Support Menu -->
       <div class="col-lg-2 col-md-6 mb-4">
         <h5 class="footer-title">Support</h5>
-        <ul class="list-unstyled footer-menu">
+        <ul class="footer-links">
           {% for item in page.support_menu %}
             <li><a href="{{ item.url }}">{{ item.title }}</a></li>
           {% endfor %}

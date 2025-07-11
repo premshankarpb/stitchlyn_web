@@ -1,0 +1,10 @@
+@media (min-width: 75rem) {
+    .site-header {
+        min-height: 0;
+    }
+}
+
+.admin-layout .admin-main {
+    margin: 0;
+    margin-left: 2%;
+}

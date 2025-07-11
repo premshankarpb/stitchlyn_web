@@ -1,0 +1,22 @@
+uuid: e0559112-1503-4327-8690-90066735a4f8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_banner_note
+    - paragraphs.paragraphs_type.banner_item
+  module:
+    - text
+id: paragraph.banner_item.field_banner_note
+field_name: field_banner_note
+entity_type: paragraph
+bundle: banner_item
+label: 'Banner Note'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

@@ -8,7 +8,6 @@ dependencies:
     - paragraphs.paragraphs_type.cta_banner
     - paragraphs.paragraphs_type.features
     - paragraphs.paragraphs_type.hero_banner
-    - paragraphs.paragraphs_type.home_banner
     - paragraphs.paragraphs_type.simple_card
     - paragraphs.paragraphs_type.stats
     - paragraphs.paragraphs_type.type_a_card_cta
@@ -28,7 +27,6 @@ settings:
   handler: 'default:paragraph'
   handler_settings:
     target_bundles:
-      home_banner: home_banner
       features: features
       cta_banner: cta_banner
       stats: stats
@@ -54,7 +52,7 @@ settings:
         enabled: true
       home_banner:
         weight: 4
-        enabled: true
+        enabled: false
       simple_card:
         weight: 16
         enabled: true

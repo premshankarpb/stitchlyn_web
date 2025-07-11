@@ -3,33 +3,36 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.banner_item.field_banner_description
     - field.field.paragraph.banner_item.field_banner_image
+    - field.field.paragraph.banner_item.field_banner_note
     - field.field.paragraph.banner_item.field_banner_title
+    - field.field.paragraph.banner_item.field_cta_button
     - image.style.thumbnail
     - paragraphs.paragraphs_type.banner_item
   module:
     - image
+    - link
+    - text
 id: paragraph.banner_item.default
 targetEntityType: paragraph
 bundle: banner_item
 mode: default
 content:
-  field_banner_description:
-    type: string_textarea
-    weight: 1
-    region: content
-    settings:
-      rows: 5
-      placeholder: ''
-    third_party_settings: {  }
   field_banner_image:
     type: image_image
-    weight: 2
+    weight: 1
     region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_banner_note:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
     third_party_settings: {  }
   field_banner_title:
     type: string_textfield
@@ -38,6 +41,14 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_cta_button:
+    type: link_default
+    weight: 3
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
     third_party_settings: {  }
 hidden:
   created: true
