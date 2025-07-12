@@ -1,0 +1,7 @@
+{% for item in items %}
+  <li>
+    <a class="dropdown-item {{ item.in_active_trail ? 'active' }}" href="{{ item.url }}">
+      {{ item.title }}
+    </a>
+  </li>
+{% endfor %}
