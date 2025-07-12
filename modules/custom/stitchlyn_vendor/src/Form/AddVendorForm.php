@@ -65,7 +65,7 @@ class AddVendorForm extends FormBase {
       '#value' => $this->t('Create Vendor'),
     ];
 
-    $form['#theme'] = 'vendor_add_form';
+    //$form['#theme'] = 'vendor_add_form';
 
     return $form;
   }
