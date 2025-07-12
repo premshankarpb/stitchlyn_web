@@ -27,6 +27,12 @@ class AddVendorForm extends FormBase {
       '#required' => TRUE,
     ];
 
+    $form['password'] = [
+      '#type' => 'password',
+      '#title' => $this->t('Password'),
+      '#required' => TRUE,
+    ];
+
     $form['field_vendor_name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Vendor Name'),
@@ -74,6 +80,7 @@ class AddVendorForm extends FormBase {
     $user = User::create([
       'name' => $form_state->getValue('username'),
       'mail' => $form_state->getValue('email'),
+      'pass' => $form_state->getValue('password'),
       'status' => 1,
       'roles' => ['vendor'],
     ]);
