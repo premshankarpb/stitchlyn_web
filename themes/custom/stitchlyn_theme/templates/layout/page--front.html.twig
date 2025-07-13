@@ -15,15 +15,6 @@
     {# Include Header Navigation #}
     {% include "@stitchlyn_theme/layout/header.html.twig" %}
 
-    {# Hero Section from Banner Item paragraph (Carousel) #}
-    {% if page.field_header_content %}
-      <section class="hero-section">
-        <div class="hero-slider">
-          {{ page.field_header_content }}
-        </div>
-      </section>
-    {% endif %}
-
     {# Page Banner or Custom Section (optional) #}
     {% if page.highlighted %}
       <div class="highlighted">{{ page.highlighted }}</div>
