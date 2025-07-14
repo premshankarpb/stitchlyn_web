@@ -9,3 +9,22 @@ function stitchlyn_basic_theme($existing, $type, $theme, $path) {
     ],
   ];
 }
+
+/**
+ * Implements hook_editor_js_settings_alter().
+ */
+function stitchlyn_basic_editor_js_settings_alter(array &$settings, \Drupal\editor\Entity\Editor $editor) {
+  if ($editor->getEditor() === 'ckeditor5' && $editor->id() === 'full_html') {
+    // Add the 'i' tag to the CKEditor schema.
+    $settings['ckeditor5']['htmlSupport'] = [
+      'allow' => [
+        [
+          'name' => 'i',
+          'attributes' => true,
+          'classes' => true,
+          'styles' => true,
+        ],
+      ],
+    ];
+  }
+}
