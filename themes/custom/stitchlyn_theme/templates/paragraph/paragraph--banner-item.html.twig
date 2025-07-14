@@ -13,14 +13,11 @@
         {% if paragraph.field_banner_note %}
           <p class="hero-subtitle">{{ paragraph.field_banner_note.value|raw }} </p>
         {% endif %}
-
-        {% set link = paragraph.field_cta_button %}
-        {% if link %}
-          <div class="d-flex flex-wrap gap-3 mb-4">
-            <a href="{{ link.url.toString() }}" class="btn btn-primary">
-              {{ link.title }}
-            </a>
-          </div>
+        {% set link_item = paragraph.field_cta_button.0 %}
+        {% if link_item %}
+          <a href="{{ link_item.url.toString() }}" class="btn btn-primary">
+            {{ link_item.title }}
+          </a>
         {% endif %}
       </div>
     </div>

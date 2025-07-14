@@ -8,3 +8,7 @@
     margin: 0;
     margin-left: 2%;
 }
+
+.path-frontpage .page-banner-section {
+    display: none !important;
+}
