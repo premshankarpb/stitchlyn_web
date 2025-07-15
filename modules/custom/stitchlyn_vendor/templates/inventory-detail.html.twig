@@ -1,0 +1,12 @@
+<article class="inventory-detail">
+  <h1>{{ node.label }}</h1>
+
+  <div><strong>SKU:</strong> {{ node.field_sku_code.value }}</div>
+  <div><strong>Category:</strong> {{ node.field_category.entity.label }}</div>
+  <div><strong>Type:</strong> {{ node.field_inventory_type.entity.label }}</div>
+  <div><strong>Unit of Measure:</strong> {{ node.field_unit_of_measure.entity.label }}</div>
+  <div><strong>Cost Price:</strong> ₹{{ node.field_cost_price.value }}</div>
+  <div><strong>Opening Stock:</strong> {{ node.field_opening_stock.value }}</div>
+  <div><strong>Reorder Level:</strong> {{ node.field_reorder_level.value }}</div>
+  <div><strong>Description:</strong> {{ node.body.value|raw }}</div>
+</article>

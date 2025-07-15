@@ -1,0 +1,37 @@
+<article class="po-detail">
+  <h1>{{ node.label }}</h1>
+
+  <div><strong>Date:</strong> {{ node.created|date("d M Y") }}</div>
+  <div><strong>Vendor:</strong> {{ node.field_vendor.entity.label }}</div>
+  <div><strong>Remarks:</strong> {{ node.body.value|raw }}</div>
+
+  <hr>
+
+  <h3>Items in this Purchase Order</h3>
+  {% if items|length > 0 %}
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Subtotal Cost</th>
+          <th>Tax</th>
+          <th>Total Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+          <tr>
+            <td>{{ item.field_inventory_item.entity.label }}</td>
+            <td>{{ item.field_quantity.value }}</td>
+            <td>₹{{ item.field_subtotal_cost.value }}</td>
+            <td>₹{{ item.field_tax.value }}</td>
+            <td>₹{{ item.field_total_cost.value }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No items found in this purchase order.</p>
+  {% endif %}
+</article>

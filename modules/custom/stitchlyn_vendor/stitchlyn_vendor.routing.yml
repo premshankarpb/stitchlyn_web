@@ -38,3 +38,27 @@ stitchlyn_vendor.autocomplete_inventory:
     _title: 'Inventory Autocomplete'
   requirements:
     _permission: 'access content'
+stitchlyn_vendor.inventory_detail:
+  path: '/dashboard/inventory/{node}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\InventoryDetailController::view'
+    _title: 'Inventory Detail'
+  requirements:
+    _permission: 'access content'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+stitchlyn_vendor.purchase_order_detail:
+  path: '/dashboard/po/{node}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\PurchaseOrderDetailController::view'
+    _title: 'Purchase Order Detail'
+  requirements:
+    _permission: 'access content'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node

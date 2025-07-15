@@ -25,5 +25,16 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
       'template'       => 'inventory-item-form',
       'path'           => $path . '/templates',
     ],
+    'stitchlyn_inventory_detail' => [
+      'variables' => ['node' => NULL],
+      'template' => 'inventory-detail',
+    ],
+    'stitchlyn_po_detail' => [
+      'variables' => [
+        'node' => NULL,
+        'items' => [],
+      ],
+      'template' => 'po-detail',
+    ],
   ];
 }
