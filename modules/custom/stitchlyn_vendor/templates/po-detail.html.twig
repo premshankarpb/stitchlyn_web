@@ -1,7 +1,7 @@
 <article class="po-detail">
   <h1>{{ node.label }}</h1>
-
-  <div><strong>Date:</strong> {{ node.created|date("d M Y") }}</div>
+  
+  <div><strong>Date:</strong> {{ node.created.value|date("d M Y") }}</div>
   <div><strong>Vendor:</strong> {{ node.field_vendor.entity.label }}</div>
   <div><strong>Remarks:</strong> {{ node.body.value|raw }}</div>
 
