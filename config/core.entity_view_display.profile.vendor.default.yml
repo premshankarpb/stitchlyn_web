@@ -3,11 +3,13 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.profile.vendor.field_about
     - field.field.profile.vendor.field_billing_address
     - field.field.profile.vendor.field_contact_person
     - field.field.profile.vendor.field_gst_number
     - field.field.profile.vendor.field_phone_number
     - field.field.profile.vendor.field_status
+    - field.field.profile.vendor.field_vendor_location
     - field.field.profile.vendor.field_vendor_name
     - profile.type.vendor
   module:
@@ -17,6 +19,13 @@ targetEntityType: profile
 bundle: vendor
 mode: default
 content:
+  field_about:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
   field_billing_address:
     type: basic_string
     label: above
@@ -56,6 +65,14 @@ content:
       link: true
     third_party_settings: {  }
     weight: 5
+    region: content
+  field_vendor_location:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 6
     region: content
   field_vendor_name:
     type: string

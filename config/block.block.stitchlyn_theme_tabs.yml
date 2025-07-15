@@ -2,6 +2,8 @@ uuid: 90ff9b00-3329-4471-b1eb-7e418335805a
 langcode: en
 status: true
 dependencies:
+  module:
+    - system
   theme:
     - stitchlyn_theme
 id: stitchlyn_theme_tabs
@@ -17,4 +19,8 @@ settings:
   provider: core
   primary: true
   secondary: true
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    pages: '/user/*'

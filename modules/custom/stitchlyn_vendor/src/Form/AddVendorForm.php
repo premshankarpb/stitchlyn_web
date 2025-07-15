@@ -49,6 +49,11 @@ class AddVendorForm extends FormBase {
       '#title' => $this->t('Phone Number'),
     ];
 
+    $form['field_vendor_location'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Location'),
+    ];
+
     $form['field_billing_address'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Billing Address'),
@@ -57,6 +62,11 @@ class AddVendorForm extends FormBase {
     $form['field_gst_number'] = [
       '#type' => 'textfield',
       '#title' => $this->t('GST Number'),
+    ];
+
+    $form['field_about'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('About'),
     ];
 
     $form['field_status'] = [
@@ -94,8 +104,10 @@ class AddVendorForm extends FormBase {
     $profile->set('field_vendor_name', $form_state->getValue('field_vendor_name'));
     $profile->set('field_contact_person', $form_state->getValue('field_contact_person'));
     $profile->set('field_phone_number', $form_state->getValue('field_phone_number'));
+    $profile->set('field_vendor_location', $form_state->getValue('field_vendor_location'));
     $profile->set('field_billing_address', $form_state->getValue('field_billing_address'));
     $profile->set('field_gst_number', $form_state->getValue('field_gst_number'));
+    $profile->set('field_about', $form_state->getValue('field_about'));
     $profile->set('field_status', $form_state->getValue('field_status'));
 
     $profile->save();

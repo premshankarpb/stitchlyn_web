@@ -46,6 +46,16 @@ class AddUnitManagerForm extends FormBase {
       '#selection_settings' => ['target_bundles' => ['production_units']],
     ];
 
+    $form['field_vendor_location'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Location'),
+    ];
+
+    $form['field_about'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('About'),
+    ];
+
     $form['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Add Unit Manager'),
@@ -74,6 +84,8 @@ class AddUnitManagerForm extends FormBase {
       'field_name' => $form_state->getValue('field_name'),
       'field_phone_number' => $form_state->getValue('field_phone_number'),
       'field_unit' => $form_state->getValue('field_unit'),
+      'field_vendor_location' => $form_state->getValue('field_vendor_location'),
+      'field_about' => $form_state->getValue('field_about'),
     ]);
     $profile->save();
 
