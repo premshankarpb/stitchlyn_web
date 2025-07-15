@@ -1,7 +1,5 @@
 <?php
 
-<?php
-
 namespace Drupal\stitchlyn_vendor\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
