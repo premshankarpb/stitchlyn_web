@@ -1,0 +1,143 @@
+<!-- Sidebar 
+<aside class="admin-sidebar dark-sidebar">
+  <div class="sidebar-content">
+    <nav class="sidebar-menu aesthetic-sidebar">
+      <ul class="sidebar-list">
+        <li class="sidebar-group has-submenu">
+          <a href="#" class="sidebar-link sidebar-parent d-flex justify-content-between align-items-center"
+            data-toggle="sidebar-dropdown" tabindex="0">
+            <span><i class="fas fa-list me-2"></i>Vendor Management</span>
+            <i class="fas fa-chevron-right sidebar-arrow"></i>
+          </a>
+          <ul class="sidebar-sublist" style="display: none;">
+            <li><a href="vendor-listing.html" class="sidebar-link"><i class="fas fa-table-list me-2"></i>Vendor
+                Listing</a></li>
+            <li><a href="vendor-detail.html" class="sidebar-link"><i class="fas fa-id-card me-2"></i>Vendor Detail</a>
+            </li>
+            <li><a href="purchase.html" class="sidebar-link"><i class="fas fa-shopping-cart me-2"></i>Purchase</a></li>
+          </ul>
+        </li>
+        <li class="sidebar-group has-submenu">
+          <a href="#" class="sidebar-link sidebar-parent d-flex justify-content-between align-items-center"
+            data-toggle="sidebar-dropdown" tabindex="0">
+            <span><i class="fas fa-file-invoice me-2"></i>Quotations</span>
+            <i class="fas fa-chevron-right sidebar-arrow"></i>
+          </a>
+          <ul class="sidebar-sublist" style="display: none;">
+            <li><a href="quotation.html" class="sidebar-link"><i class="fas fa-list-ul me-2"></i>Quotation Listing</a>
+            </li>
+            <li><a href="#" class="sidebar-link"><i class="fas fa-plus me-2"></i>Create Quotation</a></li>
+          </ul>
+        </li>
+        <li class="sidebar-group has-submenu">
+          <a href="#" class="sidebar-link sidebar-parent d-flex justify-content-between align-items-center"
+            data-toggle="sidebar-dropdown" tabindex="0">
+            <span><i class="fas fa-cogs me-2"></i>Settings</span>
+            <i class="fas fa-chevron-right sidebar-arrow"></i>
+          </a>
+          <ul class="sidebar-sublist" style="display: none;">
+            <li><a href="#" class="sidebar-link"><i class="fas fa-user-cog me-2"></i>Profile</a></li>
+            <li><a href="#" class="sidebar-link"><i class="fas fa-sliders-h me-2"></i>Preferences</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+-->
+
+<!-- Main Content -->
+<main class="admin-main">
+  <div class="mb-4">
+    <h1 class="display-5 fw-bold text-primary mb-3">{{ user.label }}</h1>
+    <span class="badge bg-success mb-3">{{ field_status_name }}</span>
+  </div>
+  <div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-5">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title mb-3">{{ usr_role }} Details</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><i class="fas fa-map-marker-alt text-primary me-2"></i>
+              <strong>Location:</strong> {{ field_vendor_location }}</li>
+            <!-- <li class="list-group-item"><i class="fas fa-tag text-primary me-2"></i> <strong>Category:</strong>
+              Textiles, Raw Materials
+            </li> -->
+            {% if field_phone_number %}
+              <li class="list-group-item"><i class="fas fa-envelope text-primary me-2"></i> <strong>Email:</strong>{{ email }}</li>
+            {% endif %}
+            {% if field_phone_number %}
+              <li class="list-group-item"><i class="fas fa-phone text-primary me-2"></i> <strong>Phone:</strong> {{ field_phone_number }}</li>
+            {% endif %}
+            <!-- 
+            <li class="list-group-item"><i class="fas fa-globe text-primary me-2"></i> <strong>Website:</strong>
+              <a href="#" class="text-decoration-underline">www.textilemasters.com</a>
+            </li>
+            <li class="list-group-item"><i class="fas fa-star text-warning me-2"></i> <strong>Rating:</strong> 4.0/5 </li>
+            -->
+            <li class="list-group-item"><i class="fas fa-calendar-alt text-primary me-2"></i> <strong>Member Since:</strong>
+              {{ created }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-7">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title mb-3">About {{ usr_role }}</h5>
+          <p>{{ field_about }}</p>
+          <div class="mt-4">
+            <button class="btn btn-primary me-2">Contact Vendor</button>
+            <button class="btn btn-outline-primary">View Products</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Purchase Details Section (Div-based layout) -->
+  <!--
+  <div class="card mb-5">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Purchase Details</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="purchase-list">
+        <div class="row fw-bold border-bottom bg-light py-2 gx-0">
+          <div class="col-2">Purchase ID</div>
+          <div class="col-2">Date</div>
+          <div class="col-2">Product</div>
+          <div class="col-2">Quantity</div>
+          <div class="col-2">Amount</div>
+          <div class="col-2">Status</div>
+        </div>
+        <div class="row align-items-center border-bottom py-2 gx-0">
+          <div class="col-2">#1001</div>
+          <div class="col-2">2025-06-01</div>
+          <div class="col-2">Cotton Fabric</div>
+          <div class="col-2">500</div>
+          <div class="col-2">₹25,000</div>
+          <div class="col-2"><span class="badge bg-success">Completed</span></div>
+        </div>
+        <div class="row align-items-center border-bottom py-2 gx-0">
+          <div class="col-2">#1002</div>
+          <div class="col-2">2025-05-15</div>
+          <div class="col-2">Polyester Yarn</div>
+          <div class="col-2">300</div>
+          <div class="col-2">₹12,000</div>
+          <div class="col-2"><span class="badge bg-warning text-dark">Pending</span></div>
+        </div>
+        <div class="row align-items-center border-bottom py-2 gx-0">
+          <div class="col-2">#1003</div>
+          <div class="col-2">2025-04-28</div>
+          <div class="col-2">Silk Thread</div>
+          <div class="col-2">200</div>
+          <div class="col-2">₹8,000</div>
+          <div class="col-2"><span class="badge bg-danger">Cancelled</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  -->
+</main>

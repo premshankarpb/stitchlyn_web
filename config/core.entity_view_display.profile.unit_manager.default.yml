@@ -3,9 +3,11 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.profile.unit_manager.field_about
     - field.field.profile.unit_manager.field_name
     - field.field.profile.unit_manager.field_phone_number
     - field.field.profile.unit_manager.field_unit
+    - field.field.profile.unit_manager.field_vendor_location
     - profile.type.unit_manager
   module:
     - phonenumber
@@ -14,6 +16,13 @@ targetEntityType: profile
 bundle: unit_manager
 mode: default
 content:
+  field_about:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
   field_name:
     type: string
     label: above
@@ -38,5 +47,13 @@ content:
       link: true
     third_party_settings: {  }
     weight: 3
+    region: content
+  field_vendor_location:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 6
     region: content
 hidden: {  }

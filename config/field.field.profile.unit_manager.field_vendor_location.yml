@@ -1,0 +1,19 @@
+uuid: 7037f98b-5cdb-4bf3-9ea7-1ed0ea5aeab2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_vendor_location
+    - profile.type.unit_manager
+id: profile.unit_manager.field_vendor_location
+field_name: field_vendor_location
+entity_type: profile
+bundle: unit_manager
+label: Location
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

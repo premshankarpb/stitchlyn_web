@@ -2,6 +2,7 @@
 
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\file\Entity\File;
+use Drupal\profile\Entity\Profile;
 use Drupal\Core\Url;
 
 /**
@@ -143,4 +144,75 @@ function stitchlyn_theme_theme_suggestions_page_alter(array &$suggestions, array
   if (strpos(\Drupal::request()->getPathInfo(), '/dashboard') === 0) {
     $suggestions[] = 'page__dashboard';
   }
+}
+
+/**
+ * Implements hook_preprocess_user().
+ */
+function stitchlyn_theme_preprocess_user(array &$variables) {
+  /** @var \Drupal\user\Entity\User $account */
+  $account = $variables['elements']['#user'];
+
+  $roles = $account->getRoles();
+  foreach ($roles as $rid) {
+    $role = \Drupal\user\Entity\Role::load($rid);
+    if ($role) {
+      if($role->label() == 'Vendor'){
+        $variables['usr_role'] = 'Vendor';
+      }
+      if($role->label() == 'Unit Manager'){
+        $variables['usr_role'] = 'Unit Manager';
+      }
+    }
+  }
+
+  // Get basic properties
+  $variables['uid'] = $account->id();
+  $variables['username'] = $account->getDisplayName();
+  $variables['email'] = $account->getEmail();
+  $variables['created'] = \Drupal::service('date.formatter')->format($account->getCreatedTime());
+
+  $profile_entities = \Drupal::entityTypeManager()
+    ->getStorage('profile')
+    ->loadByProperties([
+      'uid' => $account->id(),
+    ]);
+  $profile = reset($profile_entities);
+
+  if ($profile && $profile->hasField('field_phone_number')) {
+    $field = $profile->get('field_phone_number');
+    $values = $field->getValue();
+
+    if (!empty($values[0]['phone_number'])) {
+      $phone_number = $values[0]['phone_number'];
+      $variables['field_phone_number'] = $phone_number;
+    }
+    else {
+      $variables['field_phone_number'] = '';
+    }
+  }
+
+  if ($profile && $profile->hasField('field_status')) {
+    $status_field = $profile->get('field_status');
+
+    if (!$status_field->isEmpty()) {
+      $term = $status_field->first()->entity;
+
+      if ($term && $term instanceof \Drupal\taxonomy\TermInterface) {
+        $status_name = $term->label(); // Get term name
+        $variables['field_status_name'] = $status_name;
+      }
+    }
+  }
+
+  if ($profile->hasField('field_vendor_location') && !$profile->get('field_vendor_location')->isEmpty()) {
+    $variables['field_vendor_location'] = $profile->get('field_vendor_location')->value;
+  }
+
+  if ($profile && $profile->hasField('field_about') && !$profile->get('field_about')->isEmpty()) {
+    $variables['field_about'] = $profile->get('field_about')->value;
+  }
+
+
+
 }

@@ -1,0 +1,19 @@
+uuid: 21c567bf-ca52-4987-958e-9718355476da
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_about
+    - profile.type.unit_manager
+id: profile.unit_manager.field_about
+field_name: field_about
+entity_type: profile
+bundle: unit_manager
+label: About
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
