@@ -1,12 +1,51 @@
 <article class="inventory-detail">
-  <h1>{{ node.label }}</h1>
 
-  <div><strong>SKU:</strong> {{ node.field_sku_code.value }}</div>
-  <div><strong>Category:</strong> {{ node.field_category.entity.label }}</div>
-  <div><strong>Type:</strong> {{ node.field_inventory_type.entity.label }}</div>
-  <div><strong>Unit of Measure:</strong> {{ node.field_unit_of_measure.entity.label }}</div>
-  <div><strong>Cost Price:</strong> ₹{{ node.field_cost_price.value }}</div>
-  <div><strong>Opening Stock:</strong> {{ node.field_opening_stock.value }}</div>
-  <div><strong>Reorder Level:</strong> {{ node.field_reorder_level.value }}</div>
-  <div><strong>Description:</strong> {{ node.body.value|raw }}</div>
+  <main class="admin-main">
+    <div class="mb-4">
+      <h1 class="display-5 fw-bold text-primary mb-3">{{ user.label }}</h1>
+      <span class="badge bg-success mb-3">{{ field_status_name }}</span>
+    </div>
+    <div class="row g-4 mb-5">
+      <div class="col-md-6 col-lg-5">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-3">{{ node.label }} Details</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><i class="fas fa-barcode text-primary me-2"></i>
+                <strong>SKU:</strong> {{ node.field_sku_code.value }}</li>
+              <li class="list-group-item"><i class="fas fa-tag text-primary me-2"></i>
+                <strong>Category:</strong> {{ node.field_category.entity.label }} </li>
+              <li class="list-group-item"><i class="fas fa-envelope text-primary me-2"></i>
+                <strong>Type:</strong>{{ node.field_inventory_type.entity.label }}</li>
+              <li class="list-group-item"><i class="fas fa-balance-scale text-primary me-2"></i>
+                <strong>Unit of Measure:</strong> {{ node.field_unit_of_measure.entity.label }} </li>
+              <li class="list-group-item"><i class="fas fa-inr text-warning me-2"></i>
+                <strong>Cost Price:</strong> ₹ {{ node.field_cost_price.value }} </li>
+              <li class="list-group-item"><i class="fas fa-book text-primary me-2"></i>
+                <strong>Opening Stock:</strong>{{ node.field_opening_stock.value }} </li>
+              <li class="list-group-item"><i class="fas fa-shopping-cart text-primary me-2"></i>
+                <strong>Reorder Level:</strong> {{ node.field_reorder_level.value }} </li>
+            
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-7">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Description</h5>
+            <p>{{ node.body.value|raw }}</p>
+            
+            <div class="mt-4">
+              <button class="btn btn-primary me-2">Contact Vendor</button>
+              <button class="btn btn-outline-primary">View Products</button>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
 </article>

@@ -205,7 +205,7 @@ function stitchlyn_theme_preprocess_user(array &$variables) {
     }
   }
 
-  if ($profile->hasField('field_vendor_location') && !$profile->get('field_vendor_location')->isEmpty()) {
+  if ($profile && $profile->hasField('field_vendor_location') && !$profile->get('field_vendor_location')->isEmpty()) {
     $variables['field_vendor_location'] = $profile->get('field_vendor_location')->value;
   }
 
