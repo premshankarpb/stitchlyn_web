@@ -5,6 +5,8 @@ namespace Drupal\stitchlyn_vendor\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
+use Drupal\user\Entity\User;
+use Drupal\profile\Entity\Profile;
 
 class PurchaseOrderDetailController extends ControllerBase {
 
@@ -24,10 +26,27 @@ class PurchaseOrderDetailController extends ControllerBase {
       }
     }
 
+    // Get user reference (e.g., vendor)
+    $user = NULL;
+    $profile = NULL;
+    if ($node->hasField('field_vendor') && !$node->get('field_vendor')->isEmpty()) {
+      $user = $node->field_vendor->entity;
+      // Load profile (assuming profile type is 'vendor_profile')
+      $profiles = \Drupal::entityTypeManager()
+        ->getStorage('profile')
+        ->loadByProperties([
+          'uid' => $user->id(),
+          'type' => 'vendor',
+        ]);
+      $profile = reset($profiles);
+    }
+
     return [
       '#theme' => 'stitchlyn_po_detail',
       '#node' => $node,
       '#items' => $po_items,
+      '#vendor_user' => $user,
+      '#vendor_profile' => $profile,
       '#title' => $node->label(),
     ];
   }

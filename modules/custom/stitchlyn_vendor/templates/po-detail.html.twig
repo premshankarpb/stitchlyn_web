@@ -1,9 +1,64 @@
 <article class="po-detail">
-  <h1>{{ node.label }}</h1>
-  
-  <div><strong>Date:</strong> {{ node.created.value|date("d M Y") }}</div>
-  <div><strong>Vendor:</strong> {{ node.field_vendor.entity.label }}</div>
-  <div><strong>Remarks:</strong> {{ node.body.value|raw }}</div>
+
+  {% if node.field_payment_status.entity.label == 'Paid' %}
+    {% set pay_class = 'bg-success' %}
+  {% else %}
+    {% set pay_class = 'bg-danger' %}
+  {% endif %}
+  <main class="admin-main">
+    <div class="mb-4">
+      <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
+      <span class="badge {{ pay_class }} mb-3">{{ node.field_payment_status.entity.label }}</span>
+    </div>
+    <div class="row g-4 mb-5">
+      <div class="col-md-6 col-lg-5">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-3">{{ node.label }} Details</h5>
+            <span class="badge {{ pay_class }} mb-3">Payment Status : {{ node.field_payment_status.entity.label }}</span>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><i class="fas fa-calendar-alt text-primary me-2"></i>
+                <strong>Date:</strong> {{ node.created.value|date("d M Y") }} </li>
+              <li class="list-group-item"><i class="fas fa-user text-primary me-2"></i>
+                <strong>Vendor:</strong> {{ node.field_vendor.entity.label }} </li>
+              <li class="list-group-item"><i class="fas fa-money-check-alt text-warning me-2"></i>
+                <strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }} </li>
+              <li class="list-group-item"><i class="fas fa-percent text-warning me-2"></i>
+                <strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }} </li>
+              <li class="list-group-item"><i class="fas fa-inr text-warning me-2"></i>
+                <strong>Total Amount:</strong> ₹ {{ node.field_total_amount.value }} </li>
+              <li class="list-group-item"><i class="fas fa-address-book text-primary me-2"></i>
+                <strong>Billing Address:</strong>{{ vendor_profile.field_billing_address.value }} </li>
+              <li class="list-group-item"><i class="fas fa-file-text text-primary me-2" aria-hidden="true"></i>
+                <strong>Vendor GST:</strong> {{ vendor_profile.field_gst_number.value }} </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-7">
+        <div class="card h-100">
+          <div class="card-body">
+            {% if node.body.value is not empty %}
+              <h5 class="card-title mb-3">Remarks</h5>
+              <p>{{ node.body.value|raw }}</p>
+            {% endif %}
+            {% if vendor_profile.field_about.value is not empty %}
+              <h5 class="card-title mb-3">About Vendor</h5>
+              <p>{{ vendor_profile.field_about.value|raw }}</p>
+            {% endif %}
+
+            <div class="mt-4">
+              <button class="btn btn-primary me-2" onclick="showPhone()">Contact Vendor</button>
+              <span id="vendor-phone" style="display:none;">
+                {{vendor_profile.field_phone_number.0.phone_number}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 
   <hr>
 
@@ -35,3 +90,13 @@
     <p>No items found in this purchase order.</p>
   {% endif %}
 </article>
+
+
+<script>
+  function showPhone() {
+    var phoneEl = document.getElementById('vendor-phone');
+    if (phoneEl.style.display === "none") {
+      phoneEl.style.display = "inline";
+    }
+  }
+</script>

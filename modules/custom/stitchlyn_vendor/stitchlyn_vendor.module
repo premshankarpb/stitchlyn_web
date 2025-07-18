@@ -32,6 +32,8 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
     'stitchlyn_po_detail' => [
       'variables' => [
         'node' => NULL,
+        'vendor_user' => [],
+        'vendor_profile' => [],
         'items' => [],
       ],
       'template' => 'po-detail',
