@@ -213,6 +213,15 @@ function stitchlyn_theme_preprocess_user(array &$variables) {
     $variables['field_about'] = $profile->get('field_about')->value;
   }
 
-
-
 }
+
+// function stitchlyn_theme_preprocess_menu__account(&$variables) {
+//   foreach ($variables['items'] as $key => $item) {
+//     if (empty($item['access'])) {
+//       unset($variables['items'][$key]);
+//     }
+//   }
+// }
+// function stitchlyn_theme_preprocess_menu__account(&$variables) {
+//   \Drupal::logger('debug_menu')->notice('<pre>' . print_r($variables['items'], TRUE) . '</pre>');
+// }
