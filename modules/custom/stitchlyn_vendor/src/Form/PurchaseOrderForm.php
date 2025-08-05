@@ -66,9 +66,13 @@ class PurchaseOrderForm extends FormBase {
 
     foreach ($items as $delta) {
       $form['items_table'][$delta]['item'] = [
-        '#type' => 'textfield',
-        '#attributes' => ['class' => ['autocomplete-item']],
-        '#autocomplete_route_name' => 'stitchlyn_vendor.autocomplete_inventory',
+        '#type' => 'entity_autocomplete',
+        '#title' => $this->t('Item'),
+        '#target_type' => 'node',
+        '#selection_settings' => [
+          'target_bundles' => ['inventory_item'],
+        ],
+        '#required' => TRUE,
       ];
       $form['items_table'][$delta]['qty'] = ['#type' => 'number'];
       $form['items_table'][$delta]['rate'] = ['#type' => 'number'];
@@ -128,6 +132,7 @@ class PurchaseOrderForm extends FormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    \Drupal::logger('purchase_order_form')->notice('Submit triggered');
     // Save purchase order
     $node = Node::create([
       'type' => 'purchase_order',
@@ -144,14 +149,16 @@ class PurchaseOrderForm extends FormBase {
 
     // Save items
     foreach ($form_state->get('items') as $delta) {
+      $item_row = $form_state->getValue(['items_table', $delta]);
+
       Node::create([
         'type' => 'purchase_order_items',
         'title' => 'PO Item',
-        'field_item_reference' => $form['items_table'][$delta]['item']['#value'],
-        'field_quantity' => $form['items_table'][$delta]['qty']['#value'],
-        'field_item_rate' => $form['items_table'][$delta]['rate']['#value'],
-        'field_tax_amount' => $form['items_table'][$delta]['tax']['#value'],
-        'field_total_amount' => $form['items_table'][$delta]['total']['#value'],
+        'field_item_reference' => $item_row['item'],
+        'field_quantity' => $item_row['qty'],
+        'field_item_rate' => $item_row['rate'],
+        'field_tax_amount' => $item_row['tax'],
+        'field_total_amount' => $item_row['total'],
         'field_purchase_order' => $node->id(),
       ])->save();
     }
