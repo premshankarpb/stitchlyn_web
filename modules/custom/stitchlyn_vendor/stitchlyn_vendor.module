@@ -20,6 +20,11 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
       'template'       => 'purchase-order-form',
       'path'           => $path . '/templates',
     ],
+    'purchase_order_edit_form' => [
+      'render element' => 'form',
+      'template'       => 'purchase-order-edit-form',
+      'path'           => $path . '/templates',
+    ],    
     'inventory_item_form' => [
       'render element' => 'form',
       'template'       => 'inventory-item-form',

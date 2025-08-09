@@ -62,3 +62,17 @@ stitchlyn_vendor.purchase_order_detail:
     parameters:
       node:
         type: entity:node
+stitchlyn_vendor.purchase_order.edit:
+  path: '/purchase-order/{purchase_order}/edit'
+  defaults:
+    _form: '\Drupal\stitchlyn_vendor\Form\EditPurchaseOrderForm'
+    _title: 'Edit Purchase Order'
+  requirements:
+    _permission: 'access content'
+    _entity_access: 'purchase_order.update'
+  options:
+    parameters:
+      purchase_order:
+        type: entity:node
+
+
