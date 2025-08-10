@@ -63,7 +63,8 @@
   <hr>
 
   <h3>Items in this Purchase Order</h3>
-  {% if items|length > 0 %}
+  {% if referencing_nodes|length > 0 %}
+
     <table class="table table-bordered table-striped">
       <thead>
         <tr>
@@ -75,13 +76,16 @@
         </tr>
       </thead>
       <tbody>
-        {% for item in items %}
+        {% for item in referencing_nodes %}
+        {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
+        {% set total_amount = sub_total + item.field_tax_amount.value %}
+
           <tr>
-            <td>{{ item.field_inventory_item.entity.label }}</td>
+            <td>{{ item.field_item_reference.entity.label }}</td>
             <td>{{ item.field_quantity.value }}</td>
-            <td>₹{{ item.field_subtotal_cost.value }}</td>
-            <td>₹{{ item.field_tax.value }}</td>
-            <td>₹{{ item.field_total_cost.value }}</td>
+            <td>₹{{ sub_total }}</td>
+            <td>₹{{ item.field_tax_amount.value }}</td>
+            <td>₹{{ total_amount }}</td>
           </tr>
         {% endfor %}
       </tbody>

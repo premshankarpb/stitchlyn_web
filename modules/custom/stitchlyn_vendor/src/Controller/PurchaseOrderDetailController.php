@@ -16,15 +16,15 @@ class PurchaseOrderDetailController extends ControllerBase {
       throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
     }
 
-    // Fetch related Purchase Order Items via entity reference
-    $po_items = [];
-    if ($node->hasField('field_po_items')) {
-      foreach ($node->get('field_po_items')->referencedEntities() as $item_node) {
-        if ($item_node->bundle() === 'purchase_order_items') {
-          $po_items[] = $item_node;
-        }
-      }
-    }
+    // Get nodes referencing this purchase_order
+    $referencing_nodes = [];
+
+    $item_nodes = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties([
+      'type' => 'purchase_order_items',
+      'field_purchase_order' => $node->id(),
+    ]);
 
     // Get user reference (e.g., vendor)
     $user = NULL;
@@ -44,9 +44,9 @@ class PurchaseOrderDetailController extends ControllerBase {
     return [
       '#theme' => 'stitchlyn_po_detail',
       '#node' => $node,
-      '#items' => $po_items,
       '#vendor_user' => $user,
       '#vendor_profile' => $profile,
+      '#referencing_nodes' => $item_nodes,
       '#title' => $node->label(),
     ];
   }
