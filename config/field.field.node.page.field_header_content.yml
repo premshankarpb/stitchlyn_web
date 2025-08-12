@@ -6,6 +6,7 @@ dependencies:
     - field.storage.node.field_header_content
     - node.type.page
     - paragraphs.paragraphs_type.banner_item
+    - paragraphs.paragraphs_type.hero_banner
   module:
     - entity_reference_revisions
 id: node.page.field_header_content
@@ -23,6 +24,7 @@ settings:
   handler_settings:
     target_bundles:
       banner_item: banner_item
+      hero_banner: hero_banner
     negate: 0
     target_bundles_drag_drop:
       banner_item:
@@ -39,7 +41,7 @@ settings:
         enabled: false
       hero_banner:
         weight: 16
-        enabled: false
+        enabled: true
       home_banner:
         weight: 17
         enabled: false

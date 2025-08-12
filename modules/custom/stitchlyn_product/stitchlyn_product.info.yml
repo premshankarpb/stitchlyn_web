@@ -1,0 +1,7 @@
+name: Stitchlyn Product
+type: module
+description: Custom product for stitchlyn.
+core_version_requirement: ^10 || ^11
+package: Stitchlyn
+dependencies:
+  - drupal:node

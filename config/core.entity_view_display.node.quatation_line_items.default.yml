@@ -1,0 +1,69 @@
+uuid: a49552fe-f12f-48e0-9c75-7611ac5d5250
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.quatation_line_items.body
+    - field.field.node.quatation_line_items.field_attributes
+    - field.field.node.quatation_line_items.field_linked_quotation
+    - field.field.node.quatation_line_items.field_product
+    - field.field.node.quatation_line_items.field_quantity
+    - node.type.quatation_line_items
+  module:
+    - entity_reference_revisions
+    - text
+    - user
+id: node.quatation_line_items.default
+targetEntityType: node
+bundle: quatation_line_items
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_attributes:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 111
+    region: content
+  field_linked_quotation:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 112
+    region: content
+  field_product:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_quantity:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

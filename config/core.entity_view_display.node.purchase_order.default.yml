@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.purchase_order.body
     - field.field.node.purchase_order.field_date_of_purchase
     - field.field.node.purchase_order.field_payment_status
+    - field.field.node.purchase_order.field_po_number
     - field.field.node.purchase_order.field_subtotal_amount
     - field.field.node.purchase_order.field_tax_amount
     - field.field.node.purchase_order.field_total_amount
@@ -13,6 +14,7 @@ dependencies:
     - node.type.purchase_order
   module:
     - datetime
+    - serial
     - text
     - user
 id: node.purchase_order.default
@@ -43,6 +45,13 @@ content:
       link: true
     third_party_settings: {  }
     weight: 104
+    region: content
+  field_po_number:
+    type: serial_default_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 108
     region: content
   field_subtotal_amount:
     type: number_decimal

@@ -1,0 +1,21 @@
+uuid: 3475c2cb-6ce8-4854-bb2d-a72bccab11b5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_po_number
+    - node.type.purchase_order
+  module:
+    - serial
+id: node.purchase_order.field_po_number
+field_name: field_po_number
+entity_type: node
+bundle: purchase_order
+label: 'PO Number'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: serial

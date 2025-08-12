@@ -4,5 +4,5 @@ status: true
 dependencies: {  }
 id: backend
 label: Backend
-description: 'CRM admin menu for managment'
+description: 'CRM admin menu for management'
 locked: false

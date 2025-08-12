@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.purchase_order.body
     - field.field.node.purchase_order.field_date_of_purchase
     - field.field.node.purchase_order.field_payment_status
+    - field.field.node.purchase_order.field_po_number
     - field.field.node.purchase_order.field_subtotal_amount
     - field.field.node.purchase_order.field_tax_amount
     - field.field.node.purchase_order.field_total_amount
@@ -36,6 +37,7 @@ content:
 hidden:
   field_date_of_purchase: true
   field_payment_status: true
+  field_po_number: true
   field_subtotal_amount: true
   field_tax_amount: true
   field_total_amount: true

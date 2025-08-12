@@ -1,0 +1,19 @@
+uuid: 96636b67-91b5-4a81-bf51-41e212984dda
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_radius
+    - paragraphs.paragraphs_type.umbrella_attributes
+id: paragraph.umbrella_attributes.field_radius
+field_name: field_radius
+entity_type: paragraph
+bundle: umbrella_attributes
+label: Radius
+description: 'Canopy Radius in cm'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

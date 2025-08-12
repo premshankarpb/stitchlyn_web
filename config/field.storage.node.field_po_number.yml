@@ -1,0 +1,21 @@
+uuid: bbf42d7d-d7db-430c-8fea-508a52232b41
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - serial
+id: node.field_po_number
+field_name: field_po_number
+entity_type: node
+type: serial
+settings:
+  start_value: 1
+  init_existing_entities: 0
+module: serial
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

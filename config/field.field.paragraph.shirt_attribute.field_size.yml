@@ -1,0 +1,29 @@
+uuid: f43a4387-0770-4ce2-8125-bb96d379ff62
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_size
+    - paragraphs.paragraphs_type.shirt_attribute
+    - taxonomy.vocabulary.size
+id: paragraph.shirt_attribute.field_size
+field_name: field_size
+entity_type: paragraph
+bundle: shirt_attribute
+label: Size
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      size: size
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

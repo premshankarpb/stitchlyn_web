@@ -1,0 +1,21 @@
+uuid: 71c921e9-cbcc-4fc9-859f-89431260d079
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_quotation_number
+    - node.type.quotation
+  module:
+    - serial
+id: node.quotation.field_quotation_number
+field_name: field_quotation_number
+entity_type: node
+bundle: quotation
+label: 'Quotation Number'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: serial

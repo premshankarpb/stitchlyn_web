@@ -1,0 +1,17 @@
+uuid: 8b92870d-e45b-4966-9716-27878596ab07
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: Quotation
+type: quotation
+description: 'Content type to save all the quotations'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

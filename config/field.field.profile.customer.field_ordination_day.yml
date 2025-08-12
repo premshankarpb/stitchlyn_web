@@ -1,0 +1,21 @@
+uuid: b1f7036f-9f49-49f5-961a-ce26ebd5af6a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_ordination_day
+    - profile.type.customer
+  module:
+    - datetime
+id: profile.customer.field_ordination_day
+field_name: field_ordination_day
+entity_type: profile
+bundle: customer
+label: 'Ordination day'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

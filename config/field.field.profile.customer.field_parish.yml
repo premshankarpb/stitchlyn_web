@@ -1,0 +1,19 @@
+uuid: 2d6a4bff-cf47-44dc-8e6a-cdea1f177e56
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_parish
+    - profile.type.customer
+id: profile.customer.field_parish
+field_name: field_parish
+entity_type: profile
+bundle: customer
+label: Parish
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

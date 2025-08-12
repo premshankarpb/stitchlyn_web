@@ -1,0 +1,18 @@
+uuid: 4a96899f-aa95-4bab-b08c-cb679176d6a0
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.quatation_line_items
+id: node.quatation_line_items.title
+field_name: title
+entity_type: node
+bundle: quatation_line_items
+label: 'Quotation Number'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

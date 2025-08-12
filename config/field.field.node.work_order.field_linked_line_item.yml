@@ -1,0 +1,29 @@
+uuid: 2034e50e-0522-4256-97f4-ab098949428f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_linked_line_item
+    - node.type.quatation_line_items
+    - node.type.work_order
+id: node.work_order.field_linked_line_item
+field_name: field_linked_line_item
+entity_type: node
+bundle: work_order
+label: 'Linked Line Item'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      quatation_line_items: quatation_line_items
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

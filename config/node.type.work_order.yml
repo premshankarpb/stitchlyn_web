@@ -10,7 +10,7 @@ third_party_settings:
     parent: ''
 name: 'Work Order'
 type: work_order
-description: null
+description: 'Content type for adding the work orders'
 help: null
 new_revision: true
 preview_mode: 1

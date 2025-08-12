@@ -1578,7 +1578,7 @@ display:
           entity_type: node
           entity_field: nid
           plugin_id: field
-          label: ''
+          label: ID
           exclude: true
           alter:
             alter_text: false
@@ -1611,7 +1611,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -1646,7 +1646,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{{ edit_node }} <a href='po/{{ nid_1 }}'>View</a>"
+            text: '{{ edit_node }} <a href="/dashboard/po/{{ nid_1 }}">View</a>'
             make_link: false
             path: ''
             absolute: false

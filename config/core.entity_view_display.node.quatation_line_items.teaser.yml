@@ -1,0 +1,38 @@
+uuid: e254ad28-1e60-4d4b-a51f-301bf2b5afe2
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.quatation_line_items.body
+    - field.field.node.quatation_line_items.field_attributes
+    - field.field.node.quatation_line_items.field_linked_quotation
+    - field.field.node.quatation_line_items.field_product
+    - field.field.node.quatation_line_items.field_quantity
+    - node.type.quatation_line_items
+  module:
+    - text
+    - user
+id: node.quatation_line_items.teaser
+targetEntityType: node
+bundle: quatation_line_items
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_attributes: true
+  field_linked_quotation: true
+  field_product: true
+  field_quantity: true

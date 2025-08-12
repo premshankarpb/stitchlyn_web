@@ -1,0 +1,10 @@
+uuid: 3ddf39c5-b2b9-4776-960a-eebed38a326d
+langcode: en
+status: true
+dependencies: {  }
+id: umbrella_attributes
+label: 'Umbrella Attributes'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

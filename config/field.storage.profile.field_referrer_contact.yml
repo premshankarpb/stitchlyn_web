@@ -1,0 +1,20 @@
+uuid: 59015233-f7bd-45d1-b9e1-880c216da2c0
+langcode: en
+status: true
+dependencies:
+  module:
+    - phonenumber
+    - profile
+id: profile.field_referrer_contact
+field_name: field_referrer_contact
+entity_type: profile
+type: phone
+settings:
+  unique: false
+module: phonenumber
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

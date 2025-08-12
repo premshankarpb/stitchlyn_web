@@ -1,0 +1,19 @@
+uuid: b76cc3f3-dd48-4b91-84c1-f6a866af51f5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_customer_name
+    - profile.type.customer
+id: profile.customer.field_customer_name
+field_name: field_customer_name
+entity_type: profile
+bundle: customer
+label: 'Customer Name'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

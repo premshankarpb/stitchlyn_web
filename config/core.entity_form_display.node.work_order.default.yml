@@ -4,9 +4,18 @@ status: true
 dependencies:
   config:
     - field.field.node.work_order.body
+    - field.field.node.work_order.field_expected_due_date
+    - field.field.node.work_order.field_linked_line_item
+    - field.field.node.work_order.field_linked_quotation
+    - field.field.node.work_order.field_product
+    - field.field.node.work_order.field_quantity
+    - field.field.node.work_order.field_unit_assigned
+    - field.field.node.work_order.field_work_order_number
     - node.type.work_order
   module:
+    - datetime
     - path
+    - serial
     - text
 id: node.work_order.default
 targetEntityType: node
@@ -26,6 +35,65 @@ content:
   created:
     type: datetime_timestamp
     weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_expected_due_date:
+    type: datetime_default
+    weight: 135
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_linked_line_item:
+    type: entity_reference_autocomplete
+    weight: 133
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_linked_quotation:
+    type: entity_reference_autocomplete
+    weight: 132
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_product:
+    type: entity_reference_autocomplete
+    weight: 122
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_quantity:
+    type: number
+    weight: 124
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_unit_assigned:
+    type: entity_reference_autocomplete
+    weight: 134
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_work_order_number:
+    type: serial_default_widget
+    weight: 136
     region: content
     settings: {  }
     third_party_settings: {  }

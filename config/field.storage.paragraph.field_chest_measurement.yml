@@ -1,0 +1,21 @@
+uuid: d019770c-5dd2-476d-8366-42e344e7a322
+langcode: en
+status: true
+dependencies:
+  module:
+    - paragraphs
+id: paragraph.field_chest_measurement
+field_name: field_chest_measurement
+entity_type: paragraph
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

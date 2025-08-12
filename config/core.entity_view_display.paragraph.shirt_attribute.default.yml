@@ -1,0 +1,39 @@
+uuid: bbc74d5b-30c2-44be-82b4-13bd7caeff54
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.shirt_attribute.field_chest_measurement
+    - field.field.paragraph.shirt_attribute.field_colour
+    - field.field.paragraph.shirt_attribute.field_size
+    - paragraphs.paragraphs_type.shirt_attribute
+id: paragraph.shirt_attribute.default
+targetEntityType: paragraph
+bundle: shirt_attribute
+mode: default
+content:
+  field_chest_measurement:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_colour:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_size:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

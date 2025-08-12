@@ -1,0 +1,9 @@
+uuid: dd27185e-4c7e-4063-9b18-2429697825e2
+langcode: en
+status: true
+dependencies: {  }
+name: Colour
+vid: color
+description: 'Describes colour for the item'
+weight: 0
+new_revision: false

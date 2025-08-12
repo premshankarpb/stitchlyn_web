@@ -4,8 +4,17 @@ status: true
 dependencies:
   config:
     - field.field.node.work_order.body
+    - field.field.node.work_order.field_expected_due_date
+    - field.field.node.work_order.field_linked_line_item
+    - field.field.node.work_order.field_linked_quotation
+    - field.field.node.work_order.field_product
+    - field.field.node.work_order.field_quantity
+    - field.field.node.work_order.field_unit_assigned
+    - field.field.node.work_order.field_work_order_number
     - node.type.work_order
   module:
+    - datetime
+    - serial
     - text
     - user
 id: node.work_order.default
@@ -19,6 +28,65 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 101
+    region: content
+  field_expected_due_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 115
+    region: content
+  field_linked_line_item:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 113
+    region: content
+  field_linked_quotation:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 112
+    region: content
+  field_product:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_quantity:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_unit_assigned:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 114
+    region: content
+  field_work_order_number:
+    type: serial_default_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 116
     region: content
   links:
     settings: {  }

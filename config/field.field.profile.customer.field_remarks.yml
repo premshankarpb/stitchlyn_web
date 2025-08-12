@@ -1,0 +1,22 @@
+uuid: ddb00d46-a9b9-4ab6-86b8-e5f1fcb4c592
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_remarks
+    - profile.type.customer
+  module:
+    - text
+id: profile.customer.field_remarks
+field_name: field_remarks
+entity_type: profile
+bundle: customer
+label: Remarks
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

@@ -1,0 +1,45 @@
+uuid: d8414ba7-c5ac-4bfe-a952-5b07a3e67be4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.shirt_attribute.field_chest_measurement
+    - field.field.paragraph.shirt_attribute.field_colour
+    - field.field.paragraph.shirt_attribute.field_size
+    - paragraphs.paragraphs_type.shirt_attribute
+id: paragraph.shirt_attribute.default
+targetEntityType: paragraph
+bundle: shirt_attribute
+mode: default
+content:
+  field_chest_measurement:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_colour:
+    type: entity_reference_autocomplete
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_size:
+    type: entity_reference_autocomplete
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

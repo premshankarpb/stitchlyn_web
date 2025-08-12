@@ -1,0 +1,13 @@
+uuid: 83610456-a71b-4ec4-94fd-1d90ccbd10d1
+langcode: en
+status: true
+dependencies: {  }
+id: customer
+label: Customer
+display_label: Customer
+multiple: false
+registration: false
+roles:
+  authenticated: authenticated
+allow_revisions: false
+new_revision: false

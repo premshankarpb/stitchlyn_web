@@ -1,0 +1,18 @@
+uuid: 4f3cb439-4c05-4e9b-8b49-de0b0e382c4d
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.quotation
+id: node.quotation.title
+field_name: title
+entity_type: node
+bundle: quotation
+label: 'Quotation Title'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

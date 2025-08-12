@@ -8,7 +8,7 @@ id: node.purchase_order.title
 field_name: title
 entity_type: node
 bundle: purchase_order
-label: 'Purchase Order'
+label: 'Purchase Order Title'
 description: ''
 required: true
 translatable: true

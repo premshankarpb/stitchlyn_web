@@ -1,0 +1,29 @@
+uuid: 287ed002-9f38-42f6-9e8f-a7f2bed87be2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_product
+    - node.type.product
+    - node.type.work_order
+id: node.work_order.field_product
+field_name: field_product
+entity_type: node
+bundle: work_order
+label: Product
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      product: product
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,29 @@
+uuid: ea32208e-b803-40f1-9a10-0014f5e13b14
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_linked_quotation
+    - node.type.quotation
+    - node.type.work_order
+id: node.work_order.field_linked_quotation
+field_name: field_linked_quotation
+entity_type: node
+bundle: work_order
+label: 'Linked Quotation'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      quotation: quotation
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

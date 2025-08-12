@@ -1,0 +1,144 @@
+uuid: 9134569b-60b1-412e-af7f-7ed2ec0c8283
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.quotation
+  module:
+    - content_moderation
+id: quotation_workflow
+label: 'Quotation Workflow'
+type: content_moderation
+type_settings:
+  states:
+    accepted:
+      label: Accepted
+      weight: -3
+      published: false
+      default_revision: false
+    delivered:
+      label: Delivered
+      weight: 2
+      published: false
+      default_revision: false
+    dispatched:
+      label: Dispatched
+      weight: 1
+      published: false
+      default_revision: false
+    draft:
+      label: Draft
+      weight: -5
+      published: false
+      default_revision: false
+    in_progress:
+      label: 'In Progress'
+      weight: -1
+      published: false
+      default_revision: false
+    published:
+      label: Fullfilled
+      weight: 3
+      published: true
+      default_revision: true
+    rejected:
+      label: Rejected
+      weight: 4
+      published: false
+      default_revision: false
+    requested:
+      label: Requested
+      weight: -4
+      published: false
+      default_revision: false
+    to_update:
+      label: 'To Update'
+      weight: -2
+      published: false
+      default_revision: false
+    work_completed:
+      label: 'Work Completed'
+      weight: 0
+      published: false
+      default_revision: false
+  transitions:
+    accepted:
+      label: Accepted
+      from:
+        - requested
+      to: accepted
+      weight: 3
+    create_new_draft:
+      label: 'Create New Draft'
+      from:
+        - draft
+      to: draft
+      weight: 0
+    dispatched:
+      label: Dispatched
+      from:
+        - in_progress
+        - work_completed
+      to: dispatched
+      weight: 7
+    in_progress:
+      label: 'In Progress'
+      from:
+        - accepted
+        - requested
+      to: in_progress
+      weight: 5
+    needs_to_update:
+      label: 'Needs to Update'
+      from:
+        - requested
+      to: to_update
+      weight: 4
+    order_delivered:
+      label: 'Order Delivered'
+      from:
+        - dispatched
+        - in_progress
+        - work_completed
+      to: delivered
+      weight: 8
+    publish:
+      label: 'Order Fullfilled'
+      from:
+        - delivered
+        - dispatched
+        - work_completed
+      to: published
+      weight: 1
+    quation_requested:
+      label: 'Quation Requested'
+      from:
+        - draft
+        - to_update
+      to: requested
+      weight: 2
+    quotation_fulfilled:
+      label: Rejected
+      from:
+        - accepted
+        - delivered
+        - dispatched
+        - draft
+        - in_progress
+        - published
+        - rejected
+        - requested
+        - to_update
+        - work_completed
+      to: rejected
+      weight: 9
+    ready_to_despatch:
+      label: 'Ready to Despatch'
+      from:
+        - in_progress
+      to: work_completed
+      weight: 6
+  entity_types:
+    node:
+      - quotation
+  default_moderation_state: draft

@@ -1,0 +1,48 @@
+uuid: 01f90975-9bef-44b4-b97b-85286dce2178
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.umbrella_attributes.field_colour
+    - field.field.paragraph.umbrella_attributes.field_handle_length
+    - field.field.paragraph.umbrella_attributes.field_length
+    - field.field.paragraph.umbrella_attributes.field_radius
+    - paragraphs.paragraphs_type.umbrella_attributes
+id: paragraph.umbrella_attributes.default
+targetEntityType: paragraph
+bundle: umbrella_attributes
+mode: default
+content:
+  field_colour:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_handle_length:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_length:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_radius:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

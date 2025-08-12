@@ -1,0 +1,29 @@
+uuid: 061bded6-4adf-471d-831d-079807d7b4f7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_customer_reference
+    - node.type.quotation
+id: node.quotation.field_customer_reference
+field_name: field_customer_reference
+entity_type: node
+bundle: quotation
+label: 'Customer Reference'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    filter:
+      type: _none
+    include_anonymous: false
+field_type: entity_reference

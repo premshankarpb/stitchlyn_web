@@ -1,0 +1,19 @@
+uuid: 10ed0ea1-3a37-4649-9197-f1ad5908e5d8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_associated_diocese
+    - profile.type.customer
+id: profile.customer.field_associated_diocese
+field_name: field_associated_diocese
+entity_type: profile
+bundle: customer
+label: 'Associated Diocese'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

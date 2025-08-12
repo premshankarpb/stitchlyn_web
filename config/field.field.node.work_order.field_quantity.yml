@@ -1,0 +1,23 @@
+uuid: f8ff2554-175b-4617-b015-bbf6e3036b5a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_quantity
+    - node.type.work_order
+id: node.work_order.field_quantity
+field_name: field_quantity
+entity_type: node
+bundle: work_order
+label: 'Quantity Assigned'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

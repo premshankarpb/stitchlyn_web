@@ -1,0 +1,10 @@
+uuid: 7967552c-e5e9-4fbc-854e-d3aa66a77427
+langcode: en
+status: true
+dependencies: {  }
+id: shirt_attribute
+label: 'Shirt Attribute'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

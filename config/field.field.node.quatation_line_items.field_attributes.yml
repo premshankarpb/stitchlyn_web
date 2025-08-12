@@ -1,0 +1,69 @@
+uuid: e5476714-b200-485a-81f5-23b4b8616bc8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_attributes
+    - node.type.quatation_line_items
+    - paragraphs.paragraphs_type.shirt_attribute
+    - paragraphs.paragraphs_type.umbrella_attributes
+  module:
+    - entity_reference_revisions
+id: node.quatation_line_items.field_attributes
+field_name: field_attributes
+entity_type: node
+bundle: quatation_line_items
+label: Attributes
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      shirt_attribute: shirt_attribute
+      umbrella_attributes: umbrella_attributes
+    negate: 0
+    target_bundles_drag_drop:
+      banner_item:
+        weight: 13
+        enabled: false
+      cta_banner:
+        weight: 14
+        enabled: false
+      feature_item:
+        weight: 16
+        enabled: false
+      features:
+        weight: 15
+        enabled: false
+      hero_banner:
+        weight: 17
+        enabled: false
+      home_banner:
+        weight: 18
+        enabled: false
+      shirt_attribute:
+        weight: 20
+        enabled: true
+      simple_card:
+        weight: 19
+        enabled: false
+      simple_card_item:
+        weight: 20
+        enabled: false
+      st:
+        weight: 21
+        enabled: false
+      stats:
+        weight: 22
+        enabled: false
+      type_a_card_cta:
+        weight: 23
+        enabled: false
+      umbrella_attributes:
+        weight: 24
+        enabled: true
+field_type: entity_reference_revisions

@@ -1,0 +1,29 @@
+uuid: 37342e6e-1585-4d1b-931e-80df5cc175d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_colour
+    - paragraphs.paragraphs_type.shirt_attribute
+    - taxonomy.vocabulary.color
+id: paragraph.shirt_attribute.field_colour
+field_name: field_colour
+entity_type: paragraph
+bundle: shirt_attribute
+label: Colour
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      color: color
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,24 @@
+uuid: 9f7ca472-f4c4-45e0-8904-fa8f56205c91
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.invoice
+  module:
+    - text
+id: node.invoice.body
+field_name: body
+entity_type: node
+bundle: invoice
+label: Remarks
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+  allowed_formats: {  }
+field_type: text_with_summary

@@ -1,0 +1,11 @@
+stitchlyn_product.detail:
+  path: '/product/{node}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_product\Controller\ProductController::view'
+    _title_callback: '\Drupal\stitchlyn_product\Controller\ProductController::title'
+  requirements:
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node

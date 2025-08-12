@@ -1,0 +1,21 @@
+uuid: 647e5d07-befa-44a3-8f0a-67787c5b0db7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_work_order_number
+    - node.type.work_order
+  module:
+    - serial
+id: node.work_order.field_work_order_number
+field_name: field_work_order_number
+entity_type: node
+bundle: work_order
+label: 'Work Order Number'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: serial

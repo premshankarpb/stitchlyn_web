@@ -1,0 +1,18 @@
+uuid: 241fb125-0efb-404e-930d-28984615a7eb
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.work_order
+id: node.work_order.title
+field_name: title
+entity_type: node
+bundle: work_order
+label: 'Work Order Title'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

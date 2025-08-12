@@ -1,0 +1,23 @@
+uuid: 019189e0-9306-4b24-a4b1-858e1e69fb82
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cost_price
+    - node.type.product
+id: node.product.field_cost_price
+field_name: field_cost_price
+entity_type: node
+bundle: product
+label: 'Cost Price'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: -1.0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: float

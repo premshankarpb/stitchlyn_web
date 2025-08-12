@@ -1,0 +1,19 @@
+uuid: 2b81b55f-b254-4725-8781-060bf4cb477f
+langcode: en
+status: true
+dependencies:
+  module:
+    - profile
+    - text
+id: profile.field_remarks
+field_name: field_remarks
+entity_type: profile
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

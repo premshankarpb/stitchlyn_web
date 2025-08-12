@@ -1,0 +1,19 @@
+uuid: 7a3b25c9-d250-4c79-a2e0-389230d05bcd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_gst_number
+    - profile.type.customer
+id: profile.customer.field_gst_number
+field_name: field_gst_number
+entity_type: profile
+bundle: customer
+label: 'GST Number'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

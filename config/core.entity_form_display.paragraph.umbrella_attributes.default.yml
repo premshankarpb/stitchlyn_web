@@ -1,0 +1,52 @@
+uuid: 59bfb900-9fc3-44f7-a203-20831b306c1d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.umbrella_attributes.field_colour
+    - field.field.paragraph.umbrella_attributes.field_handle_length
+    - field.field.paragraph.umbrella_attributes.field_length
+    - field.field.paragraph.umbrella_attributes.field_radius
+    - paragraphs.paragraphs_type.umbrella_attributes
+id: paragraph.umbrella_attributes.default
+targetEntityType: paragraph
+bundle: umbrella_attributes
+mode: default
+content:
+  field_colour:
+    type: entity_reference_autocomplete
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_handle_length:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_length:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_radius:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

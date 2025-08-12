@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.purchase_order.body
     - field.field.node.purchase_order.field_date_of_purchase
     - field.field.node.purchase_order.field_payment_status
+    - field.field.node.purchase_order.field_po_number
     - field.field.node.purchase_order.field_subtotal_amount
     - field.field.node.purchase_order.field_tax_amount
     - field.field.node.purchase_order.field_total_amount
@@ -14,6 +15,7 @@ dependencies:
   module:
     - datetime
     - path
+    - serial
     - text
 id: node.purchase_order.default
 targetEntityType: node
@@ -51,6 +53,12 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_po_number:
+    type: serial_default_widget
+    weight: 128
+    region: content
+    settings: {  }
     third_party_settings: {  }
   field_subtotal_amount:
     type: number

@@ -13,5 +13,5 @@ type: purchase_order
 description: 'Content model for the Purchase Order'
 help: null
 new_revision: true
-preview_mode: 0
+preview_mode: 1
 display_submitted: true

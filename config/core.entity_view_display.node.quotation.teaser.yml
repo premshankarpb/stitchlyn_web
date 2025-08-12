@@ -1,0 +1,46 @@
+uuid: e96fa6fc-5b73-4152-a74e-76632126b678
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.quotation.body
+    - field.field.node.quotation.field_customer_reference
+    - field.field.node.quotation.field_discount
+    - field.field.node.quotation.field_payment_status
+    - field.field.node.quotation.field_quotation_date
+    - field.field.node.quotation.field_quotation_number
+    - field.field.node.quotation.field_subtotal_amount
+    - field.field.node.quotation.field_tax_amount
+    - field.field.node.quotation.field_total_amount
+    - node.type.quotation
+  module:
+    - text
+    - user
+id: node.quotation.teaser
+targetEntityType: node
+bundle: quotation
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_customer_reference: true
+  field_discount: true
+  field_payment_status: true
+  field_quotation_date: true
+  field_quotation_number: true
+  field_subtotal_amount: true
+  field_tax_amount: true
+  field_total_amount: true

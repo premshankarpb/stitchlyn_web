@@ -1,0 +1,21 @@
+uuid: 0f4b4f02-ec6f-4263-aaed-4d8e899dbd2d
+langcode: en
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_name_of_referrer
+field_name: field_name_of_referrer
+entity_type: profile
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

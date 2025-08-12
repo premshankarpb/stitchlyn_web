@@ -1,0 +1,19 @@
+uuid: 16a66439-2328-4347-af0f-ba2128062553
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_name_of_referrer
+    - profile.type.customer
+id: profile.customer.field_name_of_referrer
+field_name: field_name_of_referrer
+entity_type: profile
+bundle: customer
+label: 'Name of referrer'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

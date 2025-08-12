@@ -1,0 +1,24 @@
+uuid: abccf689-1a12-4695-8125-fbc7b5a6b308
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_quotation_date
+    - node.type.quotation
+  module:
+    - datetime
+id: node.quotation.field_quotation_date
+field_name: field_quotation_date
+entity_type: node
+bundle: quotation
+label: 'Quotation Date'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    default_date_type: now
+    default_date: now
+default_value_callback: ''
+settings: {  }
+field_type: datetime

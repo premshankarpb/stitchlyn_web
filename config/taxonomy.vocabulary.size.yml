@@ -1,0 +1,9 @@
+uuid: 91ebba9c-7d81-4b67-8216-fe3d6106a628
+langcode: en
+status: true
+dependencies: {  }
+name: Size
+vid: size
+description: 'Size label for the Product'
+weight: 0
+new_revision: false

@@ -1,0 +1,29 @@
+uuid: 83212600-4ddf-45a3-99f0-f9340144a713
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_unit_assigned
+    - node.type.work_order
+    - taxonomy.vocabulary.production_units
+id: node.work_order.field_unit_assigned
+field_name: field_unit_assigned
+entity_type: node
+bundle: work_order
+label: 'Unit Assigned'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      production_units: production_units
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

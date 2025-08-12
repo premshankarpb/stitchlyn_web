@@ -1,0 +1,23 @@
+uuid: f8060cb4-9935-4c8f-ac41-16bd7f72a780
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_discount
+    - node.type.quotation
+id: node.quotation.field_discount
+field_name: field_discount
+entity_type: node
+bundle: quotation
+label: Discount
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

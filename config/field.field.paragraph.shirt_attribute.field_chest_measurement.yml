@@ -1,0 +1,19 @@
+uuid: d90c0627-71d2-4dde-9345-ed26345b9050
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_chest_measurement
+    - paragraphs.paragraphs_type.shirt_attribute
+id: paragraph.shirt_attribute.field_chest_measurement
+field_name: field_chest_measurement
+entity_type: paragraph
+bundle: shirt_attribute
+label: 'Chest Measurement'
+description: 'in cm'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

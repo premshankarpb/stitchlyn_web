@@ -1,0 +1,21 @@
+uuid: c8ea95c0-d541-4f65-8215-ba03a8330bba
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_invoice_number
+    - node.type.invoice
+  module:
+    - serial
+id: node.invoice.field_invoice_number
+field_name: field_invoice_number
+entity_type: node
+bundle: invoice
+label: 'Invoice Number'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: serial
