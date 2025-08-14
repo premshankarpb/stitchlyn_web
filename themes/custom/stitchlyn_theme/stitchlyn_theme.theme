@@ -4,6 +4,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\file\Entity\File;
 use Drupal\profile\Entity\Profile;
 use Drupal\Core\Url;
+use Drupal\Core\Site\Settings;
 
 /**
  * Implements hook_preprocess_paragraph__feature_item().
@@ -225,3 +226,33 @@ function stitchlyn_theme_theme_suggestions_page_alter(array &$suggestions, array
 // function stitchlyn_theme_preprocess_menu__account(&$variables) {
 //   \Drupal::logger('debug_menu')->notice('<pre>' . print_r($variables['items'], TRUE) . '</pre>');
 // }
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function stitchlyn_theme_preprocess_node(array &$variables) {
+
+  $node = $variables['node'];
+
+  // Ensure this is a node of content type 'product' and has the field
+  if ($node instanceof \Drupal\node\NodeInterface && $node->bundle() === 'product' && $node->hasField('field_product_images')) {
+    $image_urls = [];
+
+    // Get the referenced image files
+    $images = $node->get('field_product_images')->referencedEntities();
+    foreach ($images as $image) {
+      if ($image instanceof File) {
+        // Get file URI (e.g., "public://images/example.jpg")
+        $file_uri = $image->getFileUri();
+
+        // Get full absolute URL from file_uri
+        //$url = $file_url_generator->generateAbsoluteString($file_uri);
+        $url = \Drupal::service('file_url_generator')->generateAbsoluteString($file_uri);
+        $image_urls[] = $url;
+      }
+    }
+
+    // Pass the image URLs to the Twig template
+    $variables['product_image_urls'] = $image_urls;
+  }
+}
