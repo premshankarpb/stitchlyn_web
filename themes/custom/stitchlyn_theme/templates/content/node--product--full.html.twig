@@ -99,7 +99,78 @@
   </header>
   <div>
     {# Comments not part of content, so they won't inherit .text-content styles. #}
-    {{ content|without('comment') }}
+        <!-- Product Detail Section -->
+    <section class="product-detail-section py-5 bg-white">
+      <div class="container">
+        <div class="row align-items-start">
+          <!-- Left: Image Gallery Slider -->
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="product-gallery">
+              <!-- Main Image Slider -->
+              <div class="product-slider magnific-gallery mb-3">
+                {% for url in product_image_urls %}
+                  <a href="{{ url }}" class="gallery-popup" title="Product Image 1">
+                    <img src="{{ url }}" alt="Product Image 1" class="img-fluid rounded-4 shadow w-100"/>
+                  </a>
+                {% endfor %}
+              </div>
+              <!-- Thumbnail Slider -->
+              <div class="product-thumbs-slider mt-2">
+              {% for url in product_image_urls %}
+                  <div>
+                  <img src="{{ url }}" alt="Product image"
+                    class="img-fluid rounded-3 shadow"
+                    style="width: 70px; height: 70px; object-fit: cover; cursor: pointer; border: 2px solid #eee;"
+                  />
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+          </div>
+          <!-- Right: Product Details -->
+          <div class="col-lg-6">
+            <h2 class="product-title mb-2">{{ node.title.0.value }}</h2>
+            <div class="mb-3">
+              <span class="badge bg-success me-2">{{ content.stock }}</span>
+              <span class="h4 text-primary">₹{{ node.field_cost_price.value }}</span>
+            </div>
+            <p class="product-description mb-3">
+              {{ content.body }}
+            </p>
+              {{ content.field_attributes }}
+            <div class="mb-4">
+              <label for="quantity" class="form-label">Quantity:</label>
+              <input
+                type="number"
+                id="quantity"
+                class="form-control d-inline-block w-auto ms-2"
+                value="1"
+                min="1"
+                style="width: 80px;"
+              />
+            </div>
+            <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+              <button class="btn btn-primary px-4">
+                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+              </button>
+              <button class="btn btn-outline-primary px-4">
+                <i class="fas fa-bolt me-2"></i>Buy Now
+              </button>
+              <a
+                href="#"
+                class="btn btn-link text-decoration-none"
+                ><i class="fas fa-heart me-1"></i>Add to Wishlist</a
+              >
+            </div>
+            <div class="small text-muted">
+              <i class="fas fa-shield-alt me-1"></i> 30-day money-back guarantee
+              &middot; Secure checkout
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {# content|without('comment') #}
   </div>
   {% if content.comment %}
     <div id="comments" class="{{ layout }}">
