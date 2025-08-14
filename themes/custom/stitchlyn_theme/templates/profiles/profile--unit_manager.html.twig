@@ -1,0 +1,111 @@
+{#
+  profile--unit-manager.html.twig
+  Card layout for the Unit Manager profile type.
+
+  Fields (from your screenshot):
+  - field_name (Text)
+  - field_phone_number (Phone)
+  - field_unit (Taxonomy term: Production Units)
+  - field_remarks (Text, formatted, long)
+
+  Uses custom route: stitchlyn_basic.profile_form
+#}
+
+{%
+  set left_classes = [
+    'profile',
+    'profile--' ~ profile.id,
+    'profile--type--' ~ profile.bundle|clean_class,
+    profile.isDefault() ? 'profile--is-default',
+    view_mode ? 'profile--view-mode--' ~ view_mode|clean_class,
+    'clearfix',
+    'col-md-7',
+    'col-lg-8'
+  ]
+%}
+
+<div class="row g-4 mb-5 align-items-start">
+  {# ===== Left: Unit Manager details ===== #}
+  <div{{ attributes.addClass(left_classes) }}>
+    {{ title_suffix.contextual_links }}
+
+    {% set owner_id = profile.getOwnerId() %}
+
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <h5 class="card-title mb-0">Unit Manager Profile</h5>
+
+          <a
+            href="{{ path('stitchlyn_basic.profile_form', {'user': owner_id, 'profile_type': 'unit_manager'}) }}"
+            class="btn btn-sm btn-primary"
+            title="Edit Unit Manager Profile"
+          >
+            <i class="fas fa-pen me-1" aria-hidden="true"></i> Edit
+          </a>
+        </div>
+
+        <ul class="list-group list-group-flush">
+
+          {# Name #}
+          {% if content.field_name is defined and content.field_name %}
+            <li class="list-group-item">
+              <i class="fas fa-id-badge text-primary me-2" aria-hidden="true"></i>
+              <strong>Name:</strong>
+              {{ content.field_name }}
+            </li>
+          {% endif %}
+
+          {# Phone #}
+          {% if content.field_phone_number is defined and content.field_phone_number %}
+            <li class="list-group-item">
+              <i class="fas fa-phone text-primary me-2" aria-hidden="true"></i>
+              <strong>Phone:</strong>
+              {{ content.field_phone_number }}
+            </li>
+          {% endif %}
+
+          {# Production Unit (taxonomy) #}
+          {% if content.field_unit is defined and content.field_unit %}
+            <li class="list-group-item">
+              <i class="fas fa-industry text-primary me-2" aria-hidden="true"></i>
+              <strong>Unit:</strong>
+              {{ content.field_unit }}
+            </li>
+          {% endif %}
+        </ul>
+
+        {# Render any leftover fields so nothing is dropped #}
+        {% set printed = [
+          'field_name',
+          'field_phone_number',
+          'field_unit',
+          'field_remarks'
+        ] %}
+        {% set rest = content|without(printed) %}
+        {% if rest|render %}
+          <div class="mt-3">
+            {{ rest }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# ===== Right: Notes / Remarks ===== #}
+  <div class="col-md-5 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title mb-3 text-center">Unit Manager Notes</h5>
+        {% if content.field_remarks is defined and content.field_remarks %}
+          {{ content.field_remarks }}
+        {% else %}
+          <p class="mb-0">
+            Keep your contact details and assigned production unit up to date. This helps
+            with accurate work-order assignments, tracking, and coordination across teams.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

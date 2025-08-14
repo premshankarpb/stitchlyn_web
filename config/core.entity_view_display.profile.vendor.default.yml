@@ -7,11 +7,13 @@ dependencies:
     - field.field.profile.vendor.field_contact_person
     - field.field.profile.vendor.field_gst_number
     - field.field.profile.vendor.field_phone_number
+    - field.field.profile.vendor.field_remarks
     - field.field.profile.vendor.field_status
     - field.field.profile.vendor.field_vendor_name
     - profile.type.vendor
   module:
     - phonenumber
+    - text
 id: profile.vendor.default
 targetEntityType: profile
 bundle: vendor
@@ -19,14 +21,14 @@ mode: default
 content:
   field_billing_address:
     type: basic_string
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     weight: 4
     region: content
   field_contact_person:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -34,7 +36,7 @@ content:
     region: content
   field_gst_number:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -42,27 +44,27 @@ content:
     region: content
   field_phone_number:
     type: phone_international
-    label: above
+    label: hidden
     settings:
       title: ''
       link: false
     third_party_settings: {  }
     weight: 2
     region: content
-  field_status:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
+  field_remarks:
+    type: text_default
+    label: hidden
+    settings: {  }
     third_party_settings: {  }
-    weight: 5
+    weight: 12
     region: content
   field_vendor_name:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     weight: 0
     region: content
-hidden: {  }
+hidden:
+  field_status: true

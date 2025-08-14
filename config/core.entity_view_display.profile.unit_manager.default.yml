@@ -5,10 +5,12 @@ dependencies:
   config:
     - field.field.profile.unit_manager.field_name
     - field.field.profile.unit_manager.field_phone_number
+    - field.field.profile.unit_manager.field_remarks
     - field.field.profile.unit_manager.field_unit
     - profile.type.unit_manager
   module:
     - phonenumber
+    - text
 id: profile.unit_manager.default
 targetEntityType: profile
 bundle: unit_manager
@@ -16,7 +18,7 @@ mode: default
 content:
   field_name:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -24,16 +26,23 @@ content:
     region: content
   field_phone_number:
     type: phone_international
-    label: above
+    label: hidden
     settings:
       title: ''
       link: false
     third_party_settings: {  }
     weight: 2
     region: content
+  field_remarks:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 12
+    region: content
   field_unit:
     type: entity_reference_label
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }

@@ -1,0 +1,4 @@
+access user profiles:
+  title: 'Access Stitchlyn user profiles route'
+  description: 'Allows using the custom add/edit profile page.'
+  restrict: false

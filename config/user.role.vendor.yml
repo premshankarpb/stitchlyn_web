@@ -1,9 +1,14 @@
 uuid: d52864f0-d9e0-4976-8518-1a669b253271
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - profile
 id: vendor
 label: Vendor
 weight: 4
 is_admin: null
-permissions: {  }
+permissions:
+  - 'create vendor profile'
+  - 'update own vendor profile'
+  - 'view own vendor profile'

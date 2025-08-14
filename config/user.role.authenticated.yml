@@ -10,8 +10,10 @@ dependencies:
     - contact
     - file
     - filter
+    - profile
     - search
     - shortcut
+    - stitchlyn_basic
     - system
 _core:
   default_config_hash: cFrlqjtkTfvY3RGccjJkPf1SGIfJ942IrxTLWAO4mgA
@@ -24,9 +26,14 @@ permissions:
   - 'access content'
   - 'access shortcuts'
   - 'access site-wide contact form'
+  - 'access user profiles'
+  - 'create customer profile'
   - 'delete own files'
   - 'post comments'
   - 'search content'
   - 'skip comment approval'
+  - 'update own customer profile'
   - 'use text format basic_html'
   - 'use text format webform_default'
+  - 'view own customer profile'
+  - 'view own profile'

@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - core.entity_form_mode.user.register
+    - field.field.user.user.field_first_name
+    - field.field.user.user.field_last_name
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
@@ -37,5 +39,8 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
 hidden:
+  customer_profiles: true
+  field_first_name: true
+  field_last_name: true
   unit_manager_profiles: true
   vendor_profiles: true

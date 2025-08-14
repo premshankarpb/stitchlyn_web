@@ -5,10 +5,12 @@ dependencies:
   config:
     - field.field.profile.unit_manager.field_name
     - field.field.profile.unit_manager.field_phone_number
+    - field.field.profile.unit_manager.field_remarks
     - field.field.profile.unit_manager.field_unit
     - profile.type.unit_manager
   module:
     - phonenumber
+    - text
 id: profile.unit_manager.default
 targetEntityType: profile
 bundle: unit_manager
@@ -42,6 +44,14 @@ content:
       remove_start_zero: true
       mask_formatter: true
       show_error: false
+    third_party_settings: {  }
+  field_remarks:
+    type: text_textarea
+    weight: 38
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
     third_party_settings: {  }
   field_unit:
     type: entity_reference_autocomplete

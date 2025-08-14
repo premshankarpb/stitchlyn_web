@@ -1,0 +1,22 @@
+uuid: f14f43ae-2e9a-4d8b-b117-a22fbf9ad4ff
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_remarks
+    - profile.type.unit_manager
+  module:
+    - text
+id: profile.unit_manager.field_remarks
+field_name: field_remarks
+entity_type: profile
+bundle: unit_manager
+label: Remarks
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

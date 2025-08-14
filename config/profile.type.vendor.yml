@@ -9,5 +9,5 @@ multiple: false
 registration: false
 roles:
   vendor: vendor
-allow_revisions: true
-new_revision: true
+allow_revisions: false
+new_revision: false

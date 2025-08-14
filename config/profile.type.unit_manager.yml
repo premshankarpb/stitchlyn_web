@@ -9,5 +9,5 @@ multiple: false
 registration: false
 roles:
   unit_manager: unit_manager
-allow_revisions: true
+allow_revisions: false
 new_revision: true

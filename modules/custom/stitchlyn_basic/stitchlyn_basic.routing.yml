@@ -5,3 +5,14 @@ stitchlyn_basic.dashboard:
     _title: 'Dashboard'
   requirements:
     _permission: 'access content'
+stitchlyn_basic.profile_form:
+  path: '/user/{user}/profiles/{profile_type}/update'
+  defaults:
+    _controller: '\Drupal\stitchlyn_basic\Controller\ProfileFormController::build'
+    _title: 'Manage profile'
+  requirements:
+    _permission: 'access user profiles'
+  options:
+    parameters:
+      user:
+        type: entity:user

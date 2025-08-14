@@ -1,0 +1,22 @@
+uuid: 1b09c153-8d43-45bc-b14f-3780ea9154b0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_remarks
+    - profile.type.vendor
+  module:
+    - text
+id: profile.vendor.field_remarks
+field_name: field_remarks
+entity_type: profile
+bundle: vendor
+label: Remarks
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

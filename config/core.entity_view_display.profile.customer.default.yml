@@ -5,7 +5,6 @@ dependencies:
   config:
     - field.field.profile.customer.field_associated_diocese
     - field.field.profile.customer.field_billing_address
-    - field.field.profile.customer.field_customer_name
     - field.field.profile.customer.field_date_of_birth
     - field.field.profile.customer.field_division
     - field.field.profile.customer.field_gst_number
@@ -27,7 +26,7 @@ mode: default
 content:
   field_associated_diocese:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -35,22 +34,14 @@ content:
     region: content
   field_billing_address:
     type: basic_string
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     weight: 4
     region: content
-  field_customer_name:
-    type: string
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    weight: 0
-    region: content
   field_date_of_birth:
     type: datetime_default
-    label: above
+    label: hidden
     settings:
       timezone_override: ''
       format_type: medium
@@ -59,7 +50,7 @@ content:
     region: content
   field_division:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -67,7 +58,7 @@ content:
     region: content
   field_gst_number:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -75,7 +66,7 @@ content:
     region: content
   field_name_of_referrer:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -83,7 +74,7 @@ content:
     region: content
   field_ordination_day:
     type: datetime_default
-    label: above
+    label: hidden
     settings:
       timezone_override: ''
       format_type: medium
@@ -92,7 +83,7 @@ content:
     region: content
   field_parish:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -100,7 +91,7 @@ content:
     region: content
   field_phone_number:
     type: phone_international
-    label: above
+    label: hidden
     settings:
       title: ''
       link: false
@@ -109,7 +100,7 @@ content:
     region: content
   field_referrer_contact:
     type: phone_international
-    label: above
+    label: hidden
     settings:
       title: ''
       link: false
@@ -118,7 +109,7 @@ content:
     region: content
   field_remarks:
     type: text_default
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     weight: 12

@@ -1,0 +1,207 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for profiles.
+ *
+ * Available variables:
+ * - content: Items for the content of the profile.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - view_mode: The profile view mode used.
+ * - profile: The profile object.
+ * - url: The profile URL, if available.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ *
+ * @ingroup themeable
+ */
+#}
+{%
+  set classes = [
+  'profile',
+  'profile--' ~ profile.id,
+  'profile--type--' ~ profile.bundle|clean_class,
+  profile.isDefault() ? 'profile--is-default',
+  view_mode ? 'profile--view-mode--' ~ view_mode|clean_class,
+  'clearfix',
+]
+%}
+{#
+  profile--customer.html.twig
+  Pretty card layout for the Customer profile type.
+
+  Notes:
+  - Adjust field names below to match your site if different.
+  - Uses your custom route `stitchlyn_basic.profile_form` for the Edit button.
+#}
+{%
+  set classes = [
+    'profile',
+    'profile--' ~ profile.id,
+    'profile--type--' ~ profile.bundle|clean_class,
+    profile.isDefault() ? 'profile--is-default',
+    view_mode ? 'profile--view-mode--' ~ view_mode|clean_class,
+    'clearfix',
+    'col-md-7',
+    'col-lg-8'
+  ]
+%}
+<div class="row g-4 mb-5">
+  {# Left section#}
+  <div{{ attributes.addClass(classes) }}>
+    {{ title_suffix.contextual_links }}
+
+    {# Get owner id for the Edit link #}
+    {% set owner_id = profile.getOwnerId() %}
+
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <h5 class="card-title mb-0">Customer Profile</h5>
+
+          {# Small Edit button -> your custom add/edit route #}
+          <a
+            href="{{ path('stitchlyn_basic.profile_form', {'user': owner_id, 'profile_type': 'customer'}) }}"
+            class="btn btn-sm btn-primary"
+            title="Edit Customer Profile"
+          >
+            <i class="fas fa-pen me-1" aria-hidden="true"></i> Edit
+          </a>
+        </div>
+
+        <ul class="list-group list-group-flush">
+
+          {# Phone #}
+          {% if content.field_phone_number is defined and content.field_phone_number %}
+            <li class="list-group-item">
+              <i class="fas fa-phone text-primary me-2" aria-hidden="true"></i>
+              <strong>Phone:</strong>
+              {{ content.field_phone_number }}
+            </li>
+          {% endif %}
+
+          {# DOB #}
+          {% if content.field_date_of_birth is defined and content.field_date_of_birth %}
+            <li class="list-group-item">
+              <i class="fas fa-birthday-cake text-primary me-2" aria-hidden="true"></i>
+              <strong>Date of Birth:</strong>
+              {{ content.field_date_of_birth }}
+            </li>
+          {% endif %}
+
+          {# Ordination Day #}
+          {% if content.field_ordination_day is defined and content.field_ordination_day %}
+            <li class="list-group-item">
+              <i class="fas fa-cross text-primary me-2" aria-hidden="true"></i>
+              <strong>Ordination Day:</strong>
+              {{ content.field_ordination_day }}
+            </li>
+          {% endif %}
+
+          {# Division / Diocese / Parish #}
+          {% if content.field_division is defined and content.field_division %}
+            <li class="list-group-item">
+              <i class="fas fa-sitemap text-primary me-2" aria-hidden="true"></i>
+              <strong>Division / Order:</strong>
+              {{ content.field_division }}
+            </li>
+          {% endif %}
+
+          {% if content.field_associated_diocese is defined and content.field_associated_diocese %}
+            <li class="list-group-item">
+              <i class="fas fa-church text-primary me-2" aria-hidden="true"></i>
+              <strong>Diocese:</strong>
+              {{ content.field_associated_diocese }}
+            </li>
+          {% endif %}
+
+          {% if content.field_parish is defined and content.field_parish %}
+            <li class="list-group-item">
+              <i class="fas fa-place-of-worship text-primary me-2" aria-hidden="true"></i>
+              <strong>Parish:</strong>
+              {{ content.field_parish }}
+            </li>
+          {% endif %}
+
+          {# GST #}
+          {% if content.field_gst_number is defined and content.field_gst_number %}
+            <li class="list-group-item">
+              <i class="fas fa-file-invoice-dollar text-primary me-2" aria-hidden="true"></i>
+              <strong>GST Number:</strong>
+              {{ content.field_gst_number }}
+            </li>
+          {% endif %}
+
+          {# Referrer #}
+          {% if content.field_name_of_referrer is defined and content.field_name_of_referrer %}
+            <li class="list-group-item">
+              <i class="fas fa-user-friends text-primary me-2" aria-hidden="true"></i>
+              <strong>Referrer:</strong>
+              {{ content.field_name_of_referrer }}
+            </li>
+          {% endif %}
+
+          {% if content.field_referrer_contact is defined and content.field_referrer_contact %}
+            <li class="list-group-item">
+              <i class="fas fa-phone-square text-primary me-2" aria-hidden="true"></i>
+              <strong>Referrer Contact:</strong>
+              {{ content.field_referrer_contact }}
+            </li>
+          {% endif %}
+
+          {# Billing Address #}
+          {% if content.field_billing_address is defined and content.field_billing_address %}
+            <li class="list-group-item">
+              <i class="fas fa-map-marker-alt text-primary me-2" aria-hidden="true"></i>
+              <strong>Billing Address:</strong>
+              <div class="mt-1">{{ content.field_billing_address }}</div>
+            </li>
+          {% endif %}
+        </ul>
+
+        {# Any leftover fields (so nothing is lost) #}
+        {% set printed = [
+          'field_phone_number',
+          'field_date_of_birth',
+          'field_ordination_day',
+          'field_division',
+          'field_associated_diocese',
+          'field_parish',
+          'field_gst_number',
+          'field_name_of_referrer',
+          'field_referrer_contact',
+          'field_billing_address',
+          'field_remarks',
+        ] %}
+
+        {% set rest = content|without(printed) %}
+        {% if rest|render %}
+          <div class="mt-3">
+            {{ rest }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# Right section#}
+  <div class="col-md-5 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title mb-3 text-center">Customer Bio</h5>
+        <p class="mb-4 container-fluid">
+          {% if content.field_remarks is defined and content.field_remarks %}
+            {{ content.field_remarks }}
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>

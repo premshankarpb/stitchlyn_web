@@ -1,5 +1,12 @@
 <?php
 
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\user\UserInterface;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\file\Entity\File;
+
 function stitchlyn_basic_theme($existing, $type, $theme, $path) {
   return [
     'stitchlyn_dashboard' => [
@@ -8,4 +15,212 @@ function stitchlyn_basic_theme($existing, $type, $theme, $path) {
       'path' => $path . '/templates',
     ],
   ];
+}
+
+/**
+ * Small helper: build the section for one profile type.
+ *
+ * @param \Drupal\user\UserInterface $account
+ * @param string $profile_type   Machine name, e.g. 'customer'
+ * @param string $label          Section label, e.g. 'Customer Profile'
+ * @param string $view_mode      Profile view mode to use (default)
+ *
+ * @return array Render array
+ */
+function _stitchlyn_basic_build_profile_section(UserInterface $account, string $profile_type, string $label, string $view_mode = 'default'): array {
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $profile = $storage->loadByUser($account, $profile_type, TRUE);
+
+  $build = [
+    '#type' => 'container',
+    '#attributes' => ['class' => ['stitchlyn-profile-section', "stitchlyn-profile-$profile_type"]],
+  ];
+  // $build['title'] = ['#markup' => '<h2>' . $label . '</h2>'];
+
+  if ($profile) {
+    // Render the profile entity.
+    $build['profile'] = \Drupal::entityTypeManager()
+      ->getViewBuilder('profile')
+      ->view($profile, $view_mode);
+
+    // Edit link (safe).
+    if ($profile->access('update')) {
+      $edit_link = Link::fromTextAndUrl(
+        t('Edit @label', ['@label' => $label]),
+        stitchlyn_basic_profile_manage_url($account, $profile_type)
+      )->toRenderable();
+      $edit_link['#attributes']['class'][] = 'btn p-3 d-none btn-sm btn-primary';
+      $build['manage_link'] = $edit_link;
+    }
+  }
+  else {
+    // No profile → show Create button (only for self or admins).
+    $current = \Drupal::currentUser();
+    if ($current->id() == $account->id() || $current->hasPermission('administer users')) {
+      $add_link = Link::fromTextAndUrl(
+        t('Create @label', ['@label' => $label]),
+        stitchlyn_basic_profile_add_url($account, $profile_type)
+      )->toRenderable();
+      $add_link['#attributes']['class'] = ['button', 'button--primary'];
+      $build['create_link'] = $add_link;
+    }
+  }
+
+  return $build;
+}
+
+
+/**
+ * Append profile sections to the full user page (/user/{uid}).
+ */
+function stitchlyn_basic_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+  if ($entity->getEntityTypeId() !== 'user' || ($build['#view_mode'] ?? '') !== 'full') {
+    return;
+  }
+  /** @var \Drupal\user\UserInterface $account */
+  $account = $entity;
+
+  // Always show Customer profile area for authenticated users.
+  if ($account->isAuthenticated()) {
+    $build['stitchlyn_customer_profile'] =
+      _stitchlyn_basic_build_profile_section($account, 'customer', t('Customer Profile'), 'default');
+  }
+
+  // Vendor profile if role present.
+  if ($account->hasRole('vendor')) {
+    $build['stitchlyn_vendor_profile'] =
+      _stitchlyn_basic_build_profile_section($account, 'vendor', t('Vendor Profile'), 'default');
+  }
+
+  // Unit Manager profile if role present.
+  if ($account->hasRole('unit_manager')) {
+    $build['stitchlyn_unit_manager_profile'] =
+      _stitchlyn_basic_build_profile_section($account, 'unit_manager', t('Unit Manager Profile'), 'default');
+  }
+
+  // Add a wrapper class for theming.
+  $build['#attributes']['class'][] = 'stitchlyn-user-profiles';
+  $build['#cache']['max-age'] = 0;
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for user templates.
+ */
+function stitchlyn_basic_preprocess_user(array &$variables) {
+  // Find the user entity safely (works for full view + others).
+  /** @var \Drupal\user\UserInterface|null $account */
+  $account = $variables['user']
+    ?? ($variables['elements']['#user'] ?? NULL)
+    ?? ($variables['elements']['#account'] ?? NULL);
+
+  if (!$account) {
+    return;
+  }
+
+  // Basics for header.
+  $variables['edit_url'] = \Drupal\Core\Url::fromRoute('entity.user.edit_form', [
+    'user' => $account->id(),
+  ])->toString();
+
+  // Some installs hide the email for non-admins; set only if viewable.
+  $variables['first_name'] = ($account->hasField('field_first_name') && !$account->get('field_first_name')->isEmpty())
+    ? $account->get('field_first_name')->value
+    : '';
+  $variables['last_name'] = ($account->hasField('field_last_name') && !$account->get('field_last_name')->isEmpty())
+    ? $account->get('field_last_name')->value
+    : '';
+  $variables['email'] = $account->getEmail() ?: '';
+  $variables['member_since'] = \Drupal::service('date.formatter')
+    ->format($account->getCreatedTime(), 'custom', 'd M Y');
+
+  // Picture URLs.
+  $variables['picture_thumb_url'] = '';
+  $variables['picture_original_url'] = '';
+
+  if ($account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
+    $file = $account->get('user_picture')->entity;
+    if ($file instanceof File) {
+      $uri = $file->getFileUri();
+      // Use file_url_generator service instead of file_create_url().
+      $file_url_generator = \Drupal::service('file_url_generator');
+      // Original URL.
+      $variables['picture_original_url'] = $file_url_generator->generateAbsoluteString($uri);
+      // Thumbnail URL.
+      if ($style = ImageStyle::load('thumbnail')) {
+        $variables['picture_thumb_url'] = $style->buildUrl($uri);
+      }
+      else {
+        $variables['picture_thumb_url'] = $variables['picture_original_url'];
+      }
+    }
+  }
+
+  // Human role labels.
+  $role_storage = \Drupal::entityTypeManager()->getStorage('user_role');
+  $labels = [];
+  foreach ($account->getRoles() as $rid) {
+    if ($role = $role_storage->load($rid)) {
+      $labels[] = $role->label();
+    }
+  }
+  $variables['roles_labels'] = $labels;
+
+  // Simple primary role label for the details card.
+  if (in_array('unit_manager', $account->getRoles(), TRUE)) {
+    $variables['usr_role'] = 'Unit Manager';
+  }
+  elseif (in_array('vendor', $account->getRoles(), TRUE)) {
+    $variables['usr_role'] = 'Vendor';
+  }
+  else {
+    $variables['usr_role'] = 'Customer';
+  }
+
+  $variables['is_active'] = (bool) $account->isActive();
+
+  // Bring in the profile sections injected by hook_entity_view().
+  $build = $variables['elements'] ?? [];
+  $variables['customer_profile_section'] = $build['stitchlyn_customer_profile'] ?? NULL;
+  $variables['vendor_profile_section']   = $build['stitchlyn_vendor_profile'] ?? NULL;
+  $variables['unitmgr_profile_section']  = $build['stitchlyn_unit_manager_profile'] ?? NULL;
+}
+
+/**
+ * Build a safe URL to the profile add form.
+ */
+function stitchlyn_basic_profile_add_url(UserInterface $account, string $profile_type): Url {
+  /** @var \Drupal\Core\Routing\RouteProviderInterface $rp */
+  $rp = \Drupal::service('router.route_provider');
+  try {
+    // Preferred route (Profile module ≥8.x has this).
+    $rp->getRouteByName('entity.profile.add_form');
+    return Url::fromRoute('entity.profile.add_form', [
+      'user' => $account->id(),
+      'profile_type' => $profile_type,
+    ]);
+  }
+  catch (\Exception $e) {
+    // Fallback to the path in case the route name differs/missing.
+    return Url::fromUserInput('/user/' . $account->id() . '/profiles/' . $profile_type . '/update');
+  }
+}
+
+/**
+ * Build a safe URL to the profile manage/edit form.
+ */
+function stitchlyn_basic_profile_manage_url(UserInterface $account, string $profile_type): Url {
+  /** @var \Drupal\Core\Routing\RouteProviderInterface $rp */
+  $rp = \Drupal::service('router.route_provider');
+  try {
+    // Most installs expose this as 'entity.profile.manage'.
+    $rp->getRouteByName('entity.profile.manage');
+    return Url::fromRoute('entity.profile.manage', [
+      'user' => $account->id(),
+      'profile_type' => $profile_type,
+    ]);
+  }
+  catch (\Exception $e) {
+    // Fallback to path.
+    return Url::fromUserInput('/user/' . $account->id() . '/profiles/' . $profile_type . '/update');
+  }
 }

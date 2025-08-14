@@ -29,15 +29,15 @@ class LoginRedirectSubscriber implements EventSubscriberInterface {
     $request = $event->getRequest();
 
     // Only act on /user/login redirect
-    if ($request->getPathInfo() === '/user/login' || $request->getPathInfo() === '/user') {
-      if ($this->currentUser->isAuthenticated()) {
-        $roles = $this->currentUser->getRoles();
-        if (in_array('administrator', $roles)) {
-          $url = Url::fromRoute('stitchlyn_basic.dashboard')->toString();
-          $response = new RedirectResponse($url);
-          $event->setResponse($response);
-        }
-      }
-    }
+    // if ($request->getPathInfo() === '/user/login' || $request->getPathInfo() === '/user') {
+    //   if ($this->currentUser->isAuthenticated()) {
+    //     $roles = $this->currentUser->getRoles();
+    //     if (in_array('administrator', $roles)) {
+    //       $url = Url::fromRoute('stitchlyn_basic.dashboard')->toString();
+    //       $response = new RedirectResponse($url);
+    //       $event->setResponse($response);
+    //     }
+    //   }
+    // }
   }
 }
