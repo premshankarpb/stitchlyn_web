@@ -12,3 +12,18 @@
 .path-frontpage .page-banner-section {
     display: none !important;
 }
+
+.product-card img{
+  height: 220px;
+}
+
+.card-title a{
+  font-size: 1.25rem;
+  text-decoration: none !important;
+  color: inherit;
+}
+
+.card-title a:hover {
+  text-decoration: underline;
+  color: #000; /* or your theme's color */
+}
