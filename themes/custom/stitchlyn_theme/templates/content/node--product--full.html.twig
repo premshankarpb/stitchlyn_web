@@ -75,28 +75,6 @@
   ]
 %}
 <article{{ attributes.addClass(classes) }}>
-  <header class="{{ layout }}">
-    {{ title_prefix }}
-      {% if label and not page %}
-      <h2{{ title_attributes.addClass('node__title') }}>
-        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-      </h2>
-    {% endif %}
-    {{ title_suffix }}
-    {% if display_submitted %}
-      <div class="node__meta">
-      {% if author_picture %}
-        <div class="node__author-image">
-          {{ author_picture }}
-        </div>
-      {% endif %}
-        <span{{ author_attributes }}>
-          {{ 'By'|t }} {% apply spaceless %}{{ author_name }}{% endapply %}, {{ date }}
-        </span>
-        {{ metadata }}
-      </div>
-    {% endif %}
-  </header>
   <div>
     {# Comments not part of content, so they won't inherit .text-content styles. #}
         <!-- Product Detail Section -->
@@ -151,20 +129,8 @@
             </div>
             <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
               <button class="btn btn-primary px-4">
-                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                <i class="fas fa-shopping-cart me-2"></i>Request for a Quote
               </button>
-              <button class="btn btn-outline-primary px-4">
-                <i class="fas fa-bolt me-2"></i>Buy Now
-              </button>
-              <a
-                href="#"
-                class="btn btn-link text-decoration-none"
-                ><i class="fas fa-heart me-1"></i>Add to Wishlist</a
-              >
-            </div>
-            <div class="small text-muted">
-              <i class="fas fa-shield-alt me-1"></i> 30-day money-back guarantee
-              &middot; Secure checkout
             </div>
           </div>
         </div>
