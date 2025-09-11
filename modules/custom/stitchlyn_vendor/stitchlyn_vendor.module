@@ -38,5 +38,11 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
       ],
       'template' => 'po-detail',
     ],
+    'stitchlyn_my_purchase_orders' => [
+      'variables' => [
+        'node' => NULL
+      ],
+      'template' => 'my-purchase-orders',
+    ],
   ];
 }
