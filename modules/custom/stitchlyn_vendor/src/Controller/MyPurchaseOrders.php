@@ -41,6 +41,9 @@ class MyPurchaseOrders extends ControllerBase {
       '#theme' => 'stitchlyn_my_purchase_orders',
       '#node' => $nodes,
       '#title' => $this->t('My Purchase Orders'),
+      '#cache' => [
+        'max-age' => 0,
+      ],
     ];
   }
 }
