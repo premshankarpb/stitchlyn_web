@@ -1,0 +1,45 @@
+<article class="purchase-orders-full">
+
+  {% if node.field_payment_status.entity.label == 'Paid' %}
+    {% set pay_class = 'bg-success' %}
+  {% else %}
+    {% set pay_class = 'bg-danger' %}
+  {% endif %}
+
+  <h2>{{ title }}</h2>  <!-- Display the page title -->
+
+  {% if node %}
+    <ul class="purchase-order-list">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Subtotal Cost</th>
+              <th>Tax</th>
+              <th>Total Cost</th>
+              <th>Payment Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for node_item in node %}
+              <tr>
+                <td>{{ node_item.label }}</td>
+                <td>{{ node_item.field_date_of_purchase.value|date('m/d/Y') }}</td>
+                <td>₹{{ node_item.field_subtotal_amount.value }}
+                <td>₹{{ node_item.field_tax_amount.value }}
+                <td>₹{{ node_item.field_total_amount.value }}
+                <td>₹{{ node_item.field_payment_status.entity.label }}
+
+              </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+    </ul>
+  {% else %}
+  <p>No purchase orders found.</p>
+  {% endif %}
+
+
+</article>

@@ -62,3 +62,11 @@ stitchlyn_vendor.purchase_order_detail:
     parameters:
       node:
         type: entity:node
+stitchlyn_vendor.my_purchase_orders:
+  path: '/my_purchase_orders'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\MyPurchaseOrders::view'
+    _title_callback: '\Drupal\node\Controller\NodeViewController::title'
+  requirements:
+    _permission: 'access content'
+
