@@ -1,0 +1,43 @@
+{% set form_classes = [
+  'p-4',
+  'rounded-4',
+  'shadow-sm',
+  'bg-light',
+] %}
+
+<section id="contact-form" class="contact-form-section py-5 bg-white" data-aos="fade-up">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h2 class="section-title text-center mb-4">Get in Touch</h2>
+        <form{{ attributes.addClass('p-4', 'rounded-4', 'shadow-sm', 'bg-light') }}>
+          <div class="row g-3">
+            <div class="col-md-6">
+              {{ form.elements.name }}
+            </div>
+            <div class="col-md-6">
+              {{ form.elements.email }}
+            </div>
+            <div class="col-12">
+              {{ form.elements.subject }}
+            </div>
+            <div class="col-12">
+              {{ form.elements.message }}
+            </div>
+
+            <div class="col-12 text-end">
+              {{ form.actions }}
+            </div>
+          </div>
+
+          {# Hidden fields (if any) #}
+          {% for key, field in form %}
+            {% if field['#type'] is defined and field['#type'] == 'hidden' %}
+              {{ field }}
+            {% endif %}
+          {% endfor %}
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
