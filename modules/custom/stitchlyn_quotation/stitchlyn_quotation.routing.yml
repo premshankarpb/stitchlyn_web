@@ -1,5 +1,5 @@
 stitchlyn_quotation.detail:
-  path: '/quotation/{node}'
+  path: 'dashboard/quotation/{node}'
   defaults:
     _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationController::view'
     _title_callback: '\Drupal\stitchlyn_quotation\Controller\QuotationController::title'
