@@ -175,4 +175,61 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
     // Pass the image URLs to the Twig template
     $variables['product_image_urls'] = $image_urls;
   }
+
+  if ($node instanceof \Drupal\node\NodeInterface && $node->bundle() === 'quotation') {
+    $quotation_item_data_2 = [];
+    // Check if the current node is a Quotation node
+    if ($node->getType() == 'quotation') {
+
+      // Query all Quotation Item nodes that reference this Quotation node
+      $query = \Drupal::entityQuery('node')
+        ->condition('type', 'quatation_line_items') // Quotation Item content type
+        ->condition('field_linked_quotation', $node->id()) // Assuming field_quotation_reference references the Quotation node
+        ->accessCheck(TRUE)
+        ->execute();
+
+      // Load the Quotation Item nodes and retrieve data
+      $quotation_items = \Drupal\node\Entity\Node::loadMultiple($query);
+
+      $user = NULL;
+      $profile = NULL;
+      if ($node->hasField('field_customer_reference') && !$node->get('field_customer_reference')->isEmpty()) {
+        $user = $node->field_customer_reference->entity;
+        // Load profile (assuming profile type is 'customer')
+        $profiles = \Drupal::entityTypeManager()
+          ->getStorage('profile')
+          ->loadByProperties([
+            'uid' => $user->id(),
+            'type' => 'customer',
+          ]);
+        $profile = reset($profiles);
+      }
+
+      foreach ($quotation_items as $item) {
+        $product_title = NULL;
+
+        // 4. Load the referenced Product node
+        if ($item->hasField('field_product') && !$item->get('field_product')->isEmpty()) {
+          $product_node = $item->get('field_product')->entity;
+
+          if ($product_node instanceof \Drupal\node\NodeInterface) {
+            $product_title = $product_node->label();
+          }
+        }
+
+        $quotation_item_data[] = [
+          'title' => $item->label(),
+          'quantity' => $item->get('field_quantity')->value ?? NULL,
+          'product_title' => $product_title,
+        ];
+
+        // Pass the collected data to the template
+        $variables['quotation_item_data'] = $quotation_items;
+        $variables['quotation_item_data_2'] = $quotation_item_data;
+        $variables['customer_user'] = $user;
+        $variables['customer_profile'] = $profile;
+      }
+    }
+  }
+
 }

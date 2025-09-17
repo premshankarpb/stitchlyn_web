@@ -1,0 +1,7 @@
+name: Stitchlyn Quotation
+type: module
+description: Custom quotation for stitchlyn.
+core_version_requirement: ^10 || ^11
+package: Stitchlyn
+dependencies:
+  - drupal:node

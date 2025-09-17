@@ -1,0 +1,11 @@
+stitchlyn_quotation.detail:
+  path: '/quotation/{node}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationController::view'
+    _title_callback: '\Drupal\stitchlyn_quotation\Controller\QuotationController::title'
+  requirements:
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node
