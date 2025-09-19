@@ -9,3 +9,14 @@ stitchlyn_quotation.detail:
     parameters:
       node:
         type: entity:node
+stitchlyn_quotation.wo_detail:
+  path: 'dashboard/wo/{node}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\WOController::view'
+    _title_callback: '\Drupal\stitchlyn_quotation\Controller\WOController::title'
+  requirements:
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node
