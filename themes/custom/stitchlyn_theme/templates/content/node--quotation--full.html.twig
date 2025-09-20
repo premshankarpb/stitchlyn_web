@@ -1,0 +1,100 @@
+<article class="po-detail">
+
+  {% if node.field_payment_status.entity.label == 'Paid' %}
+    {% set pay_class = 'bg-success' %}
+  {% else %}
+    {% set pay_class = 'bg-danger' %}
+  {% endif %}
+  <main class="admin-main">
+    <div class="mb-4">
+      <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
+      <span class="badge {{ pay_class }} mb-3">{{ node.field_payment_status.entity.label }}</span>
+    </div>
+    <div class="row g-4 mb-5">
+      <div class="col-md-6 col-lg-5">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-3">{{ node.label }} Details</h5>
+            <span class="badge {{ pay_class }} mb-3">Payment Status : {{ node.field_payment_status.entity.label }}</span>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><i class="fas fa-calendar-alt text-primary me-2"></i>
+                <strong>Date:</strong> {{ node.created.value|date("d M Y") }} </li>
+              <li class="list-group-item"><i class="fas fa-user text-primary me-2"></i>
+                <strong>Customer:</strong> {{ node.field_customer_reference.entity.label }} </li>
+              <li class="list-group-item"><i class="fas fa-money-check-alt text-warning me-2"></i>
+                <strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }} </li>
+              <li class="list-group-item"><i class="fas fa-percent text-warning me-2"></i>
+                <strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }} </li>
+              <li class="list-group-item"><i class="fas fa-inr text-warning me-2"></i>
+                <strong>Total Amount:</strong> ₹ {{ node.field_total_amount.value }} </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-7">
+        <div class="card h-100">
+          <div class="card-body">
+            {% if node.body.value is not empty %}
+              <h5 class="card-title mb-3">Remarks</h5>
+              <p>{{ node.body.value|raw }}</p>
+            {% endif %}
+            {% if customer_profile.field_remarks.value is not empty %}
+              <h5 class="card-title mb-3">About Customer</h5>
+              <p>{{ customer_profile.field_remarks.value|raw }}</p>
+            {% endif %}
+
+            <div class="mt-4">
+              <button class="btn btn-primary me-2" onclick="showPhone()">Contact Customer</button>
+              <span id="vendor-phone" style="display:none;">
+                {{customer_profile.field_phone_number.0.phone_number}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <hr>
+
+  <h3>Items in this Quotation</h3>
+  {% if quotation_item_data|length > 0 %}
+    {{ quotation_product_data.product_title }}
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Quotation Number</th>
+          <th>Quantity</th>
+          <th>Product</th>
+        </tr>
+      </thead>
+      <tbody>
+      
+        {% for item in quotation_item_data_2 %}
+            
+        {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
+        {% set total_amount = sub_total + item.field_tax_amount.value %}
+
+          <tr>
+            <td>{{ item.title }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{item.product_title  }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No items found in this purchase order.</p>
+  {% endif %}
+</article>
+
+
+<script>
+  function showPhone() {
+    var phoneEl = document.getElementById('vendor-phone');
+    if (phoneEl.style.display === "none") {
+      phoneEl.style.display = "inline";
+    }
+  }
+</script>
