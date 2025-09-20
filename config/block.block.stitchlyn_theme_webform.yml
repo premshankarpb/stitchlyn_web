@@ -1,0 +1,31 @@
+uuid: 7a00c550-71a5-42d2-84d1-6155869fa15c
+langcode: en
+status: true
+dependencies:
+  config:
+    - webform.webform.stitchlyn_contact
+  module:
+    - system
+    - webform
+  theme:
+    - stitchlyn_theme
+id: stitchlyn_theme_webform
+theme: stitchlyn_theme
+region: content
+weight: 1
+provider: null
+plugin: webform_block
+settings:
+  id: webform_block
+  label: Webform
+  label_display: '0'
+  provider: webform
+  webform_id: stitchlyn_contact
+  default_data: ''
+  redirect: false
+  lazy: true
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /contact

@@ -9,7 +9,7 @@ dependencies:
 id: stitchlyn_theme_mainpagecontent
 theme: stitchlyn_theme
 region: content
-weight: 1
+weight: 0
 provider: null
 plugin: system_main_block
 settings:

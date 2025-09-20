@@ -11,6 +11,7 @@ dependencies:
     - field.storage.node.field_vendor
     - node.type.purchase_order
     - taxonomy.vocabulary.payment_status
+    - user.role.vendor
   module:
     - datetime
     - node
@@ -867,7 +868,7 @@ display:
             group_items: {  }
           reduce_duplicates: false
           vid: payment_status
-          type: textfield
+          type: select
           hierarchy: false
           limit: true
           error_message: true
