@@ -1,0 +1,6 @@
+stitchlyn_basic.erp_settings:
+  title: 'ERP Client Settings'
+  description: 'Manage ERP client details like name, address, GST, and logo.'
+  parent: system.admin_config
+  route_name: stitchlyn_basic.erp_settings
+  weight: 100

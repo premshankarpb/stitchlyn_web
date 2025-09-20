@@ -16,3 +16,10 @@ stitchlyn_basic.profile_form:
     parameters:
       user:
         type: entity:user
+stitchlyn_basic.erp_settings:
+  path: '/admin/config/erp/client-settings'
+  defaults:
+    _form: '\Drupal\stitchlyn_basic\Form\ERPClientSettingsForm'
+    _title: 'ERP Client Settings'
+  requirements:
+    _permission: 'administer site configuration'
