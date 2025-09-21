@@ -1,5 +1,5 @@
 stitchlyn_product.detail:
-  path: '/product/{node}'
+  path: 'dashboard/product/{node}'
   defaults:
     _controller: '\Drupal\stitchlyn_product\Controller\ProductController::view'
     _title_callback: '\Drupal\stitchlyn_product\Controller\ProductController::title'
@@ -9,3 +9,18 @@ stitchlyn_product.detail:
     parameters:
       node:
         type: entity:node
+stitchlyn_product.product_add:
+  path: 'dashboard/product/add'
+  defaults:
+    _controller: '\Drupal\stitchlyn_product\Controller\ProductController::add'
+    _title: 'Add Product'
+  requirements:
+    _permission: 'create product content'
+stitchlyn_product.wo_edit:
+  path: 'dashboard/product/{node}/edit'
+  defaults:
+    _controller: '\Drupal\stitchlyn_product\Controller\ProductController::edit'
+    _title_callback: '\Drupal\stitchlyn_product\Controller\ProductController::title'
+  requirements:
+    _entity_access: 'node.update'
+    node: \d+
