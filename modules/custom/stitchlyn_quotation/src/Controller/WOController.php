@@ -5,6 +5,11 @@ namespace Drupal\stitchlyn_quotation\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Drupal\Core\Url;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Form\FormBuilderInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Drupal\node\Entity\Node;
 
 class WOController extends ControllerBase {
 
@@ -38,6 +43,53 @@ class WOController extends ControllerBase {
     $build['#cache']['contexts'][] = 'user.permissions';
 
     return $build;
+  }
+
+  /**
+   * Render the add form for a work_order node.
+   */
+
+  public function add() {
+    // Check access: user must have permission to create 'work_order' content.
+    $access = \Drupal::currentUser()->hasPermission('create work_order content');
+    if (!$access) {
+      throw new AccessDeniedHttpException();
+    }
+
+    // Create a new unsaved node entity of type 'work_order'.
+    $node = Node::create(['type' => 'work_order']);
+
+    // Use the entity form builder to render the 'add' form.
+    return \Drupal::service('entity.form_builder')->getForm($node, 'default');
+  }
+
+  /**
+   * Render the edit form for a work_order node.
+   */
+  public function edit(NodeInterface $node) {
+    if ($node->bundle() !== 'work_order') {
+      throw new NotFoundHttpException();
+    }
+
+    if (!$node->access('update')) {
+      throw new AccessDeniedHttpException();
+    }
+
+    // Use the entity form builder to get the edit form.
+    $form = \Drupal::service('entity.form_builder')->getForm($node, 'edit');
+
+    return $form;
+  }
+
+  /**
+   * Access control for the controller routes.
+   */
+  public function access(NodeInterface $node) {
+    if ($node->bundle() !== 'work_order') {
+      return AccessResult::forbidden();
+    }
+
+    return $node->access('update') ? AccessResult::allowed() : AccessResult::forbidden();
   }
 
 }
