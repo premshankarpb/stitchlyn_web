@@ -20,3 +20,18 @@ stitchlyn_quotation.wo_detail:
     parameters:
       node:
         type: entity:node
+stitchlyn_quotation.wo_add:
+  path: 'dashboard/wo/add'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\WOController::add'
+    _title: 'Add Work Order'
+  requirements:
+    _permission: 'create work_order content'
+stitchlyn_quotation.wo_edit:
+  path: 'dashboard/wo/{node}/edit'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\WOController::edit'
+    _title_callback: '\Drupal\stitchlyn_quotation\Controller\WOController::title'
+  requirements:
+    _entity_access: 'node.update'
+    node: \d+
