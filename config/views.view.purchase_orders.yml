@@ -1685,7 +1685,20 @@ display:
           hide_alter_empty: false
       defaults:
         fields: false
+        header: false
       display_description: ''
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: false
+          content: '<a class="btn btn-primary" href="add/purchase-order">Add Purchase Order</a>'
+          tokenize: false
       display_extenders: {  }
       path: dashboard/purchase_orders
     cache_metadata:
