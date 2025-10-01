@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+    h1 { margin: 0 0 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+    th { background: #ff4444; color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>Quotation: {{ node.label }}</h1>
+  <p><strong>Date:</strong> {{ node.created.value|date("d M Y") }}</p>
+  <p><strong>Customer:</strong> {{ node.field_customer_reference.entity.label }}</p>
+  <p><strong>Total Amount:</strong> ₹{{ node.field_total_amount.value }}</p>
+
+  <h3>Items</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>S.No</th>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Rate</th>
+        <th>Subtotal</th>
+        <th>Tax</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set grand_total = 0 %}
+      {% for item in quotation_items %}
+        {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
+        {% set total = sub_total + item.field_tax_amount.value %}
+        {% set grand_total = grand_total + total %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ item.field_product.entity.label }}</td>
+          <td>{{ item.field_quantity.value }}</td>
+          <td>₹{{ item.field_item_rate.value }}</td>
+          <td>₹{{ sub_total }}</td>
+          <td>₹{{ item.field_tax_amount.value }}</td>
+          <td>₹{{ total }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="6" style="text-align:right;">Grand Total</td>
+        <td>₹{{ grand_total }}</td>
+      </tr>
+    </tfoot>
+  </table>
+</body>
+</html>
