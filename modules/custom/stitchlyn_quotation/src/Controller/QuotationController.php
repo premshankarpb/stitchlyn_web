@@ -57,8 +57,8 @@ class QuotationController extends ControllerBase {
     $quotation_items = \Drupal::entityTypeManager()
       ->getStorage('node')
       ->loadByProperties([
-        'type' => 'quotation_item',
-        'field_quotation' => $node->id(),
+        'type' => 'quatation_line_items',
+        'field_linked_quotation' => $node->id(),
       ]);
 
     // Render Twig template for PDF
