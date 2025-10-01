@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function stitchlyn_quotation_theme($existing, $type, $theme, $path) {
+  return [
+    'stitchlyn_quotation-pdf' => [
+      'variables' => [
+        'node' => NULL,
+        'vendor_user' => [],
+        'vendor_profile' => [],
+        'referencing_nodes' => [],
+      ],
+      'template' => 'quotation-pdf',
+    ]
+  ];
+}
