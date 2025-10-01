@@ -233,3 +233,12 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
   }
 
 }
+
+function stitchlyn_theme_preprocess_views_view(&$variables) {
+  if ($variables['view']->id() === 'vendors' && $variables['view']->current_display === 'page_1') {
+    $variables['export_query'] = \Drupal::request()->getQueryString();
+    // $a = \Drupal::request()->getQueryString();
+    // \Drupal::logger('aaa')->warning('<pre><code>' . print_r($a, TRUE) . '</code></pre>');
+  }
+}
+
