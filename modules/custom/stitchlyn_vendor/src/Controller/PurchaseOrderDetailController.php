@@ -80,14 +80,18 @@ class PurchaseOrderDetailController extends ControllerBase {
     }
 
     // Render twig HTML
-    $html = \Drupal::service('renderer')->renderPlain([
+    $build = [
       '#theme' => 'stitchlyn_po_pdf',
       '#node' => $node,
       '#vendor_user' => $user,
       '#vendor_profile' => $profile,
       '#referencing_nodes' => $item_nodes,
       '#title' => $node->label(),
-    ]);
+    ];
+
+    // Now pass by reference
+    $html = \Drupal::service('renderer')->renderPlain($build);
+
 
     // Get dompdf service
     $dompdf = \Drupal::service('stitchlyn_vendor.dompdf');
