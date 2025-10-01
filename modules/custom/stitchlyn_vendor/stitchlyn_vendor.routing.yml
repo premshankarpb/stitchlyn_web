@@ -62,6 +62,18 @@ stitchlyn_vendor.purchase_order_detail:
     parameters:
       node:
         type: entity:node
+stitchlyn_vendor.purchase_order_pdf:
+  path: '/dashboard/po/{node}/pdf'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\PurchaseOrderDetailController::pdf'
+    _title: 'Purchase Order PDF'
+  requirements:
+    _permission: 'access content'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
 stitchlyn_vendor.my_purchase_orders:
   path: '/my_purchase_orders'
   defaults:

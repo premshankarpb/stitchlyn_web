@@ -7,6 +7,7 @@ use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
+use Symfony\Component\HttpFoundation\Response;
 
 class PurchaseOrderDetailController extends ControllerBase {
 
@@ -50,4 +51,60 @@ class PurchaseOrderDetailController extends ControllerBase {
       '#title' => $node->label(),
     ];
   }
+
+  public function pdf(NodeInterface $node) {
+    if ($node->bundle() !== 'purchase_order') {
+      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+    }
+
+    // Load items
+    $item_nodes = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties([
+        'type' => 'purchase_order_items',
+        'field_purchase_order' => $node->id(),
+      ]);
+
+    // Load vendor
+    $user = NULL;
+    $profile = NULL;
+    if ($node->hasField('field_vendor') && !$node->get('field_vendor')->isEmpty()) {
+      $user = $node->field_vendor->entity;
+      $profiles = \Drupal::entityTypeManager()
+        ->getStorage('profile')
+        ->loadByProperties([
+          'uid' => $user->id(),
+          'type' => 'vendor',
+        ]);
+      $profile = reset($profiles);
+    }
+
+    // Render twig HTML
+    $html = \Drupal::service('renderer')->renderPlain([
+      '#theme' => 'stitchlyn_po_pdf',
+      '#node' => $node,
+      '#vendor_user' => $user,
+      '#vendor_profile' => $profile,
+      '#referencing_nodes' => $item_nodes,
+      '#title' => $node->label(),
+    ]);
+
+    // Get dompdf service
+    $dompdf = \Drupal::service('stitchlyn_vendor.dompdf');
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    $pdf_content = $dompdf->output();
+
+    return new Response(
+      $pdf_content,
+      200,
+      [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'attachment; filename="purchase_order_' . $node->id() . '.pdf"',
+      ]
+    );
+  }
+
 }

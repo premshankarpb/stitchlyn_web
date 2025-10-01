@@ -38,6 +38,15 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
       ],
       'template' => 'po-detail',
     ],
+    'stitchlyn_po_pdf' => [
+      'variables' => [
+        'node' => NULL,
+        'vendor_user' => [],
+        'vendor_profile' => [],
+        'referencing_nodes' => [],
+      ],
+      'template' => 'po-pdf',
+    ],
     'stitchlyn_my_purchase_orders' => [
       'variables' => [
         'node' => NULL

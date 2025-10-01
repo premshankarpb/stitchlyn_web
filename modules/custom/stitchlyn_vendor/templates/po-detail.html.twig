@@ -10,6 +10,9 @@
       <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
       <span class="badge {{ pay_class }} mb-3">{{ node.field_payment_status.entity.label }}</span>
     </div>
+    <a href="{{ path('stitchlyn_vendor.purchase_order_pdf', {'node': node.id}) }}" class="btn btn-danger">
+      Export PDF
+    </a>
     <div class="row g-4 mb-5">
       <div class="col-md-6 col-lg-5">
         <div class="card h-100">

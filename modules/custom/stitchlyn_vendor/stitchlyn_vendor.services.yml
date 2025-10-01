@@ -1,0 +1,4 @@
+services:
+  stitchlyn_vendor.dompdf:
+    class: Dompdf\Dompdf
+    factory: ['Drupal\stitchlyn_vendor\DompdfFactory', 'create']
