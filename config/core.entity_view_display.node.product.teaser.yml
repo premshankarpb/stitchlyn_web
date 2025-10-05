@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.field.node.product.body
     - field.field.node.product.field_attributes
+    - field.field.node.product.field_category
     - field.field.node.product.field_cost_price
     - field.field.node.product.field_product_images
     - field.field.node.product.field_sku_code
@@ -34,6 +35,7 @@ content:
     region: content
 hidden:
   field_attributes: true
+  field_category: true
   field_cost_price: true
   field_product_images: true
   field_sku_code: true

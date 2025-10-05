@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.product.body
     - field.field.node.product.field_attributes
+    - field.field.node.product.field_category
     - field.field.node.product.field_cost_price
     - field.field.node.product.field_product_images
     - field.field.node.product.field_sku_code
@@ -12,6 +13,7 @@ dependencies:
     - image.style.thumbnail
     - node.type.product
   module:
+    - content_moderation
     - image
     - paragraphs
     - path
@@ -55,6 +57,16 @@ content:
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
     third_party_settings: {  }
+  field_category:
+    type: entity_reference_autocomplete
+    weight: 125
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_cost_price:
     type: number
     weight: 129
@@ -87,6 +99,12 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path

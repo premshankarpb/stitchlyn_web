@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.product.body
     - field.field.node.product.field_attributes
+    - field.field.node.product.field_category
     - field.field.node.product.field_cost_price
     - field.field.node.product.field_product_images
     - field.field.node.product.field_sku_code
@@ -35,6 +36,14 @@ content:
       link: ''
     third_party_settings: {  }
     weight: 111
+    region: content
+  field_category:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
     region: content
   field_cost_price:
     type: number_decimal
