@@ -47,3 +47,22 @@ stitchlyn_quotation.wo_edit:
   requirements:
     _entity_access: 'node.update'
     node: \d+
+stitchlyn_quotation.add:
+  path: '/dashboard/add/quotation'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAddController::createQuotation'
+    _title: 'Add Quotation'
+  requirements:
+    _permission: 'access content'
+stitchlyn_quotation.edit:
+  path: '/dashboard/quotation/{node}/edit'
+  defaults:
+    _form: '\Drupal\stitchlyn_quotation\Form\QuotationEditForm'
+    _title_callback: '\Drupal\stitchlyn_quotation\Form\QuotationEditForm::title'
+  requirements:
+    _permission: 'access content'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
