@@ -15,6 +15,7 @@ class QuotationHelper {
     $rows = [];
 
     $query = \Drupal::entityQuery('node')
+      ->accessCheck(TRUE)
       ->condition('type', 'quotation_line_items')
       ->condition('field_linked_quotation', $quotation_id);
     $nids = $query->execute();
