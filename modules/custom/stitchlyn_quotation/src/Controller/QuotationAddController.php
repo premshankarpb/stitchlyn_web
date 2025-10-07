@@ -20,6 +20,7 @@ class QuotationAddController extends ControllerBase {
 
     // Auto-generate quotation number (simple increment logic).
     $last_nid = \Drupal::entityQuery('node')
+      ->accessCheck(TRUE)
       ->condition('type', 'quotation')
       ->sort('created', 'DESC')
       ->range(0, 1)
