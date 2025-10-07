@@ -66,3 +66,15 @@ stitchlyn_quotation.edit:
     parameters:
       node:
         type: entity:node
+stitchlyn_quotation.popup_form:
+  path: '/quotation/popup/attributes'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationPopupController::attributePopup'
+  requirements:
+    _permission: 'access content'
+stitchlyn_quotation.item_remove:
+  path: '/quotation/item/{nid}/remove'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationPopupController::removeItem'
+  requirements:
+    _permission: 'access content'
