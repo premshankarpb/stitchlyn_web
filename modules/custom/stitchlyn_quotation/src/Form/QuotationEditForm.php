@@ -94,11 +94,20 @@ class QuotationEditForm extends FormBase {
     $quotation_nid = $form_state->get('node')->id();
 
     if ($product_nid) {
-      $url = '/quotation/popup/attributes?product_nid=' . $product_nid . '&quotation_nid=' . $quotation_nid;
-      $response->addCommand(new \Drupal\Core\Ajax\InvokeCommand(NULL, 'drupalAjax', [[
-        'url' => $url,
-      ]]));
+      // Load the popup form directly.
+      $popup_form = \Drupal::formBuilder()->getForm('\Drupal\stitchlyn_quotation\Form\AttributePopupForm', $product_nid, $quotation_nid);
+
+      // Use OpenModalDialogCommand to show it.
+      $response->addCommand(new \Drupal\Core\Ajax\OpenModalDialogCommand(
+        $this->t('Product Attributes'),
+        $popup_form,
+        ['width' => '600']
+      ));
     }
+    else {
+      $response->addCommand(new \Drupal\Core\Ajax\AlertCommand('Please select a product first.'));
+    }
+
     return $response;
   }
 
