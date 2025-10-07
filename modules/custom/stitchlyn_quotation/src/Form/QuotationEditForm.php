@@ -44,13 +44,20 @@ class QuotationEditForm extends FormBase {
     ];
 
     // Table wrapper
+    // $form['line_items'] = [
+    //   '#type' => 'container',
+    //   '#attributes' => ['id' => 'line-items-wrapper'],
+    //   'table_markup' => [
+    //     '#markup' => \Drupal::service('stitchlyn_quotation.helper')->renderLineItemTable($quotation_id),
+    //   ],
+    // ];
     $form['line_items'] = [
       '#type' => 'container',
       '#attributes' => ['id' => 'line-items-wrapper'],
-      'table_markup' => [
-        '#markup' => \Drupal::service('stitchlyn_quotation.helper')->renderLineItemTable($quotation_id),
-      ],
     ];
+
+    $form['line_items']['table'] = \Drupal::service('stitchlyn_quotation.helper')->renderLineItemTable($quotation_id);
+
 
     // Totals
     $form['totals'] = [
