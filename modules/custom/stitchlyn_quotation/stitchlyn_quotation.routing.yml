@@ -49,7 +49,7 @@ stitchlyn_quotation.wo_edit:
     node: \d+
 # Create new quotation and redirect to edit page
 stitchlyn_quotation.add:
-  path: '/dashboard/quotation/add'
+  path: '/dashboard/add/quotation'
   defaults:
     _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAddController::createQuotation'
     _title: 'Add Quotation'
