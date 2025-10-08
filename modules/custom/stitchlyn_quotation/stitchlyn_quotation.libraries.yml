@@ -5,3 +5,4 @@ quotation:
     - core/jquery
     - core/drupal
     - core/drupal.dialog
+    - core/once

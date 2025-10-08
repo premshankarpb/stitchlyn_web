@@ -37,7 +37,7 @@ class QuotationAddController extends ControllerBase {
     ]);
     $node->save();
 
-    return new RedirectResponse('/quotation/' . $node->id() . '/edit');
+    return new RedirectResponse('/dashboard/quotation/' . $node->id() . '/edit');
   }
 
 }
