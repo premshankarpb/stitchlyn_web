@@ -3,36 +3,24 @@
 namespace Drupal\stitchlyn_quotation\Service;
 
 use Drupal\node\Entity\Node;
-use Drupal\Core\Link;
-use Drupal\Core\Url;
-/**
- * Helper service for Quotation module.
- */
+
 class QuotationHelper {
 
   public function renderLineItemTable($quotation_id) {
-    $header = ['Product', 'Quantity', 'Price', 'Actions'];
+    $header = ['Product', 'Quantity', 'Price'];
     $rows = [];
 
-    $query = \Drupal::entityQuery('node')
+    $nids = \Drupal::entityQuery('node')
       ->accessCheck(TRUE)
       ->condition('type', 'quotation_line_items')
-      ->condition('field_linked_quotation', $quotation_id);
-    $nids = $query->execute();
+      ->condition('field_linked_quotation', $quotation_id)
+      ->execute();
 
-    foreach (Node::loadMultiple($nids) as $item) {
-      $product = $item->get('field_product')->entity;
-      $qty = $item->get('field_quantity')->value;
-      $price = $product ? $product->get('field_cost_price')->value : 0;
-      $view_link = Link::fromTextAndUrl('View', Url::fromRoute('entity.node.canonical', ['node' => $item->id()]))->toString();
-      $remove_link = Link::fromTextAndUrl('Remove', Url::fromRoute('stitchlyn_quotation.item_remove', ['nid' => $item->id()]))->toString();
-
-      $rows[] = [
-        $product ? $product->label() : '-',
-        $qty,
-        $price,
-        $view_link . ' | ' . $remove_link,
-      ];
+    foreach (Node::loadMultiple($nids) as $i) {
+      $p = $i->get('field_product')->entity;
+      $qty = $i->get('field_quantity')->value ?? 0;
+      $price = $p ? $p->get('field_cost_price')->value ?? 0 : 0;
+      $rows[] = [$p ? $p->label() : '-', $qty, number_format($price, 2)];
     }
 
     return [
@@ -43,4 +31,31 @@ class QuotationHelper {
     ];
   }
 
+  public function computeTotals($quotation_id) {
+    $subtotal = 0;
+    $nids = \Drupal::entityQuery('node')
+      ->accessCheck(TRUE)
+      ->condition('type', 'quotation_line_items')
+      ->condition('field_linked_quotation', $quotation_id)
+      ->execute();
+
+    foreach (Node::loadMultiple($nids) as $i) {
+      $p = $i->get('field_product')->entity;
+      $qty = $i->get('field_quantity')->value ?? 0;
+      $price = $p ? $p->get('field_cost_price')->value ?? 0 : 0;
+      $subtotal += $qty * $price;
+    }
+
+    $tax_pct = \Drupal::config('stitchlyn_quotation.settings')->get('tax_percentage') ?? 0;
+    $tax = ($subtotal * $tax_pct) / 100;
+    $q = Node::load($quotation_id);
+    $discount = $q->get('field_discount')->value ?? 0;
+    $total = $subtotal - $discount + $tax;
+
+    return [
+      'subtotal' => round($subtotal, 2),
+      'tax' => round($tax, 2),
+      'total' => round($total, 2),
+    ];
+  }
 }

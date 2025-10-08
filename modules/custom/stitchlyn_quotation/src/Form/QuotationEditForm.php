@@ -17,16 +17,50 @@ class QuotationEditForm extends FormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
+    $form['#attached']['library'][] = 'stitchlyn_quotation/quotation';
     $form_state->set('node', $node);
     $quotation_id = $node->id();
 
-    // Product autocomplete + add button
-    $form['product_section'] = [
-      '#type' => 'container',
-      '#attributes' => ['class' => ['inline-form']],
+    // ========== Quotation Information ==========
+    $form['quotation_info'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Quotation Information'),
+      '#open' => TRUE,
     ];
 
-    $form['product_section']['product_autocomplete'] = [
+    $form['quotation_info']['title'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Title'),
+      '#default_value' => $node->label(),
+      '#required' => TRUE,
+    ];
+
+    $form['quotation_info']['field_customer_reference'] = [
+      '#type' => 'entity_autocomplete',
+      '#title' => $this->t('Customer'),
+      '#target_type' => 'user',
+      '#default_value' => $node->get('field_customer_reference')->entity ?? NULL,
+    ];
+
+    $form['quotation_info']['field_quotation_date'] = [
+      '#type' => 'date',
+      '#title' => $this->t('Date'),
+      '#default_value' => $node->get('field_quotation_date')->value ?? date('Y-m-d'),
+    ];
+
+    $form['quotation_info']['body'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Remarks'),
+      '#default_value' => $node->get('body')->value ?? '',
+    ];
+
+    // ========== Product Section ==========
+    $form['product_section'] = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['product-section']],
+    ];
+
+    $form['product_section']['product'] = [
       '#type' => 'entity_autocomplete',
       '#title' => $this->t('Select Product'),
       '#target_type' => 'node',
@@ -37,79 +71,81 @@ class QuotationEditForm extends FormBase {
     $form['product_section']['add_product'] = [
       '#type' => 'button',
       '#value' => $this->t('Add Product'),
-      '#ajax' => [
-        'callback' => '::openAttributePopup',
-        'event' => 'click',
+      '#attributes' => [
+        'class' => ['button', 'add-product-btn'],
+        'data-quotation-id' => $quotation_id,
       ],
     ];
 
-    // Table wrapper
-    // $form['line_items'] = [
-    //   '#type' => 'container',
-    //   '#attributes' => ['id' => 'line-items-wrapper'],
-    //   'table_markup' => [
-    //     '#markup' => \Drupal::service('stitchlyn_quotation.helper')->renderLineItemTable($quotation_id),
-    //   ],
-    // ];
+    // ========== Line Items ==========
     $form['line_items'] = [
       '#type' => 'container',
       '#attributes' => ['id' => 'line-items-wrapper'],
+      'table' => \Drupal::service('stitchlyn_quotation.helper')->renderLineItemTable($quotation_id),
     ];
 
-    $form['line_items']['table'] = \Drupal::service('stitchlyn_quotation.helper')->renderLineItemTable($quotation_id);
+    // ========== Totals ==========
+    $helper = \Drupal::service('stitchlyn_quotation.helper');
+    $totals = $helper->computeTotals($quotation_id);
 
-
-    // Totals
     $form['totals'] = [
-      '#type' => 'details',
+      '#type' => 'fieldset',
       '#title' => $this->t('Totals'),
-      '#open' => TRUE,
     ];
 
     $form['totals']['field_subtotal_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Subtotal'),
-      '#default_value' => $node->get('field_subtotal_amount')->value ?? 0,
+      '#default_value' => $totals['subtotal'],
+      '#attributes' => ['readonly' => 'readonly'],
+    ];
+
+    $form['totals']['field_discount'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Discount'),
+      '#default_value' => $node->get('field_discount')->value ?? 0,
       '#step' => 0.01,
     ];
+
     $form['totals']['field_tax_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Tax'),
-      '#default_value' => $node->get('field_tax_amount')->value ?? 0,
-      '#step' => 0.01,
+      '#default_value' => $totals['tax'],
+      '#attributes' => ['readonly' => 'readonly'],
     ];
+
     $form['totals']['field_total_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Total'),
-      '#default_value' => $node->get('field_total_amount')->value ?? 0,
-      '#step' => 0.01,
+      '#default_value' => $totals['total'],
+      '#attributes' => ['readonly' => 'readonly'],
+    ];
+
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Save Quotation'),
+      '#button_type' => 'primary',
     ];
 
     return $form;
   }
 
-  public function openAttributePopup(array &$form, FormStateInterface $form_state) {
-    $response = new \Drupal\Core\Ajax\AjaxResponse();
-    $product_nid = $form_state->getValue('product_autocomplete');
-    $quotation_nid = $form_state->get('node')->id();
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $node = $form_state->get('node');
+    $v = $form_state->getValues();
 
-    if ($product_nid) {
-      // Load the popup form directly.
-      $popup_form = \Drupal::formBuilder()->getForm('\Drupal\stitchlyn_quotation\Form\AttributePopupForm', $product_nid, $quotation_nid);
+    $node->setTitle($v['title']);
+    $node->set('field_customer_reference', $v['field_customer_reference']);
+    $node->set('field_quotation_date', $v['field_quotation_date']);
+    $node->set('body', ['value' => $v['body'], 'format' => 'basic_html']);
+    $node->set('field_discount', $v['field_discount']);
 
-      // Use OpenModalDialogCommand to show it.
-      $response->addCommand(new \Drupal\Core\Ajax\OpenModalDialogCommand(
-        $this->t('Product Attributes'),
-        $popup_form,
-        ['width' => '600']
-      ));
-    }
-    else {
-      $response->addCommand(new \Drupal\Core\Ajax\AlertCommand('Please select a product first.'));
-    }
+    $totals = \Drupal::service('stitchlyn_quotation.helper')->computeTotals($node->id());
+    $node->set('field_subtotal_amount', $totals['subtotal']);
+    $node->set('field_tax_amount', $totals['tax']);
+    $node->set('field_total_amount', $totals['total']);
+    $node->save();
 
-    return $response;
+    $this->messenger()->addMessage($this->t('Quotation saved successfully.'));
   }
-
-  public function submitForm(array &$form, FormStateInterface $form_state) {}
 }
