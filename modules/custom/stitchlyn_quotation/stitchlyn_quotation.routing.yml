@@ -56,7 +56,7 @@ stitchlyn_quotation.add:
   requirements:
     _permission: 'access content'
 
-# Edit existing quotation (main form)
+# Edit quotation main form
 stitchlyn_quotation.edit:
   path: '/dashboard/quotation/{node}/edit'
   defaults:
@@ -70,7 +70,7 @@ stitchlyn_quotation.edit:
       node:
         type: entity:node
 
-# AJAX popup for product attributes
+# Popup HTML for attributes + quantity
 stitchlyn_quotation.ajax_attributes:
   path: '/quotation/ajax/attributes/{product}/{quotation}'
   defaults:
@@ -78,7 +78,7 @@ stitchlyn_quotation.ajax_attributes:
   requirements:
     _permission: 'access content'
 
-# Save quotation line item
+# Save line item (JSON)
 stitchlyn_quotation.ajax_save_item:
   path: '/quotation/ajax/save-item/{product}/{quotation}'
   defaults:
@@ -86,7 +86,7 @@ stitchlyn_quotation.ajax_save_item:
   requirements:
     _permission: 'access content'
 
-# Refresh line items table
+# Refresh table (JSON -> html + subtotal)
 stitchlyn_quotation.ajax_line_items:
   path: '/quotation/ajax/line-items/{quotation}'
   defaults:
@@ -94,7 +94,23 @@ stitchlyn_quotation.ajax_line_items:
   requirements:
     _permission: 'access content'
 
-# Tax configuration form (admin)
+# Delete 1 line item (JSON)
+stitchlyn_quotation.ajax_delete_item:
+  path: '/quotation/ajax/delete-item/{item_id}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::deleteLineItem'
+  requirements:
+    _permission: 'access content'
+
+# View 1 line item (JSON -> html)
+stitchlyn_quotation.ajax_view_item:
+  path: '/quotation/ajax/view-item/{item_id}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::viewLineItem'
+  requirements:
+    _permission: 'access content'
+
+# Tax configuration admin form
 stitchlyn_quotation.tax_config:
   path: '/admin/config/stitchlyn/tax'
   defaults:

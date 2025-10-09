@@ -62,7 +62,7 @@ class AttributePopupForm extends FormBase {
     $quotation = Node::load($this->quotationId);
 
     $line_item = Node::create([
-      'type' => 'quotation_line_items',
+      'type' => 'quatation_line_items',
       'title' => 'Item for ' . $product->label(),
       'field_product' => $this->productId,
       'field_linked_quotation' => $this->quotationId,
