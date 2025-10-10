@@ -243,10 +243,13 @@ function stitchlyn_theme_preprocess_views_view(&$variables) {
   if ($variables['view']->id() === 'products' && $variables['view']->current_display === 'page_2') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
   }
+  if ($variables['view']->id() === 'inventory_list' && $variables['view']->current_display === 'page_1') {
+    $variables['export_query'] = \Drupal::request()->getQueryString();
+  }
   if ($variables['view']->id() === 'purchase_orders' && $variables['view']->current_display === 'page_1') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
   }
-  if ($variables['view']->id() === 'quotation_list' && $variables['view']->current_display === 'page_2') {
+  if ($variables['view']->id() === 'quotation_list' && $variables['view']->current_display === 'page_1') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
   }
   if ($variables['view']->id() === 'unit_managers' && $variables['view']->current_display === 'page_2') {
