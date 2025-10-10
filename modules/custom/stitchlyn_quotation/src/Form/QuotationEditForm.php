@@ -6,16 +6,28 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 
+/**
+ * Custom quotation edit form.
+ */
 class QuotationEditForm extends FormBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId() {
     return 'stitchlyn_quotation_edit_form';
   }
 
+  /**
+   * Page title callback.
+   */
   public static function title(NodeInterface $node) {
     return 'Edit Quotation #' . $node->get('field_quotation_number')->value;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
     $form['#attached']['library'][] = 'stitchlyn_quotation/quotation';
     $form_state->set('node', $node);
@@ -60,6 +72,7 @@ class QuotationEditForm extends FormBase {
       '#attributes' => ['class' => ['product-section']],
     ];
 
+    // Product autocomplete
     $form['product_section']['product'] = [
       '#type' => 'entity_autocomplete',
       '#title' => $this->t('Select Product'),
@@ -68,13 +81,17 @@ class QuotationEditForm extends FormBase {
       '#attributes' => ['id' => 'product-autocomplete'],
     ];
 
+    // ✅ Fixed: render as a plain button (not submit)
     $form['product_section']['add_product'] = [
       '#type' => 'button',
       '#value' => $this->t('Add Product'),
       '#attributes' => [
         'class' => ['button', 'add-product-btn'],
         'data-quotation-id' => $quotation_id,
+        'type' => 'button', // ensures JS only, no submit
       ],
+      '#limit_validation_errors' => [],
+      '#ajax' => FALSE,
     ];
 
     // ========== Line Items ==========
@@ -121,6 +138,7 @@ class QuotationEditForm extends FormBase {
       '#attributes' => ['readonly' => 'readonly'],
     ];
 
+    // ========== Actions ==========
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save Quotation'),
@@ -130,15 +148,18 @@ class QuotationEditForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $node = $form_state->get('node');
-    $v = $form_state->getValues();
+    $values = $form_state->getValues();
 
-    $node->setTitle($v['title']);
-    $node->set('field_customer_reference', $v['field_customer_reference']);
-    $node->set('field_quotation_date', $v['field_quotation_date']);
-    $node->set('body', ['value' => $v['body'], 'format' => 'basic_html']);
-    $node->set('field_discount', $v['field_discount']);
+    $node->setTitle($values['title']);
+    $node->set('field_customer_reference', $values['field_customer_reference']);
+    $node->set('field_quotation_date', $values['field_quotation_date']);
+    $node->set('body', ['value' => $values['body'], 'format' => 'basic_html']);
+    $node->set('field_discount', $values['field_discount']);
 
     $totals = \Drupal::service('stitchlyn_quotation.helper')->computeTotals($node->id());
     $node->set('field_subtotal_amount', $totals['subtotal']);
@@ -148,4 +169,5 @@ class QuotationEditForm extends FormBase {
 
     $this->messenger()->addMessage($this->t('Quotation saved successfully.'));
   }
+
 }

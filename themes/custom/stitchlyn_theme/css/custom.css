@@ -27,3 +27,42 @@
   text-decoration: underline;
   color: #000; /* or your theme's color */
 }
+
+.quotation-line-items {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.quotation-line-items th,
+.quotation-line-items td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+}
+
+.quotation-line-items th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  text-align: left;
+}
+
+.quotation-line-items tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.no-items {
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: #666;
+}
+
+.quotation-item-view td, .quotation-item-view th {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+}
+
+.quotation-item-view th {
+  background: #f7f7f7;
+  font-weight: bold;
+}

@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+
 /**
  * Implements hook_theme().
  */
@@ -15,4 +17,16 @@ function stitchlyn_quotation_theme($existing, $type, $theme, $path) {
       'template' => 'quotation-pdf',
     ]
   ];
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function stitchlyn_quotation_page_attachments(array &$attachments) {
+  // Load ERP config for tax.
+  $config = \Drupal::config('stitchlyn_basic.erp_settings');
+  $tax_percentage = (float) ($config->get('tax_percentage') ?? 18);
+
+  // Pass to JS.
+  $attachments['#attached']['drupalSettings']['stitchlynTax'] = $tax_percentage;
 }

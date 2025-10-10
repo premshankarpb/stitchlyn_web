@@ -1,5 +1,5 @@
 stitchlyn_quotation.detail:
-  path: 'dashboard/quotation/{node}'
+  path: '/dashboard/quotation/{node}'
   defaults:
     _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationController::view'
     _title_callback: '\Drupal\stitchlyn_quotation\Controller\QuotationController::title'
@@ -9,6 +9,7 @@ stitchlyn_quotation.detail:
     parameters:
       node:
         type: entity:node
+
 stitchlyn_quotation.pdf:
   path: '/dashboard/quotation/{node}/pdf'
   defaults:
@@ -21,6 +22,7 @@ stitchlyn_quotation.pdf:
     parameters:
       node:
         type: entity:node
+
 stitchlyn_quotation.wo_detail:
   path: '/dashboard/wo/{node}'
   defaults:
@@ -32,6 +34,7 @@ stitchlyn_quotation.wo_detail:
     parameters:
       node:
         type: entity:node
+
 stitchlyn_quotation.wo_add:
   path: '/dashboard/wo/add'
   defaults:
@@ -39,6 +42,7 @@ stitchlyn_quotation.wo_add:
     _title: 'Add Work Order'
   requirements:
     _permission: 'create work_order content'
+
 stitchlyn_quotation.wo_edit:
   path: '/dashboard/wo/{node}/edit'
   defaults:
@@ -47,7 +51,12 @@ stitchlyn_quotation.wo_edit:
   requirements:
     _entity_access: 'node.update'
     node: \d+
-# Create new quotation and redirect to edit page
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+# Add new quotation and redirect to edit page
 stitchlyn_quotation.add:
   path: '/dashboard/add/quotation'
   defaults:
@@ -56,7 +65,7 @@ stitchlyn_quotation.add:
   requirements:
     _permission: 'access content'
 
-# Edit quotation main form
+# Edit quotation form
 stitchlyn_quotation.edit:
   path: '/dashboard/quotation/{node}/edit'
   defaults:
@@ -70,31 +79,35 @@ stitchlyn_quotation.edit:
       node:
         type: entity:node
 
-# Popup HTML for attributes + quantity
+# Load product attribute popup
 stitchlyn_quotation.ajax_attributes:
   path: '/quotation/ajax/attributes/{product}/{quotation}'
   defaults:
-    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::getProductAttributes'
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::getAttributeForm'
   requirements:
     _permission: 'access content'
 
-# Save line item (JSON)
-stitchlyn_quotation.ajax_save_item:
-  path: '/quotation/ajax/save-item/{product}/{quotation}'
+# Save paragraph (AJAX)
+stitchlyn_quotation.save_item:
+  path: '/quotation/ajax/save-item/{product_id}/{quotation_id}'
   defaults:
-    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::saveLineItem'
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::saveAttributeItem'
   requirements:
     _permission: 'access content'
+  options:
+    _format: 'json'
 
-# Refresh table (JSON -> html + subtotal)
-stitchlyn_quotation.ajax_line_items:
-  path: '/quotation/ajax/line-items/{quotation}'
+# Refresh table
+stitchlyn_quotation.line_items:
+  path: '/quotation/ajax/line-items/{quotation_id}'
   defaults:
     _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::getLineItems'
   requirements:
     _permission: 'access content'
+  options:
+    _format: 'json'
 
-# Delete 1 line item (JSON)
+# Delete item
 stitchlyn_quotation.ajax_delete_item:
   path: '/quotation/ajax/delete-item/{item_id}'
   defaults:
@@ -102,15 +115,7 @@ stitchlyn_quotation.ajax_delete_item:
   requirements:
     _permission: 'access content'
 
-# View 1 line item (JSON -> html)
-stitchlyn_quotation.ajax_view_item:
-  path: '/quotation/ajax/view-item/{item_id}'
-  defaults:
-    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::viewLineItem'
-  requirements:
-    _permission: 'access content'
-
-# Tax configuration admin form
+# Tax config admin
 stitchlyn_quotation.tax_config:
   path: '/admin/config/stitchlyn/tax'
   defaults:
@@ -118,3 +123,10 @@ stitchlyn_quotation.tax_config:
     _title: 'Tax Configuration'
   requirements:
     _permission: 'administer site configuration'
+
+stitchlyn_quotation.view_item:
+  path: 'quotation/ajax/view-item/{item_id}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::viewAttributeItem'
+  requirements:
+    _permission: 'access content'

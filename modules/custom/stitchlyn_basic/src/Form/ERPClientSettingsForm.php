@@ -44,6 +44,14 @@ class ERPClientSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('client_gst'),
     ];
 
+    $form['tax_percentage'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Global Tax Percentage'),
+      '#default_value' => $config->get('tax_percentage') ?? 18,
+      '#step' => 0.01,
+      '#description' => $this->t('Set the global tax rate (%) used for quotations.'),
+    ];
+
     $form['client_logo'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Client Logo'),
@@ -73,6 +81,7 @@ class ERPClientSettingsForm extends ConfigFormBase {
       ->set('client_address', $form_state->getValue('client_address'))
       ->set('client_contact', $form_state->getValue('client_contact'))
       ->set('client_gst', $form_state->getValue('client_gst'))
+      ->set('tax_percentage', $form_state->getValue('tax_percentage'))
       ->set('client_logo', $form_state->getValue('client_logo'))
       ->save();
   }
