@@ -179,22 +179,26 @@ class QuotationEditForm extends FormBase {
     $node->set('body', ['value' => $values['body'], 'format' => 'basic_html']);
     $node->set('field_discount', $values['field_discount']);
 
-    // Fetch hidden totals (populated by JS)
-    $subtotal = (float) $form_state->getValue('hidden_subtotal');
-    $tax = (float) $form_state->getValue('hidden_tax');
-    $total = (float) $form_state->getValue('hidden_total');
+    // // Fetch hidden totals (populated by JS)
+    // $subtotal = (float) $form_state->getValue('hidden_subtotal');
+    // $tax = (float) $form_state->getValue('hidden_tax');
+    // $total = (float) $form_state->getValue('hidden_total');
 
-    // Fallback: if JS didn’t run, recompute from backend
-    if (!$subtotal) {
-      $helper = \Drupal::service('stitchlyn_quotation.helper');
-      $computed = $helper->computeTotals($node->id());
-      $subtotal = (float) $computed['subtotal'];
-      $config = \Drupal::config('stitchlyn_basic.erp_settings');
-      $tax_rate = (float) ($config->get('tax_percentage') ?? 0);
-      $discount = (float) $values['field_discount'];
-      $tax = ($subtotal - $discount) * ($tax_rate / 100);
-      $total = $subtotal - $discount + $tax;
-    }
+    // // Fallback: if JS didn’t run, recompute from backend
+    // if (!$subtotal) {
+    //   $helper = \Drupal::service('stitchlyn_quotation.helper');
+    //   $computed = $helper->computeTotals($node->id());
+    //   $subtotal = (float) $computed['subtotal'];
+    //   $config = \Drupal::config('stitchlyn_basic.erp_settings');
+    //   $tax_rate = (float) ($config->get('tax_percentage') ?? 18);
+    //   $discount = (float) $values['field_discount'];
+    //   $tax = ($subtotal - $discount) * ($tax_rate / 100);
+    //   $total = $subtotal - $discount + $tax;
+    // }
+
+    $subtotal = $values['hidden_subtotal'];
+    $tax = $values['hidden_tax'];
+    $total = $values['hidden_total'];
 
     // Save totals
     $node->set('field_subtotal_amount', $subtotal);
