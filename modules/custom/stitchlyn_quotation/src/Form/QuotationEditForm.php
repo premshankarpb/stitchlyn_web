@@ -72,7 +72,6 @@ class QuotationEditForm extends FormBase {
       '#attributes' => ['class' => ['product-section']],
     ];
 
-    // Product autocomplete
     $form['product_section']['product'] = [
       '#type' => 'entity_autocomplete',
       '#title' => $this->t('Select Product'),
@@ -81,14 +80,13 @@ class QuotationEditForm extends FormBase {
       '#attributes' => ['id' => 'product-autocomplete'],
     ];
 
-    // ✅ Fixed: render as a plain button (not submit)
     $form['product_section']['add_product'] = [
       '#type' => 'button',
       '#value' => $this->t('Add Product'),
       '#attributes' => [
         'class' => ['button', 'add-product-btn'],
         'data-quotation-id' => $quotation_id,
-        'type' => 'button', // ensures JS only, no submit
+        'type' => 'button',
       ],
       '#limit_validation_errors' => [],
       '#ajax' => FALSE,
@@ -152,22 +150,37 @@ class QuotationEditForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    /** @var \Drupal\node\Entity\Node $node */
     $node = $form_state->get('node');
     $values = $form_state->getValues();
 
+    // Basic fields.
     $node->setTitle($values['title']);
     $node->set('field_customer_reference', $values['field_customer_reference']);
     $node->set('field_quotation_date', $values['field_quotation_date']);
     $node->set('body', ['value' => $values['body'], 'format' => 'basic_html']);
     $node->set('field_discount', $values['field_discount']);
 
-    $totals = \Drupal::service('stitchlyn_quotation.helper')->computeTotals($node->id());
-    $node->set('field_subtotal_amount', $totals['subtotal']);
-    $node->set('field_tax_amount', $totals['tax']);
-    $node->set('field_total_amount', $totals['total']);
+    // --- Fetch tax configuration globally ---
+    $config = \Drupal::config('stitchlyn_basic.erp_settings');
+    $tax_rate = (float) ($config->get('tax_percentage') ?? 0);
+
+    // --- Recompute totals server-side ---
+    $helper = \Drupal::service('stitchlyn_quotation.helper');
+    $computed = $helper->computeTotals($node->id());
+    $subtotal = (float) $computed['subtotal'];
+    $discount = (float) $values['field_discount'];
+    $tax = ($subtotal - $discount) * ($tax_rate / 100);
+    $total = $subtotal - $discount + $tax;
+
+    // --- Save totals to node ---
+    $node->set('field_subtotal_amount', $subtotal);
+    $node->set('field_tax_amount', $tax);
+    $node->set('field_total_amount', $total);
+
     $node->save();
 
-    $this->messenger()->addMessage($this->t('Quotation saved successfully.'));
+    $this->messenger()->addMessage($this->t('Quotation saved successfully with updated totals.'));
   }
 
 }
