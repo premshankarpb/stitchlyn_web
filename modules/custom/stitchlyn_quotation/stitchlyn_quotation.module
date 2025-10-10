@@ -8,9 +8,10 @@ function stitchlyn_quotation_theme($existing, $type, $theme, $path) {
     'stitchlyn_quotation_pdf' => [
       'variables' => [
         'node' => NULL,
-        'vendor_user' => [],
-        'vendor_profile' => [],
-        'referencing_nodes' => [],
+        'customer_profile' => [],
+        'quotation_items' => [],
+        'product_items' => [],
+        'title' => [],
       ],
       'template' => 'quotation-pdf',
     ]

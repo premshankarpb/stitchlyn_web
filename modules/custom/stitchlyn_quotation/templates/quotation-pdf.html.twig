@@ -11,10 +11,59 @@
   </style>
 </head>
 <body>
-  <h1>Quotation: {{ node.label }}</h1>
+  {#<h1>Quotation: {{ node.label }}</h1>
   <p><strong>Date:</strong> {{ node.created.value|date("d M Y") }}</p>
   <p><strong>Customer:</strong> {{ node.field_customer_reference.entity.label }}</p>
-  <p><strong>Total Amount:</strong> ₹{{ node.field_total_amount.value }}</p>
+  <p><strong>Total Amount:</strong> ₹{{ node.field_total_amount.value }}</p>#}
+
+  <!-- Header Section -->
+  <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+      <div>
+          <h1 style="color: #333; margin: 0; font-size: 24px;">TAX INVOICE</h1>
+          <div style="margin-top: 10px; color: #666;">
+              <strong>Invoice #:</strong> <span style="color: #ff4444;">{{ node.label }}</span>
+          </div>
+          <div style="margin-top: 10px; color: #666;">
+              <strong>Date:</strong> <span style="color: #ff4444;">{{ node.created.value|date("d M Y") }}</span>
+          </div>
+      </div>
+      <div style="text-align: right;">
+          <img src="src/assets/images/logo.png" alt="Stitchlyn Logo" style="height: 60px;">
+      </div>
+  </div>
+
+  <!-- Company Details -->
+  <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+      <div style="flex: 1;">
+          <h3 style="color: #333; margin: 0 0 10px 0;">St. Antony's</h3>
+          <p style="margin: 0; color: #666; line-height: 1.5;">
+            {{ customer_profile.field_billing_address.value|render|striptags }}
+          </p>
+      </div>
+      <div style="flex: 1; text-align: right;">
+          <p style="margin: 0; color: #666; line-height: 1.5;">
+              {#<strong>Issue Date:</strong> {{ node.created.value|date("d M Y") }}<br>
+              <strong>Due Date:</strong> 07-Aug-2025<br>
+              <strong>Place of Supply:</strong> KA (29) #}
+          </p>
+      </div>
+  </div>
+
+  <!-- Bill To & Ship To -->
+  <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+      <div style="flex: 1;">
+          <h4 style="color: #333; margin: 0 0 10px 0;">Bill To</h4>
+          <p style="margin: 0; color: #666; line-height: 1.5;">
+              {{ customer_profile.field_billing_address.value|render|striptags }}
+          </p>
+      </div>
+      <div style="flex: 1;">
+          <h4 style="color: #333; margin: 0 0 10px 0;">Ship To</h4>
+          <p style="margin: 0; color: #666; line-height: 1.5;">
+              {{ customer_profile.field_billing_address.value|render|striptags }}
+          </p>
+      </div>
+  </div>
 
   <h3>Items</h3>
   <table>
@@ -32,14 +81,14 @@
     <tbody>
       {% set grand_total = 0 %}
       {% for item in quotation_items %}
-        {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
+        {% set sub_total = item.field_quantity.value * item.field_product.entity.field_cost_price.value %}
         {% set total = sub_total + item.field_tax_amount.value %}
         {% set grand_total = grand_total + total %}
         <tr>
           <td>{{ loop.index }}</td>
           <td>{{ item.field_product.entity.label }}</td>
           <td>{{ item.field_quantity.value }}</td>
-          <td>₹{{ item.field_item_rate.value }}</td>
+          <td>₹{{item.field_product.entity.field_cost_price.value }}</td>
           <td>₹{{ sub_total }}</td>
           <td>₹{{ item.field_tax_amount.value }}</td>
           <td>₹{{ total }}</td>
