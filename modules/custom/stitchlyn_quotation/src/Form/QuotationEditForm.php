@@ -108,11 +108,17 @@ class QuotationEditForm extends FormBase {
       '#title' => $this->t('Totals'),
     ];
 
+    // Subtotal (readonly + hidden mirror)
     $form['totals']['field_subtotal_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Subtotal'),
       '#default_value' => $totals['subtotal'],
       '#attributes' => ['readonly' => 'readonly'],
+    ];
+    $form['totals']['hidden_subtotal'] = [
+      '#type' => 'hidden',
+      '#value' => $totals['subtotal'],
+      '#attributes' => ['id' => 'hidden-subtotal'],
     ];
 
     $form['totals']['field_discount'] = [
@@ -122,18 +128,30 @@ class QuotationEditForm extends FormBase {
       '#step' => 0.01,
     ];
 
+    // Tax (readonly + hidden mirror)
     $form['totals']['field_tax_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Tax'),
       '#default_value' => $totals['tax'],
       '#attributes' => ['readonly' => 'readonly'],
     ];
+    $form['totals']['hidden_tax'] = [
+      '#type' => 'hidden',
+      '#value' => $totals['tax'],
+      '#attributes' => ['id' => 'hidden-tax'],
+    ];
 
+    // Total (readonly + hidden mirror)
     $form['totals']['field_total_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Total'),
       '#default_value' => $totals['total'],
       '#attributes' => ['readonly' => 'readonly'],
+    ];
+    $form['totals']['hidden_total'] = [
+      '#type' => 'hidden',
+      '#value' => $totals['total'],
+      '#attributes' => ['id' => 'hidden-total'],
     ];
 
     // ========== Actions ==========
@@ -154,26 +172,31 @@ class QuotationEditForm extends FormBase {
     $node = $form_state->get('node');
     $values = $form_state->getValues();
 
-    // Basic fields.
+    // Basic fields
     $node->setTitle($values['title']);
     $node->set('field_customer_reference', $values['field_customer_reference']);
     $node->set('field_quotation_date', $values['field_quotation_date']);
     $node->set('body', ['value' => $values['body'], 'format' => 'basic_html']);
     $node->set('field_discount', $values['field_discount']);
 
-    // --- Fetch tax configuration globally ---
-    $config = \Drupal::config('stitchlyn_basic.erp_settings');
-    $tax_rate = (float) ($config->get('tax_percentage') ?? 0);
+    // Fetch hidden totals (populated by JS)
+    $subtotal = (float) $form_state->getValue('hidden_subtotal');
+    $tax = (float) $form_state->getValue('hidden_tax');
+    $total = (float) $form_state->getValue('hidden_total');
 
-    // --- Recompute totals server-side ---
-    $helper = \Drupal::service('stitchlyn_quotation.helper');
-    $computed = $helper->computeTotals($node->id());
-    $subtotal = (float) $computed['subtotal'];
-    $discount = (float) $values['field_discount'];
-    $tax = ($subtotal - $discount) * ($tax_rate / 100);
-    $total = $subtotal - $discount + $tax;
+    // Fallback: if JS didn’t run, recompute from backend
+    if (!$subtotal) {
+      $helper = \Drupal::service('stitchlyn_quotation.helper');
+      $computed = $helper->computeTotals($node->id());
+      $subtotal = (float) $computed['subtotal'];
+      $config = \Drupal::config('stitchlyn_basic.erp_settings');
+      $tax_rate = (float) ($config->get('tax_percentage') ?? 0);
+      $discount = (float) $values['field_discount'];
+      $tax = ($subtotal - $discount) * ($tax_rate / 100);
+      $total = $subtotal - $discount + $tax;
+    }
 
-    // --- Save totals to node ---
+    // Save totals
     $node->set('field_subtotal_amount', $subtotal);
     $node->set('field_tax_amount', $tax);
     $node->set('field_total_amount', $total);

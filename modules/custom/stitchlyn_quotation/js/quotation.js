@@ -1,11 +1,8 @@
 /**
  * Quotation form behavior:
- * - Opens attribute popup for the selected product.
- * - Re-attaches Drupal behaviors so autocomplete works inside the popup.
- * - Serializes paragraph form inputs into a flat {field_*: value} map.
- * - Resolves taxonomy term IDs (from "Blue (15)" → 15).
- * - Sends via AJAX and refreshes the line-items table + totals.
- * - Automatically loads existing line items on page load (only once).
+ * - Handles product popup, attribute saving, and line-item refresh.
+ * - Auto-calculates subtotal, discount, tax, and total.
+ * - Updates both visible fields and hidden mirrors for backend save.
  */
 (function ($, Drupal, once) {
   Drupal.behaviors.stitchlynQuotation = {
@@ -20,7 +17,6 @@
           }
         });
 
-        // Clear stored ID if user edits manually.
         $(el).on('input', function () {
           $(this).removeData('entity-id');
         });
@@ -33,7 +29,6 @@
 
           const product = $('#product-autocomplete').data('entity-id');
           const quotation = $(this).data('quotation-id');
-
           if (!product) {
             alert('Please select a product first.');
             return;
@@ -48,46 +43,31 @@
             const $dlg = $('<div class="sq-dialog"></div>').html(res.html);
             const dialog = Drupal.dialog($dlg, { title: 'Add Product', width: 700 });
             dialog.showModal();
-
-            // Enable autocomplete etc. inside popup.
             Drupal.attachBehaviors($dlg[0]);
 
-            // Save button inside popup.
             $dlg.off('click.saveAttr').on('click.saveAttr', '#save-attr', function (e) {
               e.preventDefault();
 
-              // --- Build payload ---
               const payload = { attributes: {}, quantity: 1 };
-
-              // ✅ Read only the named quantity field.
               const qty = parseFloat($dlg.find('#sq-quantity').val()) || 1;
               payload.quantity = qty;
 
-              // Collect other paragraph fields.
               $dlg.find('input, select, textarea').each(function () {
                 const name = $(this).attr('name');
                 const val = $(this).val();
-                if (!name || val === '' || val === null || typeof val === 'undefined') return;
-
-                // Skip quantity field.
+                if (!name || val === '' || val === null) return;
                 if (name === 'sq_quantity') return;
 
-                // Extract base field name: field_colour[0][target_id] → field_colour
                 const m = name.match(/^(field_[a-z0-9_]+)/i);
                 if (!m) return;
                 const base = m[1];
 
-                // Handle taxonomy autocomplete values like "Blue (15)".
                 let cleanVal = val;
                 const match = String(val).match(/\((\d+)\)$/);
-                if (match) {
-                  cleanVal = match[1]; // use numeric ID directly
-                }
-
+                if (match) cleanVal = match[1];
                 payload.attributes[base] = cleanVal;
               });
 
-              // --- AJAX save ---
               $.ajax({
                 url: Drupal.url(`quotation/ajax/save-item/${product}/${quotation}`),
                 method: 'POST',
@@ -97,7 +77,7 @@
                   if (resp.status === 'success') {
                     $dlg.dialog('close');
                     $('#product-autocomplete').val('').removeData('entity-id');
-                    refreshTableAndTotals(quotation); // ✅ Reload table after save
+                    refreshTableAndTotals(quotation);
                   } else {
                     alert(resp.message || 'Failed to save item.');
                   }
@@ -118,7 +98,10 @@
           if (res.status !== 'success') return;
 
           $('#line-items-wrapper').html(res.html);
-          $('input[name="field_subtotal_amount"]').val(parseFloat(res.subtotal || 0).toFixed(2));
+          const subtotal = parseFloat(res.subtotal || 0);
+          $('input[name="field_subtotal_amount"]').val(subtotal.toFixed(2));
+          $('#hidden-subtotal').val(subtotal.toFixed(2));
+
           recomputeTotals();
           bindTableActions(qid);
           Drupal.attachBehaviors($('#line-items-wrapper')[0]);
@@ -127,7 +110,6 @@
 
       // --- Bind view/remove actions ---
       function bindTableActions(qid) {
-        // View popup
         $('.view-item').off('click').on('click', function (e) {
           e.preventDefault();
           const id = $(this).data('id');
@@ -138,18 +120,17 @@
           });
         });
 
-        // Remove item
         $('.remove-item').off('click').on('click', function (e) {
           e.preventDefault();
           const id = $(this).data('id');
           if (!confirm('Are you sure you want to remove this item?')) return;
           $.get(Drupal.url(`quotation/ajax/delete-item/${id}`), function () {
-            refreshTableAndTotals(qid); // ✅ Reload only after delete
+            refreshTableAndTotals(qid);
           });
         });
       }
 
-      // --- Totals on discount change ---
+      // --- Totals recompute when discount changes ---
       once('sqDiscount', 'input[name="field_discount"]', context).forEach((el) => {
         $(el).on('input', function () {
           recomputeTotals();
@@ -165,18 +146,25 @@
           (window.Drupal && Drupal.settings && Drupal.settings.stitchlynTax) ||
           '0'
         );
-        const tax = (subtotal * taxRate) / 100.0;
-        const total = subtotal - discount + tax;
+
+        const taxableBase = Math.max(0, subtotal - discount);
+        const tax = (taxableBase * taxRate) / 100.0;
+        const total = taxableBase + tax;
+
+        // Update visible fields
         $('input[name="field_tax_amount"]').val(tax.toFixed(2));
         $('input[name="field_total_amount"]').val(total.toFixed(2));
+
+        // 🔥 Update hidden mirrors for backend submission
+        $('#hidden-subtotal').val(subtotal.toFixed(2));
+        $('#hidden-tax').val(tax.toFixed(2));
+        $('#hidden-total').val(total.toFixed(2));
       }
 
-      // --- Initial table load: run only once per page load ---
+      // --- Initial table load (only once) ---
       once('sqInitialTableLoad', 'body', context).forEach(() => {
         const qid = $('[data-quotation-id]').data('quotation-id');
-        if (qid) {
-          refreshTableAndTotals(qid); // ✅ Load once on page load
-        }
+        if (qid) refreshTableAndTotals(qid);
       });
     },
   };
