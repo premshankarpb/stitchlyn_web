@@ -171,7 +171,8 @@ class QuotationEditForm extends FormBase {
     /** @var \Drupal\node\Entity\Node $node */
     $node = $form_state->get('node');
     $values = $form_state->getValues();
-
+ \Drupal::logger('what_a_nice_logName')->warning('<pre><code>' . print_r($values, TRUE) . '</code></pre>');
+ 
     // Basic fields
     $node->setTitle($values['title']);
     $node->set('field_customer_reference', $values['field_customer_reference']);
