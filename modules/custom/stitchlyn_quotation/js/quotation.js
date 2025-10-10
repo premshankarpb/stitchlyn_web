@@ -143,8 +143,7 @@
         const discount = parseFloat($('input[name="field_discount"]').val() || '0');
         const taxRate = parseFloat(
           (window.drupalSettings && drupalSettings.stitchlynTax) ||
-          (window.Drupal && Drupal.settings && Drupal.settings.stitchlynTax) ||
-          '0'
+          '18'
         );
 
         const taxableBase = Math.max(0, subtotal - discount);
