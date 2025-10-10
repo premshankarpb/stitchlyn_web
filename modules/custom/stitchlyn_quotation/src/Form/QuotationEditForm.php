@@ -171,8 +171,7 @@ class QuotationEditForm extends FormBase {
     /** @var \Drupal\node\Entity\Node $node */
     $node = $form_state->get('node');
     $values = $form_state->getValues();
- \Drupal::logger('what_a_nice_logName')->warning('<pre><code>' . print_r($values, TRUE) . '</code></pre>');
- 
+
     // Basic fields
     $node->setTitle($values['title']);
     $node->set('field_customer_reference', $values['field_customer_reference']);
@@ -197,9 +196,9 @@ class QuotationEditForm extends FormBase {
     //   $total = $subtotal - $discount + $tax;
     // }
 
-    $subtotal = $values['hidden_subtotal'];
-    $tax = $values['hidden_tax'];
-    $total = $values['hidden_total'];
+    $subtotal = $values['field_subtotal_amount'];
+    $tax = $values['field_tax_amount'];
+    $total = $values['field_total_amount'];
 
     // Save totals
     $node->set('field_subtotal_amount', $subtotal);
