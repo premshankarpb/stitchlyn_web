@@ -66,3 +66,7 @@
   background: #f7f7f7;
   font-weight: bold;
 }
+
+.form--inline .form-actions {
+  vertical-align: inherit;
+}
