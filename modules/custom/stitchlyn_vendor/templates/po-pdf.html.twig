@@ -2,138 +2,191 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Stitchlyn - Invoice</title>
+  <title>Purchase Order - {{ invoice_no }}</title>
   <style>
     @page { size: A4; margin: 25px; }
     body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #333; }
     h1, h3, h4 { margin: 0; padding: 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 8px; font-size: 12px; }
     th { background-color: #ff4444; color: #fff; text-align: left; }
     tfoot td { font-weight: bold; }
-    .header, .company, .billship { display: flex; justify-content: space-between; margin-bottom: 20px; }
     .signature { margin-top: 50px; text-align: right; }
     .signature div { border-top: 1px solid #666; width: 200px; padding-top: 10px; display: inline-block; }
+    .status-box { 
+      padding: 3px 10px; 
+      font-size: 11px; 
+      border-radius: 4px; 
+      font-weight: bold; 
+      color: #fff; 
+      display: inline-block;
+    }
+    .paid { background: #28a745; }
+    .unpaid { background: #dc3545; }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <div class="header">
-    <div>
-      <h1>TAX INVOICE</h1>
-      <p><strong>Invoice #:</strong> <span style="color:#ff4444;">PO-{{ node.id }}</span></p>
-    </div>
-    <div style="text-align:right;">
-      {% if logo_path is defined %}
-        <img src="{{ logo_path }}" style="height:60px;">
+
+<!-- Header -->
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
+  <tr valign="top">
+    <!-- Left -->
+    <td width="65%" style="vertical-align:top;">
+      <h1 style="font-size:22px; margin-bottom:5px;">PURCHASE ORDER</h1>
+      <h3 style="margin:0; font-size:15px;">{{ client_name }}</h3>
+      <p style="margin:0; font-size:12px; line-height:1.4;">
+        {{ client_address|raw }}<br>
+        {% if client_contact %}{{ client_contact }}<br>{% endif %}
+        {% if client_gst %}GSTIN: {{ client_gst }}{% endif %}
+      </p>
+    </td>
+
+    <!-- Right -->
+    <td width="35%" align="right" style="vertical-align:top; text-align:right;">
+      {% if logo %}
+        <img src="{{ logo }}" style="height:50px; margin-bottom:8px;"><br>
       {% endif %}
-    </div>
-  </div>
-
-  <!-- Company & Issue Details -->
-  <div class="company">
-    <div>
-      <h3>STITCHLYN</h3>
-      <p>
-        123 Fashion Street, Design District<br>
-        Bangalore, Karnataka 560001<br>
-        Phone: +91 80 1234 5678<br>
-        Email: info@stitchlyn.com<br>
-        GSTIN: 29AABCS1234Z1ZX
-      </p>
-    </div>
-    <div style="text-align:right;">
-      <p>
-        <strong>Issue Date:</strong> {{ node.created.value|date("d-M-Y") }}<br>
-        <strong>Due Date:</strong> {{ node.field_due_date.value|date("d-M-Y") }}<br>
-        <strong>Place of Supply:</strong> KA (29)
-      </p>
-    </div>
-  </div>
-
-  <!-- Bill To & Ship To -->
-  <div class="billship">
-    <div>
-      <h4>Bill To</h4>
-      <p>
-        {{ vendor_profile.field_billing_address.value|nl2br }}<br>
-        GSTIN: {{ vendor_profile.field_gst_number.value }}
-      </p>
-    </div>
-    <div>
-      <h4>Ship To</h4>
-      <p>
-        {{ vendor_profile.field_shipping_address.value|nl2br }}<br>
-        Contact: {{ vendor_profile.field_phone_number.0.phone_number }}
-      </p>
-    </div>
-  </div>
-
-  <!-- Items Table -->
-  <table>
-    <thead>
-      <tr>
-        <th>S.No</th>
-        <th>Description</th>
-        <th style="text-align:right;">Price</th>
-        <th style="text-align:right;">Taxable Value</th>
-        <th style="text-align:right;">Tax</th>
-        <th style="text-align:right;">Amount</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% set grand_total = 0 %}
-      {% for item in referencing_nodes %}
-        {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
-        {% set total_amount = sub_total + item.field_tax_amount.value %}
-        {% set grand_total = grand_total + total_amount %}
+      <table style="font-size:12px; border:1px solid #ccc; border-collapse:collapse; width:100%;">
         <tr>
-          <td>{{ loop.index }}</td>
-          <td>
-            {{ item.field_item_reference.entity.label }}
-            {% if item.body.value %}<br><small>{{ item.body.value }}</small>{% endif %}
-          </td>
-          <td style="text-align:right;">₹{{ item.field_item_rate.value }}</td>
-          <td style="text-align:right;">₹{{ sub_total }}</td>
-          <td style="text-align:right;">₹{{ item.field_tax_amount.value }}</td>
-          <td style="text-align:right;">₹{{ total_amount }}</td>
+          <td style="padding:5px; border:1px solid #ccc;"><strong>PO #:</strong></td>
+          <td style="padding:5px; border:1px solid #ccc;">{{ invoice_no }}</td>
         </tr>
-      {% endfor %}
-    </tbody>
-    <tfoot>
+        <tr>
+          <td style="padding:5px; border:1px solid #ccc;"><strong>Issue Date:</strong></td>
+          <td style="padding:5px; border:1px solid #ccc;">{{ issue_date|date("d M Y") }}</td>
+        </tr>
+        {% if due_date %}
+        <tr>
+          <td style="padding:5px; border:1px solid #ccc;"><strong>Due Date:</strong></td>
+          <td style="padding:5px; border:1px solid #ccc;">{{ due_date|date("d M Y") }}</td>
+        </tr>
+        {% endif %}
+      </table>
+    </td>
+  </tr>
+</table>
+
+<hr style="border:0; border-top:2px solid #ff4444; margin:5px 0 10px 0;">
+
+<!-- Vendor & Payment Section -->
+<table width="100%" style="margin-bottom:10px;">
+  <tr valign="top">
+    <td width="70%" style="vertical-align:top;">
+      <h4 style="margin-bottom:5px;">Bill To</h4>
+      {% if vendor_profile %}
+        <p style="margin:0; font-size:12px; line-height:1.4;">
+          {% if vendor_profile.field_vendor_name.0.value is defined %}
+            <strong>{{ vendor_profile.field_vendor_name.0.value }}</strong><br>
+          {% endif %}
+
+          {% if vendor_profile.field_billing_address.0.value is defined %}
+            Address: {{ vendor_profile.field_billing_address.0.value|nl2br }}<br>
+          {% endif %}
+
+          {% if vendor_profile.field_contact_person.0.value is defined %}
+            Contact Person: {{ vendor_profile.field_contact_person.0.value }}<br>
+          {% endif %}
+
+          {% if vendor_profile.field_gst_number.0.value is defined %}
+            GSTIN: {{ vendor_profile.field_gst_number.0.value }}<br>
+          {% endif %}
+        </p>
+      {% else %}
+        <p><em>No vendor details found.</em></p>
+      {% endif %}
+    </td>
+
+    <td width="30%" align="right" style="vertical-align:top;">
+      {% if payment_status %}
+        {% set status_lower = payment_status|lower %}
+        <div style="
+          border:1px solid #ccc;
+          padding:8px 12px;
+          border-radius:6px;
+          font-weight:bold;
+          color:#fff;
+          background-color:
+            {% if 'paid' in status_lower %}#28a745
+            {% elseif 'partial' in status_lower %}#ff9800
+            {% else %}#dc3545
+            {% endif %};
+        ">
+          {{ payment_status }}
+        </div>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+
+<!-- Items Table -->
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Description</th>
+      <th style="text-align:right;">Qty</th>
+      <th style="text-align:right;">Rate</th>
+      <th style="text-align:right;">Tax</th>
+      <th style="text-align:right;">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% set grand_total = 0 %}
+    {% for item in referencing_nodes %}
+      {% set qty = item.field_quantity.value|default(0) %}
+      {% set rate = item.field_item_rate.value|default(0) %}
+      {% set tax = item.field_tax_amount.value|default(0) %}
+      {% set total = (qty * rate) + tax %}
+      {% set grand_total = grand_total + total %}
       <tr>
-        <td colspan="5" style="text-align:right;">Total</td>
-        <td style="text-align:right;">₹{{ grand_total }}</td>
+        <td>{{ loop.index }}</td>
+        <td>{{ item.field_item_reference.entity.label }}
+          {% if item.body.value %}<br><small>{{ item.body.value }}</small>{% endif %}
+        </td>
+        <td style="text-align:right;">{{ qty|number_format(2, '.', ',') }}</td>
+        <td style="text-align:right;">₹{{ rate|number_format(2, '.', ',') }}</td>
+        <td style="text-align:right;">₹{{ tax|number_format(2, '.', ',') }}</td>
+        <td style="text-align:right;">₹{{ total|number_format(2, '.', ',') }}</td>
       </tr>
-    </tfoot>
-  </table>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="5" style="text-align:right;"><strong>Subtotal</strong></td>
+      <td style="text-align:right;">₹{{ subtotal|number_format(2, '.', ',') }}</td>
+    </tr>
+    <tr>
+      <td colspan="5" style="text-align:right;"><strong>Tax</strong></td>
+      <td style="text-align:right;">₹{{ tax|number_format(2, '.', ',') }}</td>
+    </tr>
+    <tr>
+      <td colspan="5" style="text-align:right;"><strong>Total</strong></td>
+      <td style="text-align:right;">₹{{ total|number_format(2, '.', ',') }}</td>
+    </tr>
+  </tfoot>
+</table>
 
-  <!-- Bank Details -->
-  <div style="margin-top:30px;">
-    <h4>Bank Details</h4>
-    <p>
-      Bank Name: HDFC Bank<br>
-      Account Number: 50200086169366<br>
-      IFSC Code: HDFC0004896<br>
-      Branch: FASHION DISTRICT
-    </p>
-  </div>
+<!-- Banking Details -->
+<div style="margin-top:30px;">
+  <h4>Bank Details</h4>
+  <p style="font-size:12px;">{{ client_banking|raw }}</p>
+</div>
 
-  <!-- Terms -->
-  <div style="margin-top:20px;">
-    <h4>Terms & Conditions</h4>
-    <p style="font-size:11px;">
-      1. Payment is due within 14 days<br>
-      2. Please include invoice number on payment<br>
-      3. All prices are in INR
-    </p>
-  </div>
+<!-- Terms -->
+<div style="margin-top:20px;">
+  <h4>Terms & Conditions</h4>
+  <p style="font-size:11px;">
+    1. Payment is due within 14 days.<br>
+    2. Please include PO number on payment.<br>
+    3. All prices are in INR.
+  </p>
+</div>
 
-  <!-- Signature -->
-  <div class="signature">
-    <div>
-      <p>Authorized Signature</p>
-    </div>
+<!-- Signature -->
+<div class="signature">
+  <div>
+    <p>Authorized Signature</p>
   </div>
+</div>
 </body>
 </html>
