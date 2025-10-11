@@ -7,16 +7,27 @@ use Drupal\Core\Config\ConfigFactoryInterface;
  */
 function stitchlyn_quotation_theme($existing, $type, $theme, $path) {
   return [
-    'stitchlyn_quotation_pdf' => [
+    'quotation_pdf' => [
       'variables' => [
-        'node' => NULL,
-        'customer_profile' => [],
-        'quotation_items' => [],
-        'product_items' => [],
-        'title' => [],
+        'logo' => '',
+        'client_name' => '',
+        'client_address' => '',
+        'client_contact' => '',
+        'client_gst' => '',
+        'client_banking' => '',
+        'tax_percentage' => 0,
+        'customer_profile' => [],  // ✅ Added structured customer details
+        'items' => [],
+        'subtotal' => 0,
+        'discount' => 0,
+        'tax' => 0,
+        'total' => 0,
+        'issue_date' => '',
+        'due_date' => '',
+        'invoice_no' => '',
       ],
       'template' => 'quotation-pdf',
-    ]
+    ],
   ];
 }
 

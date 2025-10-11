@@ -1,106 +1,98 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
-    h1 { margin: 0 0 10px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
-    th { background: #ff4444; color: #fff; }
-  </style>
-</head>
-<body>
-  {#<h1>Quotation: {{ node.label }}</h1>
-  <p><strong>Date:</strong> {{ node.created.value|date("d M Y") }}</p>
-  <p><strong>Customer:</strong> {{ node.field_customer_reference.entity.label }}</p>
-  <p><strong>Total Amount:</strong> ₹{{ node.field_total_amount.value }}</p>#}
+  <head>
+    <meta charset="utf-8">
+    <title>{{ invoice_no }}</title>
+    <style>
+      body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #222; }
+      .header { width: 100%; border-bottom: 2px solid #e74c3c; margin-bottom: 10px; }
+      .left { float: left; width: 70%; }
+      .right { float: right; width: 30%; text-align: right; }
+      .clearfix { clear: both; }
+      .logo { max-height: 70px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+      th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+      th { background: #e74c3c; color: #fff; }
+      .no-border td { border: none; }
+      .totals td { text-align: right; }
+      .footer { margin-top: 40px; font-size: 11px; }
+      .bold { font-weight: bold; }
+    </style>
+  </head>
+  <body>
 
-  <!-- Header Section -->
-  <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-      <div>
-          <h1 style="color: #333; margin: 0; font-size: 24px;">TAX INVOICE</h1>
-          <div style="margin-top: 10px; color: #666;">
-              <strong>Invoice #:</strong> <span style="color: #ff4444;">{{ node.label }}</span>
-          </div>
-          <div style="margin-top: 10px; color: #666;">
-              <strong>Date:</strong> <span style="color: #ff4444;">{{ node.created.value|date("d M Y") }}</span>
-          </div>
+    <div class="header">
+      <div class="left">
+        <h2>TAX INVOICE</h2>
+        <p><strong>{{ client_name }}</strong><br>{{ client_address|raw }}<br>
+        GSTIN: {{ client_gst }}<br>{{ client_contact }}</p>
       </div>
-      <div style="text-align: right;">
-          <img src="src/assets/images/logo.png" alt="Stitchlyn Logo" style="height: 60px;">
+      <div class="right">
+        {% if logo %}
+          <img src="{{ logo }}" class="logo" alt="Logo">
+        {% endif %}
+        <p><strong>Invoice #:</strong> {{ invoice_no }}<br>
+        <strong>Issue Date:</strong> {{ issue_date|date("d M Y") }}<br>
+        <strong>Due Date:</strong> {{ due_date|date("d M Y") }}</p>
       </div>
-  </div>
+      <div class="clearfix"></div>
+    </div>
 
-  <!-- Company Details -->
-  <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-      <div style="flex: 1;">
-          <h3 style="color: #333; margin: 0 0 10px 0;">St. Antony's</h3>
-          <p style="margin: 0; color: #666; line-height: 1.5;">
-            {{ customer_profile.field_billing_address.value|render|striptags }}
-          </p>
-      </div>
-      <div style="flex: 1; text-align: right;">
-          <p style="margin: 0; color: #666; line-height: 1.5;">
-              {#<strong>Issue Date:</strong> {{ node.created.value|date("d M Y") }}<br>
-              <strong>Due Date:</strong> 07-Aug-2025<br>
-              <strong>Place of Supply:</strong> KA (29) #}
-          </p>
-      </div>
-  </div>
-
-  <!-- Bill To & Ship To -->
-  <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-      <div style="flex: 1;">
-          <h4 style="color: #333; margin: 0 0 10px 0;">Bill To</h4>
-          <p style="margin: 0; color: #666; line-height: 1.5;">
-              {{ customer_profile.field_billing_address.value|render|striptags }}
-          </p>
-      </div>
-      <div style="flex: 1;">
-          <h4 style="color: #333; margin: 0 0 10px 0;">Ship To</h4>
-          <p style="margin: 0; color: #666; line-height: 1.5;">
-              {{ customer_profile.field_billing_address.value|render|striptags }}
-          </p>
-      </div>
-  </div>
-
-  <h3>Items</h3>
-  <table>
-    <thead>
+    <h3>Bill To:</h3>
+    <table class="bill-to">
       <tr>
-        <th>S.No</th>
-        <th>Product</th>
-        <th>Quantity</th>
-        <th>Rate</th>
-        <th>Subtotal</th>
-        <th>Tax</th>
-        <th>Total</th>
+        <td>
+          <strong>{{ customer_profile.name }}</strong><br>
+          {% if customer_profile.billing_address %}
+            {{ customer_profile.billing_address }}<br>
+          {% endif %}
+          {% if customer_profile.phone %}
+            Phone: {{ customer_profile.phone }}<br>
+          {% endif %}
+          {% if customer_profile.email %}
+            Email: {{ customer_profile.email }}<br>
+          {% endif %}
+          {% if customer_profile.gst %}
+            GSTIN: {{ customer_profile.gst }}
+          {% endif %}
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      {% set grand_total = 0 %}
-      {% for item in quotation_items %}
-        {% set sub_total = item.field_quantity.value * item.field_product.entity.field_cost_price.value %}
-        {% set total = sub_total + item.field_tax_amount.value %}
-        {% set grand_total = grand_total + total %}
+    </table>
+
+    <table>
+      <thead>
         <tr>
-          <td>{{ loop.index }}</td>
-          <td>{{ item.field_product.entity.label }}</td>
-          <td>{{ item.field_quantity.value }}</td>
-          <td>₹{{item.field_product.entity.field_cost_price.value }}</td>
-          <td>₹{{ sub_total }}</td>
-          <td>₹{{ item.field_tax_amount.value }}</td>
-          <td>₹{{ total }}</td>
+          <th>S.No</th>
+          <th>Description</th>
+          <th>Unit Price</th>
+          <th>Quantity</th>
+          <th>Amount</th>
         </tr>
-      {% endfor %}
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="6" style="text-align:right;">Grand Total</td>
-        <td>₹{{ grand_total }}</td>
-      </tr>
-    </tfoot>
-  </table>
-</body>
+      </thead>
+      <tbody>
+        {% for item in items %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ item.name }}</td>
+            <td>₹{{ item.unit_price|number_format(2, '.', ',') }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹{{ item.total|number_format(2, '.', ',') }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <table class="totals">
+      <tr><td colspan="4" class="no-border"></td><td><strong>Subtotal:</strong> ₹{{ subtotal|number_format(2, '.', ',') }}</td></tr>
+      <tr><td colspan="4" class="no-border"></td><td><strong>Discount:</strong> ₹{{ discount|number_format(2, '.', ',') }}</td></tr>
+      <tr><td colspan="4" class="no-border"></td><td><strong>Tax ({{ tax_percentage }}%):</strong> ₹{{ tax|number_format(2, '.', ',') }}</td></tr>
+      <tr><td colspan="4" class="no-border"></td><td><strong>Total:</strong> ₹{{ total|number_format(2, '.', ',') }}</td></tr>
+    </table>
+
+    <div class="footer">
+      <p><strong>Bank Details</strong><br>{{ client_banking|raw }}</p>
+      <p><strong>Terms & Conditions:</strong><br>1. Payment is due within 14 days.<br>2. Please include invoice number on payment.<br>3. All prices are in INR.</p>
+      <p style="text-align:right; margin-top:50px;"><strong>Authorized Signature</strong></p>
+    </div>
+  </body>
 </html>

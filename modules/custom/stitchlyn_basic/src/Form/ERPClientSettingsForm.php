@@ -31,6 +31,11 @@ class ERPClientSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Client Address'),
       '#default_value' => $config->get('client_address'),
     ];
+    $form['client_banking'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Banking details'),
+      '#default_value' => $config->get('client_banking'),
+    ];
 
     $form['client_contact'] = [
       '#type' => 'textfield',
@@ -79,6 +84,7 @@ class ERPClientSettingsForm extends ConfigFormBase {
     $this->config('stitchlyn_basic.erp_settings')
       ->set('client_name', $form_state->getValue('client_name'))
       ->set('client_address', $form_state->getValue('client_address'))
+      ->set('client_banking', $form_state->getValue('client_banking'))
       ->set('client_contact', $form_state->getValue('client_contact'))
       ->set('client_gst', $form_state->getValue('client_gst'))
       ->set('tax_percentage', $form_state->getValue('tax_percentage'))
