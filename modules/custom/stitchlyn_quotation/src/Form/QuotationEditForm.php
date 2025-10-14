@@ -5,6 +5,8 @@ namespace Drupal\stitchlyn_quotation\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Custom quotation edit form.
@@ -154,6 +156,74 @@ class QuotationEditForm extends FormBase {
       '#attributes' => ['id' => 'hidden-total'],
     ];
 
+    // ==================== Status & Payment ====================
+    $form['quotation_workflow'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Status & Payment'),
+      '#open' => TRUE,
+    ];
+
+    // Resolve workflow and available states.
+    $moderation_info = \Drupal::service('content_moderation.moderation_information');
+
+    $current_state_label = $this->t('Not moderated');
+    $state_options = [];
+    $current_state_id = '';
+
+    if ($moderation_info->isModeratedEntity($node)) {
+      /** @var \Drupal\workflows\WorkflowInterface $workflow */
+      $workflow = $moderation_info->getWorkflowForEntity($node);
+      if ($workflow) {
+        $type = $workflow->getTypePlugin();
+
+        // Load all states from this workflow.
+        $states = $type->getStates();
+        foreach ($states as $sid => $state) {
+          $state_options[$sid] = $state->label();
+        }
+
+        // Current state details.
+        $current_state_id = $node->hasField('moderation_state') ? (string) $node->get('moderation_state')->value : '';
+        if ($current_state_id !== '' && isset($states[$current_state_id])) {
+          $current_state_label = $states[$current_state_id]->label();
+        }
+      }
+    }
+
+    // Display current status (read-only).
+    $form['quotation_workflow']['current_status'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Current Status'),
+      '#markup' => '<strong>' . $current_state_label . '</strong>',
+    ];
+
+    // Allow direct state selection (dropdown of all workflow states).
+    $form['quotation_workflow']['moderation_state'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Change Status'),
+      '#options' => $state_options,
+      '#default_value' => $current_state_id,
+      '#empty_option' => $this->t('- Select -'),
+      '#description' => $this->t('Directly assign a new workflow state.'),
+    ];
+
+    // Payment status dropdown from vocabulary.
+    $payment_options = [];
+    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('payment_status', 0, 1, TRUE);
+    foreach ($terms as $term) {
+      $payment_options[$term->id()] = $term->label();
+    }
+
+    $form['quotation_workflow']['field_payment_status'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Payment Status'),
+      '#options' => $payment_options,
+      '#default_value' => $node->hasField('field_payment_status') && !$node->get('field_payment_status')->isEmpty()
+        ? (int) $node->get('field_payment_status')->target_id
+        : NULL,
+      '#empty_option' => $this->t('- Select -'),
+    ];
+
     // ========== Actions ==========
     $form['actions']['submit'] = [
       '#type' => 'submit',
@@ -187,6 +257,18 @@ class QuotationEditForm extends FormBase {
     $node->set('field_subtotal_amount', $subtotal);
     $node->set('field_tax_amount', $tax);
     $node->set('field_total_amount', $total);
+
+    // --- Payment status update ---
+    if ($node->hasField('field_payment_status')) {
+      $payment_tid = (int) ($values['field_payment_status'] ?? 0);
+      $node->set('field_payment_status', $payment_tid ? ['target_id' => $payment_tid] : NULL);
+    }
+
+    // --- Directly update moderation state (selected workflow state) ---
+    if ($node->hasField('moderation_state') && !empty($values['moderation_state'])) {
+      $node->set('moderation_state', $values['moderation_state']);
+    }
+
 
     $node->save();
 

@@ -70,3 +70,9 @@
 .form--inline .form-actions {
   vertical-align: inherit;
 }
+
+.quotation-current-status {
+  position: absolute;
+  right: 40px;
+  top: 20px;
+}
