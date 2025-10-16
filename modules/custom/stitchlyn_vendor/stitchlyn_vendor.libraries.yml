@@ -1,0 +1,9 @@
+vendor_info:
+  version: 1.x
+  js:
+    js/vendor_info.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/once

@@ -76,3 +76,17 @@
   right: 40px;
   top: 20px;
 }
+
+.vendor-info-box {
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: #f8f9fa;
+  border-left: 3px solid #007bff;
+  border-radius: 4px;
+  font-size: 0.9em;
+  line-height: 1.4em;
+  width: 90%;
+}
+.vendor-card strong {
+  font-size: 1.1em;
+}

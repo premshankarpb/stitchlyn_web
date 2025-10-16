@@ -17,13 +17,6 @@ stitchlyn_vendor.edit_form:
     parameters:
       user:
         type: entity:user
-stitchlyn_vendor.purchase_order_form:
-  path: '/dashboard/add/purchase-order'
-  defaults:
-    _form: '\Drupal\stitchlyn_vendor\Form\PurchaseOrderForm'
-    _title: 'Create Purchase Order'
-  requirements:
-    _permission: 'access content'
 stitchlyn_vendor.inventory_item_form:
   path: '/dashboard/add/inventory'
   defaults:
@@ -81,4 +74,34 @@ stitchlyn_vendor.my_purchase_orders:
     _title_callback: '\Drupal\node\Controller\NodeViewController::title'
   requirements:
     _permission: 'access content'
-
+stitchlyn_vendor.purchase_order_create:
+  path: '/dashboard/add/purchase-order'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\PurchaseOrderController::createPurchaseOrder'
+    _title: 'Create Purchase Order'
+  requirements:
+    _permission: 'access content'
+stitchlyn_vendor.purchase_order_edit:
+  path: '/dashboard/purchase-order/{node}/edit'
+  defaults:
+    _form: '\Drupal\stitchlyn_vendor\Form\PurchaseOrderEditForm'
+    _title: 'Edit Purchase Order'
+  requirements:
+    _permission: 'access content'
+    node: '\d+'
+  options:
+    parameters:
+      node:
+        type: entity:node
+stitchlyn_vendor.vendor_info:
+  path: '/stitchlyn/vendor/info'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\VendorInfoController::getVendorInfo'
+  requirements:
+    _permission: 'access content'
+stitchlyn_vendor.item_info:
+  path: '/stitchlyn/item/info'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\ItemInfoController::getItemInfo'
+  requirements:
+    _permission: 'access content'
