@@ -99,19 +99,23 @@
     <td width="30%" align="right" style="vertical-align:top;">
       {% if payment_status %}
         {% set status_lower = payment_status|lower %}
-        <div style="
-          border:1px solid #ccc;
-          padding:8px 12px;
-          border-radius:6px;
-          font-weight:bold;
-          color:#fff;
-          background-color:
-            {% if 'paid' in status_lower %}#28a745
-            {% elseif 'partial' in status_lower %}#ff9800
-            {% else %}#dc3545
-            {% endif %};
-        ">
-          {{ payment_status }}
+        <div style="font-size:12px; font-weight:bold; text-align:left;">
+          <p style="margin-bottom:5px;">Payment Status</p>
+          <div style="
+            padding:8px 12px;
+            border-radius:5px;
+            font-size:13px;
+            font-weight:bold;
+            color:#fff;
+            display:inline-block;
+            background-color:
+              {% if 'paid' in status_lower %}#28a745
+              {% elseif 'partial' in status_lower %}#ff9800
+              {% else %}#dc3545
+              {% endif %};
+          ">
+            {{ payment_status|upper }}
+          </div>
         </div>
       {% endif %}
     </td>
@@ -124,47 +128,43 @@
     <tr>
       <th>#</th>
       <th>Description</th>
-      <th style="text-align:right;">Qty</th>
-      <th style="text-align:right;">Rate</th>
-      <th style="text-align:right;">Tax</th>
+      <th style="text-align:right;">Rate  {{ payment_status|upper }}</th>
+      <th style="text-align:right;">Quantity</th>
       <th style="text-align:right;">Total</th>
     </tr>
   </thead>
   <tbody>
     {% set grand_total = 0 %}
     {% for item in referencing_nodes %}
-      {% set qty = item.field_quantity.value|default(0) %}
-      {% set rate = item.field_item_rate.value|default(0) %}
-      {% set tax = item.field_tax_amount.value|default(0) %}
-      {% set total = (qty * rate) + tax %}
+      {% set qty = item.quantity|default(0) %}
+      {% set rate = item.unit_price|default(0) %}
+      {% set total = item.total|default(0) %}
       {% set grand_total = grand_total + total %}
       <tr>
         <td>{{ loop.index }}</td>
-        <td>{{ item.field_item_reference.entity.label }}
-          {% if item.body.value %}<br><small>{{ item.body.value }}</small>{% endif %}
-        </td>
-        <td style="text-align:right;">{{ qty|number_format(2, '.', ',') }}</td>
+        <td>{{ item.name }}</td>
         <td style="text-align:right;">₹{{ rate|number_format(2, '.', ',') }}</td>
-        <td style="text-align:right;">₹{{ tax|number_format(2, '.', ',') }}</td>
+        <td style="text-align:right;">{{ qty|number_format(2, '.', ',') }}</td>
         <td style="text-align:right;">₹{{ total|number_format(2, '.', ',') }}</td>
       </tr>
     {% endfor %}
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="5" style="text-align:right;"><strong>Subtotal</strong></td>
+      <td colspan="4" style="text-align:right;"><strong>Subtotal</strong></td>
       <td style="text-align:right;">₹{{ subtotal|number_format(2, '.', ',') }}</td>
     </tr>
     <tr>
-      <td colspan="5" style="text-align:right;"><strong>Tax</strong></td>
+      <td colspan="4" style="text-align:right;"><strong>Tax (for {{ tax_percentage }}%)</strong></td>
       <td style="text-align:right;">₹{{ tax|number_format(2, '.', ',') }}</td>
     </tr>
     <tr>
-      <td colspan="5" style="text-align:right;"><strong>Total</strong></td>
+      <td colspan="4" style="text-align:right;"><strong>Total</strong></td>
       <td style="text-align:right;">₹{{ total|number_format(2, '.', ',') }}</td>
     </tr>
   </tfoot>
 </table>
+
 
 <!-- Banking Details -->
 <div style="margin-top:30px;">

@@ -61,41 +61,39 @@
         </div>
       </div>
     </div>
-  </main>
+    
+    <hr>
 
-  <hr>
+    <h3>Items in this Purchase Order</h3>
+    {% if referencing_nodes|length > 0 %}
 
-  <h3>Items in this Purchase Order</h3>
-  {% if referencing_nodes|length > 0 %}
-
-    <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Quantity</th>
-          <th>Subtotal Cost</th>
-          <th>Tax</th>
-          <th>Total Cost</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in referencing_nodes %}
-        {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
-        {% set total_amount = sub_total + item.field_tax_amount.value %}
-
+      <table class="table table-bordered table-striped">
+        <thead>
           <tr>
-            <td>{{ item.field_item_reference.entity.label }}</td>
-            <td>{{ item.field_quantity.value }}</td>
-            <td>₹{{ sub_total }}</td>
-            <td>₹{{ item.field_tax_amount.value }}</td>
-            <td>₹{{ total_amount }}</td>
+            <th>Item</th>
+            <th>Rate</th>
+            <th>Quantity</th>
+            <th>Total Cost</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No items found in this purchase order.</p>
-  {% endif %}
+        </thead>
+        <tbody>
+          {% for item in referencing_nodes %}
+          {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
+
+            <tr>
+              <td>{{ item.field_item_reference.entity.label }}</td>
+              <td>{{ item.field_item_rate.value }}</td>
+              <td>{{ item.field_quantity.value }}</td>
+              <td>₹{{ sub_total }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No items found in this purchase order.</p>
+    {% endif %}
+    
+  </main>
 </article>
 
 

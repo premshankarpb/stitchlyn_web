@@ -69,6 +69,7 @@ class PurchaseOrderDetailController extends ControllerBase {
     $client_contact  = $config->get('client_contact') ?? '';
     $client_gst      = $config->get('client_gst') ?? '';
     $client_banking  = nl2br($config->get('client_banking') ?? '');
+    $tax_percentage  = $config->get('tax_percentage') ?? '';
     $client_logo     = '';
 
     if ($fid = $config->get('client_logo')) {
@@ -89,9 +90,12 @@ class PurchaseOrderDetailController extends ControllerBase {
     // --- Payment status (taxonomy term label) ---
     $payment_status = '';
     if (!$node->get('field_payment_status')->isEmpty()) {
-      $term = $node->get('field_payment_status')->entity;
-      if ($term) {
-        $payment_status = $term->label();
+      $target_id = $node->get('field_payment_status')->target_id;
+      if ($target_id) {
+        $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($target_id);
+        if ($term) {
+          $payment_status = $term->label();
+        }
       }
     }
 
@@ -126,16 +130,13 @@ class PurchaseOrderDetailController extends ControllerBase {
         $name  = $ref ? $ref->label() : '';
         $qty   = (float) ($li->get('field_quantity')->value ?? 0);
         $rate  = (float) ($li->get('field_item_rate')->value ?? 0);
-        $tax_a = (float) ($li->get('field_tax_amount')->value ?? 0);
-        $line_total = ($qty * $rate) + $tax_a;
+        $line_total = ($qty * $rate);
 
         $items[] = [
           'name'       => $name,
           'quantity'   => $qty,
           'unit_price' => $rate,
-          'tax'        => $tax_a,
           'total'      => $line_total,
-          'remarks'    => $li->get('body')->value ?? '',
         ];
       }
     }
@@ -150,6 +151,7 @@ class PurchaseOrderDetailController extends ControllerBase {
       '#client_contact'  => $client_contact,
       '#client_gst'      => $client_gst,
       '#client_banking'  => $client_banking,
+      '#tax_percentage'  => $tax_percentage,
       // PO header
       '#invoice_no'      => $po_number,
       '#issue_date'      => $issue_date,
