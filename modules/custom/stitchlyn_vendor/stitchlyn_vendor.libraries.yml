@@ -4,6 +4,6 @@ vendor_info:
     js/vendor_info.js: {}
   dependencies:
     - core/jquery
+    - core/once
     - core/drupal
     - core/drupalSettings
-    - core/once
