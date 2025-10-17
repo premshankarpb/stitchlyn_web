@@ -47,6 +47,7 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
         'client_contact' => '',
         'client_gst' => '',
         'client_banking' => '',
+        'payment_status' => '',
         'tax_percentage' => 0,
         'vendor_profile' => [],
         'referencing_nodes' => [],

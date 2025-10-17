@@ -88,7 +88,7 @@ class PurchaseOrderDetailController extends ControllerBase {
     $total      = (float) ($node->get('field_total_amount')->value ?? 0);
 
     // --- Payment status (taxonomy term label) ---
-    $payment_status = '';
+    $payment_status = ''; // default
     if (!$node->get('field_payment_status')->isEmpty()) {
       $target_id = $node->get('field_payment_status')->target_id;
       if ($target_id) {
@@ -98,7 +98,7 @@ class PurchaseOrderDetailController extends ControllerBase {
         }
       }
     }
-
+   
     // --- Vendor user & vendor profile (profile type = vendor) ---
     $vendor_user = NULL;
     $vendor_profile = NULL;
