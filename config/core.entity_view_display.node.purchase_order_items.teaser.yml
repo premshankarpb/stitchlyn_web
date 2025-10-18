@@ -9,7 +9,6 @@ dependencies:
     - field.field.node.purchase_order_items.field_item_reference
     - field.field.node.purchase_order_items.field_purchase_order
     - field.field.node.purchase_order_items.field_quantity
-    - field.field.node.purchase_order_items.field_tax_amount
     - field.field.node.purchase_order_items.field_total_amount
     - node.type.purchase_order_items
   module:
@@ -38,5 +37,4 @@ hidden:
   field_item_reference: true
   field_purchase_order: true
   field_quantity: true
-  field_tax_amount: true
   field_total_amount: true

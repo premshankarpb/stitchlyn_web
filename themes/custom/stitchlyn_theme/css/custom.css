@@ -90,3 +90,23 @@
 .vendor-card strong {
   font-size: 1.1em;
 }
+/* Ensure both left and right cards align perfectly from the top */
+.row.g-4.align-items-stretch > [class*="col-"] .card {
+  height: 100%;
+}
+
+/* Remove default margin that pushes down remarks text */
+.remarks-card h5:first-child,
+.remarks-card p:first-child {
+  margin-top: 0 !important;
+}
+
+/* Balance heights visually */
+@media (min-width: 768px) {
+  .quotation-detail .row.g-4.align-items-stretch {
+    align-items: stretch !important;
+  }
+  .quotation-detail .card-body {
+    display: block !important;
+  }
+}

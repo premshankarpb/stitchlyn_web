@@ -177,25 +177,23 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
   }
 
   if ($node instanceof \Drupal\node\NodeInterface && $node->bundle() === 'quotation') {
-    $quotation_item_data_2 = [];
-    // Check if the current node is a Quotation node
-    if ($node->getType() == 'quotation') {
+    $quotation_item_data = [];
 
-      // Query all Quotation Item nodes that reference this Quotation node
-      $query = \Drupal::entityQuery('node')
-        ->condition('type', 'quatation_line_items') // Quotation Item content type
-        ->condition('field_linked_quotation', $node->id()) // Assuming field_quotation_reference references the Quotation node
-        ->accessCheck(TRUE)
-        ->execute();
+    // Query all Quotation Line Item nodes linked to this quotation.
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'quatation_line_items') // your correct type
+      ->condition('field_linked_quotation', $node->id())
+      ->accessCheck(TRUE)
+      ->execute();
 
-      // Load the Quotation Item nodes and retrieve data
+    if (!empty($query)) {
       $quotation_items = \Drupal\node\Entity\Node::loadMultiple($query);
 
+      // Load customer info
       $user = NULL;
       $profile = NULL;
       if ($node->hasField('field_customer_reference') && !$node->get('field_customer_reference')->isEmpty()) {
         $user = $node->field_customer_reference->entity;
-        // Load profile (assuming profile type is 'customer')
         $profiles = \Drupal::entityTypeManager()
           ->getStorage('profile')
           ->loadByProperties([
@@ -205,32 +203,76 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
         $profile = reset($profiles);
       }
 
+      // Build array for Twig
       foreach ($quotation_items as $item) {
         $product_title = NULL;
+        $unit_price = 0;
+        $attributes_data = [];
 
-        // 4. Load the referenced Product node
+        // Load Product
         if ($item->hasField('field_product') && !$item->get('field_product')->isEmpty()) {
           $product_node = $item->get('field_product')->entity;
-
           if ($product_node instanceof \Drupal\node\NodeInterface) {
             $product_title = $product_node->label();
+            $unit_price = $product_node->get('field_cost_price')->value ?? 0;
+          }
+        }
+
+        $quantity = $item->get('field_quantity')->value ?? 0;
+        $total = $unit_price * $quantity;
+
+        // ✅ Load Attributes Paragraph (if present)
+        if ($item->hasField('field_attributes') && !$item->get('field_attributes')->isEmpty()) {
+          $attr_field = $item->get('field_attributes')->first();
+
+          // Load paragraph via revision to get all field data
+          $paragraph = NULL;
+          if (!empty($attr_field->target_revision_id)) {
+            $paragraph = \Drupal::entityTypeManager()
+              ->getStorage('paragraph')
+              ->loadRevision($attr_field->target_revision_id);
+          }
+
+          if ($paragraph) {
+            $bundle_label = ucfirst(str_replace('_', ' ', $paragraph->bundle()));
+            $fields = [];
+
+            foreach ($paragraph->getFields() as $fname => $fval) {
+              if (strpos($fname, 'field_') !== 0 || $fval->isEmpty()) continue;
+
+              $label = $fval->getFieldDefinition()->getLabel();
+              $value = $fval->getFieldDefinition()->getType() === 'entity_reference'
+                ? $fval->entity->label()
+                : $fval->value;
+
+              $fields[$label] = $value;
+            }
+
+            $attributes_data[] = [
+              'bundle' => $bundle_label,
+              'fields' => $fields,
+            ];
           }
         }
 
         $quotation_item_data[] = [
-          'title' => $item->label(),
-          'quantity' => $item->get('field_quantity')->value ?? NULL,
           'product_title' => $product_title,
+          'unit_price' => $unit_price,
+          'quantity' => $quantity,
+          'total' => $total,
+          'nid' => $item->id(),
+          'attributes' => $attributes_data,
         ];
-
-        // Pass the collected data to the template
-        $variables['quotation_item_data'] = $quotation_items;
-        $variables['quotation_item_data_2'] = $quotation_item_data;
-        $variables['customer_user'] = $user;
-        $variables['customer_profile'] = $profile;
       }
+
+
+      // ✅ Assign once outside loop
+      $variables['quotation_item_data_2'] = $quotation_item_data;
+      $variables['customer_user'] = $user;
+      $variables['customer_profile'] = $profile;
     }
   }
+
 
 }
 

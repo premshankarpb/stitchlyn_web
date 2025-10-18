@@ -1,44 +1,63 @@
-<article class="po-detail">
+<article class="quotation-detail">
 
+  {# --- Payment Badge Setup --- #}
   {% if node.field_payment_status.entity.label == 'Paid' %}
     {% set pay_class = 'bg-success' %}
   {% else %}
     {% set pay_class = 'bg-danger' %}
   {% endif %}
-  <main class="admin-main">
-    <div class="mb-4">
-      <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
-      <span class="badge {{ pay_class }} mb-3">{{ node.field_payment_status.entity.label }}</span>
-    </div>
-    <a href="{{ path('stitchlyn_quotation.pdf', {'node': node.id}) }}" class="btn btn-danger">
-      Export PDF
-    </a>
 
-    <div class="row g-4 mb-5">
+  <main class="admin-main">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+      <div>
+        <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
+        <span class="badge {{ pay_class }}">{{ node.field_payment_status.entity.label }}</span>
+      </div>
+      <a href="{{ path('stitchlyn_quotation.pdf', {'node': node.id}) }}" class="btn btn-danger">
+        Export PDF
+      </a>
+    </div>
+
+    {# --- Quotation Summary Section --- #}
+    <div class="row g-4 mb-5 align-items-stretch">
+      <!-- Left Side (Quotation Details) -->
       <div class="col-md-6 col-lg-5">
-        <div class="card h-100">
+        <div class="card shadow-sm h-100">
           <div class="card-body">
             <h5 class="card-title mb-3">{{ node.label }} Details</h5>
-            <span class="badge {{ pay_class }} mb-3">Payment Status : {{ node.field_payment_status.entity.label }}</span>
+            <span class="badge {{ pay_class }} mb-3">
+              Payment Status: {{ node.field_payment_status.entity.label }}
+            </span>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item"><i class="fas fa-calendar-alt text-primary me-2"></i>
-                <strong>Date:</strong> {{ node.created.value|date("d M Y") }} </li>
-              <li class="list-group-item"><i class="fas fa-user text-primary me-2"></i>
-                <strong>Customer:</strong> {{ node.field_customer_reference.entity.label }} </li>
-              <li class="list-group-item"><i class="fas fa-money-check-alt text-warning me-2"></i>
-                <strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }} </li>
-              <li class="list-group-item"><i class="fas fa-percent text-warning me-2"></i>
-                <strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }} </li>
-              <li class="list-group-item"><i class="fas fa-inr text-warning me-2"></i>
-                <strong>Total Amount:</strong> ₹ {{ node.field_total_amount.value }} </li>
+              <li class="list-group-item">
+                <i class="fas fa-calendar-alt text-primary me-2"></i>
+                <strong>Date:</strong> {{ node.created.value|date("d M Y") }}
+              </li>
+              <li class="list-group-item">
+                <i class="fas fa-user text-primary me-2"></i>
+                <strong>Customer:</strong> {{ node.field_customer_reference.entity.label }}
+              </li>
+              <li class="list-group-item">
+                <i class="fas fa-money-check-alt text-warning me-2"></i>
+                <strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }}
+              </li>
+              <li class="list-group-item">
+                <i class="fas fa-percent text-warning me-2"></i>
+                <strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }}
+              </li>
+              <li class="list-group-item">
+                <i class="fas fa-inr text-warning me-2"></i>
+                <strong>Total Amount:</strong> ₹ {{ node.field_total_amount.value }}
+              </li>
             </ul>
           </div>
         </div>
       </div>
 
+      <!-- Right Side (Scrollable Remarks & About Customer) -->
       <div class="col-md-6 col-lg-7">
-        <div class="card h-100">
-          <div class="card-body">
+        <div class="card shadow-sm h-100">
+          <div class="card-body remarks-card" style="max-height: 420px; overflow-y: auto; min-height: 100%;">
             {% if node.body.value is not empty %}
               <h5 class="card-title mb-3">Remarks</h5>
               <p>{{ node.body.value|raw }}</p>
@@ -51,54 +70,139 @@
             <div class="mt-4">
               <button class="btn btn-primary me-2" onclick="showPhone()">Contact Customer</button>
               <span id="vendor-phone" style="display:none;">
-                {{customer_profile.field_phone_number.0.phone_number}}
+                {{ customer_profile.field_phone_number.0.phone_number }}
               </span>
             </div>
           </div>
         </div>
       </div>
+
     </div>
-  </main>
 
-  <hr>
+    <hr>
 
-  <h3>Items in this Quotation</h3>
-  {% if quotation_item_data|length > 0 %}
-    {{ quotation_product_data.product_title }}
-    <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-          <th>Quotation Number</th>
-          <th>Quantity</th>
-          <th>Product</th>
-        </tr>
-      </thead>
-      <tbody>
-      
-        {% for item in quotation_item_data_2 %}
-            
-        {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
-        {% set total_amount = sub_total + item.field_tax_amount.value %}
-
+    {# --- Quotation Items Table --- #}
+    <h3>Items in this Quotation</h3>
+    {% if quotation_item_data_2|length > 0 %}
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-light">
           <tr>
-            <td>{{ item.title }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>{{item.product_title  }}</td>
+            <th>Product Name</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Action</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No items found in this purchase order.</p>
-  {% endif %}
+        </thead>
+        <tbody>
+          {% for item in quotation_item_data_2 %}
+            <tr>
+              <td>{{ item.product_title }}</td>
+              <td>₹{{ item.unit_price }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>₹{{ item.total }}</td>
+              <td>
+                <button type="button"
+                        class="btn btn-sm btn-outline-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#itemModal{{ loop.index }}">
+                  View
+                </button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {# --- Modals for Each Item (Rendered After Table) --- #}
+      {% for item in quotation_item_data_2 %}
+        <div class="modal fade" id="itemModal{{ loop.index }}" tabindex="-1"
+            aria-labelledby="itemModalLabel{{ loop.index }}" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+              <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold" id="itemModalLabel{{ loop.index }}">
+                  Item Details – {{ item.product_title }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+
+                <!-- Basic Item Info -->
+                <table class="table table-bordered mb-0">
+                  <tbody>
+                    <tr>
+                      <th style="width: 35%;">Product</th>
+                      <td>{{ item.product_title }}</td>
+                    </tr>
+                    <tr>
+                      <th>Quantity</th>
+                      <td>{{ item.quantity }}</td>
+                    </tr>
+                    <tr>
+                      <th>Unit Price</th>
+                      <td>₹{{ item.unit_price }}</td>
+                    </tr>
+                    <tr>
+                      <th>Total</th>
+                      <td>₹{{ item.total }}</td>
+                    </tr>
+                    <tr>
+                      <th>Linked Quotation</th>
+                      <td>{{ node.label }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- Attributes Section -->
+                {% if item.attributes is defined and item.attributes|length > 0 %}
+                  <h5 class="mt-4 mb-2 fw-bold text-primary">Attributes</h5>
+                  {% for attr in item.attributes %}
+                    <table class="table table-sm table-striped mb-4">
+                      <thead class="table-light">
+                        <tr>
+                          <th colspan="2">{{ attr.bundle }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for label, value in attr.fields %}
+                          <tr>
+                            <td>{{ label }}</td>
+                            <td>{{ value }}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No items found in this quotation.</p>
+    {% endif %}
+  </main>
 </article>
 
+{# --- Custom Scrollbar Styling for Right Card --- #}
+<style>
+  .card .card-body[style*="overflow-y"]::-webkit-scrollbar {
+    width: 6px;
+  }
+  .card .card-body[style*="overflow-y"]::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.25);
+    border-radius: 3px;
+  }
+  .card .card-body[style*="overflow-y"]::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0,0,0.4);
+  }
+</style>
 
 <script>
   function showPhone() {
-    var phoneEl = document.getElementById('vendor-phone');
-    if (phoneEl.style.display === "none") {
-      phoneEl.style.display = "inline";
-    }
+    const el = document.getElementById('vendor-phone');
+    el.style.display = el.style.display === "none" ? "inline" : "none";
   }
 </script>

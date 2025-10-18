@@ -8,10 +8,10 @@ dependencies:
     - field.field.node.purchase_order_items.field_item_reference
     - field.field.node.purchase_order_items.field_purchase_order
     - field.field.node.purchase_order_items.field_quantity
-    - field.field.node.purchase_order_items.field_tax_amount
     - field.field.node.purchase_order_items.field_total_amount
     - node.type.purchase_order_items
   module:
+    - content_moderation
     - path
     - text
 id: node.purchase_order_items.default
@@ -69,19 +69,18 @@ content:
     settings:
       placeholder: ''
     third_party_settings: {  }
-  field_tax_amount:
-    type: number
-    weight: 126
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
   field_total_amount:
     type: number
     weight: 127
     region: content
     settings:
       placeholder: ''
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
