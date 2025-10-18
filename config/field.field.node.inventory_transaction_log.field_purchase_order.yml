@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_purchase_order
     - node.type.inventory_transaction_log
     - node.type.purchase_order
-    - node.type.work_order
+    - node.type.quotation
 id: node.inventory_transaction_log.field_purchase_order
 field_name: field_purchase_order
 entity_type: node
@@ -22,7 +22,7 @@ settings:
   handler_settings:
     target_bundles:
       purchase_order: purchase_order
-      work_order: work_order
+      quotation: quotation
     sort:
       field: _none
       direction: ASC

@@ -246,6 +246,9 @@ function stitchlyn_theme_preprocess_views_view(&$variables) {
   if ($variables['view']->id() === 'inventory_list' && $variables['view']->current_display === 'page_1') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
   }
+  if ($variables['view']->id() === 'inventory_log' && $variables['view']->current_display === 'page_1  ') {
+    $variables['export_query'] = \Drupal::request()->getQueryString();
+  }
   if ($variables['view']->id() === 'purchase_orders' && $variables['view']->current_display === 'page_1') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
   }
