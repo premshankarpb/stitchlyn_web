@@ -2583,7 +2583,6 @@ display:
             group_items: {  }
           reduce_duplicates: false
           vid: payment_status
-<<<<<<< HEAD
           type: select
           hierarchy: false
           limit: true
@@ -2633,12 +2632,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-=======
-          type: textfield
-          hierarchy: false
-          limit: true
-          error_message: true
->>>>>>> 5f844c5f86a68dd06180a2a68becc7a29804762e
         field_customer_reference_target_id:
           id: field_customer_reference_target_id
           table: node__field_customer_reference
@@ -2688,106 +2681,16 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-<<<<<<< HEAD
-=======
-        status:
-          id: status
-          table: node_field_data
-          field: status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
-          operator: '='
-          value: '0'
-          group: 2
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-        status_1:
-          id: status_1
-          table: node_field_data
-          field: status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
-          operator: '='
-          value: '1'
-          group: 2
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
->>>>>>> 5f844c5f86a68dd06180a2a68becc7a29804762e
       filter_groups:
         operator: AND
         groups:
           1: AND
-<<<<<<< HEAD
-=======
-          2: OR
->>>>>>> 5f844c5f86a68dd06180a2a68becc7a29804762e
       defaults:
         empty: false
         fields: false
         filters: false
         filter_groups: false
-<<<<<<< HEAD
         header: false
-=======
->>>>>>> 5f844c5f86a68dd06180a2a68becc7a29804762e
       display_description: ''
       header:
         area_text_custom:
