@@ -6,6 +6,7 @@ use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\user\UserInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\file\Entity\File;
+use Drupal\node\Entity\Node;
 
 function stitchlyn_basic_theme($existing, $type, $theme, $path) {
   return [
@@ -222,5 +223,175 @@ function stitchlyn_basic_profile_manage_url(UserInterface $account, string $prof
   catch (\Exception $e) {
     // Fallback to path.
     return Url::fromUserInput('/user/' . $account->id() . '/profiles/' . $profile_type . '/update');
+  }
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function stitchlyn_basic_node_insert(\Drupal\Core\Entity\EntityInterface $node) {
+  // Only act on 'purchase_order_items' nodes.
+  if ($node->getType() === 'purchase_order_items') {
+    // Get the referenced item (entity reference field).
+    $item_reference = $node->get('field_item_reference')->target_id;
+    $purchase_reference = $node->get('field_purchase_order')->target_id;
+
+    // Load taxonomy term ID for term "IN" from vocabulary 'transaction_type'.
+    $trans_term_ids = \Drupal::entityQuery('taxonomy_term')
+      ->accessCheck(TRUE)
+      ->condition('vid', 'transaction_type') // Replace with your vocabulary machine name.
+      ->condition('name', 'IN')
+      ->range(0, 1)
+      ->execute();
+    $trans_term_id = reset($trans_term_ids);
+
+    $quantity_value = $node->get('field_quantity')->value;
+
+    // Load taxonomy term ID for term "Purchase Order" from vocabulary 'order_type'.
+    $ord_term_ids = \Drupal::entityQuery('taxonomy_term')
+      ->accessCheck(TRUE)
+      ->condition('vid', 'order_type') // Replace with your vocabulary machine name.
+      ->condition('name', 'Purchase Order')
+      ->range(0, 1)
+      ->execute();
+    $ord_term_id = reset($ord_term_ids);
+
+    // Create the inventory transaction log node.
+    $inventory_node = Node::create([
+      'type'  => 'inventory_transaction_log',
+      'title' => 'INV_ITEM_' . $node->id(),
+      'body' => 'Added from ' . $node->id(),
+      'status' => 1, // Published.
+      'field_inventory_item' => [
+        'target_id' => $item_reference,
+      ],
+      'field_purchase_order' => [
+        'target_id' => $purchase_reference  ,
+      ],
+      'field_transaction_type' => [
+        'target_id' => $trans_term_id,
+      ],
+      'field_quantity' => $quantity_value,
+      'field_order_type' => [
+        'target_id' => $ord_term_id,
+      ],
+    ]);
+    $inventory_node->save();
+
+    // 4️⃣ Load and update the inventory item node.
+    $inventory_item_node = Node::load($item_reference);
+    // Get current inventory quantity (default to 0 if empty).
+    $current_inventory_qty = $inventory_item_node->get('field_opening_stock')->value;
+    // Add the new quantity (assuming "IN" adds stock).
+    $new_quantity = $current_inventory_qty + $quantity_value;
+
+    // Update and save.
+    $inventory_item_node->set('field_opening_stock', $new_quantity);
+    $inventory_item_node->save();
+  }
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function stitchlyn_basic_node_delete(\Drupal\Core\Entity\EntityInterface $node) {
+  // Only act on 'purchase_order_items' nodes.
+  if ($node->getType() !== 'purchase_order_items') {
+    return;
+  }
+
+  $current_user = \Drupal::currentUser();
+
+  // 1️⃣ Get the referenced inventory item and quantity.
+  $item_reference = $node->get('field_item_reference')->target_id ?? NULL;
+  $quantity_value = $node->get('field_quantity')->value;
+
+  if (empty($item_reference) || $quantity_value === 0) {
+    \Drupal::logger('stitchlyn_basic')->warning('Deleted PO item @nid missing item reference or quantity.', [
+      '@nid' => $node->id(),
+    ]);
+    return;
+  }
+
+  // 2️⃣ Load taxonomy term "OUT" (from vocabulary 'transaction_type').
+  $trans_term_ids = \Drupal::entityQuery('taxonomy_term')
+    ->accessCheck(TRUE)
+    ->condition('vid', 'transaction_type') // Replace with your vocabulary machine name.
+    ->condition('name', 'OUT')
+    ->range(0, 1)
+    ->execute();
+
+  if (empty($trans_term_ids)) {
+    \Drupal::logger('stitchlyn_basic')->error('Transaction type term "OUT" not found.');
+    return;
+  }
+
+  $trans_term_id = reset($trans_term_ids);
+
+  // 3️⃣ Load the referenced inventory item node.
+  $inventory_item_node = Node::load($item_reference);
+  if (!$inventory_item_node || !$inventory_item_node->access('update', $current_user)) {
+    \Drupal::logger('stitchlyn_basic')->warning(
+      'User @uid cannot update inventory item @item or it does not exist.',
+      [
+        '@uid' => $current_user->id(),
+        '@item' => $item_reference,
+      ]
+    );
+    return;
+  }
+
+  // 4️⃣ Subtract the quantity from inventory item.
+  $current_qty = $inventory_item_node->get('field_opening_stock')->value;
+  $new_qty = $current_qty - $quantity_value;
+
+  // Optional: Prevent negative inventory.
+  if ($new_qty < 0) {
+    \Drupal::logger('stitchlyn_basic')->warning(
+      'Inventory item @item would go negative. Setting to zero.',
+      ['@item' => $inventory_item_node->id()]
+    );
+    $new_qty = 0;
+  }
+
+  $inventory_item_node->set('field_opening_stock', $new_qty);
+  $inventory_item_node->save();
+
+  \Drupal::logger('stitchlyn_basic')->info(
+    'Updated inventory item @item: quantity reduced by @qty (new total: @new).',
+    [
+      '@item' => $inventory_item_node->id(),
+      '@qty' => $quantity_value,
+      '@new' => $new_qty,
+    ]
+  );
+
+  // 5️⃣ Create the inventory_transaction_log node with type OUT.
+  if (\Drupal::entityTypeManager()->getAccessControlHandler('node')->createAccess('inventory_transaction_log', $current_user)) {
+    $log_node = Node::create([
+      'type' => 'inventory_transaction_log',
+      'title' => 'INV_ITEM_' . $node->id() . '_OUT',
+      'body' => 'Removed from ' . $node->id() . '_OUT',
+      'status' => 1, // Published.
+      'field_inventory_item' => ['target_id' => $item_reference],
+      'field_transaction_type' => ['target_id' => $trans_term_id],
+      'field_quantity' => $quantity_value,
+    ]);
+
+    if ($log_node->access('create', $current_user)) {
+      $log_node->save();
+      \Drupal::logger('stitchlyn_basic')->info(
+        'Created inventory transaction log (OUT) for deleted PO item @nid (log ID: @log).',
+        [
+          '@nid' => $node->id(),
+          '@log' => $log_node->id(),
+        ]
+      );
+    } else {
+      \Drupal::logger('stitchlyn_basic')->warning(
+        'User @uid cannot create inventory transaction log (OUT).',
+        ['@uid' => $current_user->id()]
+      );
+    }
   }
 }
