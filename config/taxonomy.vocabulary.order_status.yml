@@ -1,0 +1,9 @@
+uuid: 7b5bb818-36d0-4ff4-ae0a-be74ac6bb279
+langcode: en
+status: true
+dependencies: {  }
+name: 'Order status'
+vid: order_status
+description: 'Status of the work order created against the quotation'
+weight: 0
+new_revision: false

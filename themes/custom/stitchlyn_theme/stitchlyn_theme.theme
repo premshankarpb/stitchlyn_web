@@ -188,7 +188,6 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
 
     if (!empty($query)) {
       $quotation_items = \Drupal\node\Entity\Node::loadMultiple($query);
-
       // Load customer info
       $user = NULL;
       $profile = NULL;
@@ -271,6 +270,46 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
       $variables['customer_user'] = $user;
       $variables['customer_profile'] = $profile;
     }
+
+    // ---- Load Inventory Logs ----
+    $inventory_logs = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties([
+        'type' => 'inventory_transaction_log',
+        'field_purchase_order' => $node->id(),
+      ]);
+
+    $log_data = [];
+    $grand_total = 0;
+
+    foreach ($inventory_logs as $log) {
+      $item = $log->get('field_inventory_item')->entity;
+      if (!$item) continue;
+
+      $cost = (float) ($item->get('field_cost_price')->value ?? 0);
+      $qty = (float) ($log->get('field_quantity')->value ?? 0);
+      $total = $cost * $qty;
+      $grand_total += $total;
+
+      $log_data[] = [
+        'id' => $log->id(),
+        'item_name' => $item->label(),
+        'opening_stock' => $item->get('field_opening_stock')->value ?? '',
+        'unit_of_measure' => $item->get('field_unit_of_measure')->entity->label() ?? '',
+        'cost_price' => $cost,
+        'quantity' => $qty,
+        'total' => $total,
+      ];
+    }
+
+    $variables['inventory_logs'] = $log_data;
+    $variables['inventory_total'] = $grand_total;
+
+    // Attach JS
+    $variables['#attached']['library'][] = 'stitchlyn_theme/inventory_log';
+    $variables['#attached']['drupalSettings']['quotationId'] = $node->id();
+    \Drupal::service('page_cache_kill_switch')->trigger();
+    
   }
 
 

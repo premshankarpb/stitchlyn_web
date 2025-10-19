@@ -1,6 +1,7 @@
+{{ attach_library('stitchlyn_theme/inventory_log') }}
 <article class="quotation-detail">
 
-  {# --- Payment Badge Setup --- #}
+  {# Payment badge #}
   {% if node.field_payment_status.entity.label == 'Paid' %}
     {% set pay_class = 'bg-success' %}
   {% else %}
@@ -8,201 +9,269 @@
   {% endif %}
 
   <main class="admin-main">
-    <div class="mb-4 d-flex justify-content-between align-items-center">
-      <div>
-        <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
-        <span class="badge {{ pay_class }}">{{ node.field_payment_status.entity.label }}</span>
-      </div>
-      <a href="{{ path('stitchlyn_quotation.pdf', {'node': node.id}) }}" class="btn btn-danger">
-        Export PDF
-      </a>
-    </div>
+    {# ---- Tabs ---- #}
+    <ul class="nav nav-tabs mb-4" id="quotationTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="quotation-tab" data-bs-toggle="tab"
+                data-bs-target="#quotationTabContent" type="button" role="tab"
+                aria-controls="quotationTabContent" aria-selected="true">
+          Quotation Details
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="inventory-tab" data-bs-toggle="tab"
+                data-bs-target="#inventoryTabContent" type="button" role="tab"
+                aria-controls="inventoryTabContent" aria-selected="false">
+          Inventory Logs
+        </button>
+      </li>
+    </ul>
 
-    {# --- Quotation Summary Section --- #}
-    <div class="row g-4 mb-5 align-items-stretch">
-      <!-- Left Side (Quotation Details) -->
-      <div class="col-md-6 col-lg-5">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="card-title mb-3">{{ node.label }} Details</h5>
-            <span class="badge {{ pay_class }} mb-3">
-              Payment Status: {{ node.field_payment_status.entity.label }}
-            </span>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">
-                <i class="fas fa-calendar-alt text-primary me-2"></i>
-                <strong>Date:</strong> {{ node.created.value|date("d M Y") }}
-              </li>
-              <li class="list-group-item">
-                <i class="fas fa-user text-primary me-2"></i>
-                <strong>Customer:</strong> {{ node.field_customer_reference.entity.label }}
-              </li>
-              <li class="list-group-item">
-                <i class="fas fa-money-check-alt text-warning me-2"></i>
-                <strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }}
-              </li>
-              <li class="list-group-item">
-                <i class="fas fa-percent text-warning me-2"></i>
-                <strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }}
-              </li>
-              <li class="list-group-item">
-                <i class="fas fa-inr text-warning me-2"></i>
-                <strong>Total Amount:</strong> ₹ {{ node.field_total_amount.value }}
-              </li>
-            </ul>
+    <div class="tab-content" id="quotationTabsContent">
+
+      {# ================= TAB 1 : QUOTATION DETAILS ================= #}
+      <div class="tab-pane fade show active" id="quotationTabContent" role="tabpanel" aria-labelledby="quotation-tab">
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
+            <span class="badge {{ pay_class }}">{{ node.field_payment_status.entity.label }}</span>
           </div>
+          <a href="{{ path('stitchlyn_quotation.pdf', {'node': node.id}) }}" class="btn btn-danger">
+            Export PDF
+          </a>
         </div>
-      </div>
 
-      <!-- Right Side (Scrollable Remarks & About Customer) -->
-      <div class="col-md-6 col-lg-7">
-        <div class="card shadow-sm h-100">
-          <div class="card-body remarks-card" style="max-height: 420px; overflow-y: auto; min-height: 100%;">
-            {% if node.body.value is not empty %}
-              <h5 class="card-title mb-3">Remarks</h5>
-              <p>{{ node.body.value|raw }}</p>
-            {% endif %}
-            {% if customer_profile.field_remarks.value is not empty %}
-              <h5 class="card-title mb-3">About Customer</h5>
-              <p>{{ customer_profile.field_remarks.value|raw }}</p>
-            {% endif %}
+        {# Summary cards #}
+        <div class="row g-4 mb-5 align-items-stretch">
+          <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm h-100">
+              <div class="card-body">
+                <h5 class="card-title mb-3">{{ node.label }} Details</h5>
+                <span class="badge {{ pay_class }} mb-3">
+                  Payment Status: {{ node.field_payment_status.entity.label }}
+                </span>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item"><strong>Date:</strong> {{ node.created.value|date('d M Y') }}</li>
+                  <li class="list-group-item"><strong>Customer:</strong> {{ node.field_customer_reference.entity.label }}</li>
+                  <li class="list-group-item"><strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }}</li>
+                  <li class="list-group-item"><strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }}</li>
+                  <li class="list-group-item"><strong>Total Amount:</strong> ₹ {{ node.field_total_amount.value }}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-            <div class="mt-4">
-              <button class="btn btn-primary me-2" onclick="showPhone()">Contact Customer</button>
-              <span id="vendor-phone" style="display:none;">
-                {{ customer_profile.field_phone_number.0.phone_number }}
-              </span>
+          <div class="col-md-6 col-lg-7">
+            <div class="card shadow-sm h-100">
+              <div class="card-body remarks-card" style="max-height:420px;overflow-y:auto;">
+                {% if node.body.value is not empty %}
+                  <h5 class="card-title mb-3">Remarks</h5>
+                  <p>{{ node.body.value|raw }}</p>
+                {% endif %}
+                {% if customer_profile.field_remarks.value is not empty %}
+                  <h5 class="card-title mb-3">About Customer</h5>
+                  <p>{{ customer_profile.field_remarks.value|raw }}</p>
+                {% endif %}
+
+                <div class="mt-4">
+                  <button class="btn btn-primary me-2" onclick="showPhone()">Contact Customer</button>
+                  <span id="vendor-phone" style="display:none;">
+                    {{ customer_profile.field_phone_number.0.phone_number }}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-    </div>
+        <hr>
 
-    <hr>
+        {# ================= Items table (WITH View button) ================= #}
+        <h3>Items in this Quotation</h3>
+        {% if quotation_item_data_2|length > 0 %}
+          <table class="table table-bordered table-striped align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Product Name</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in quotation_item_data_2 %}
+                <tr>
+                  <td>{{ item.product_title }}</td>
+                  <td>₹{{ item.unit_price }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>₹{{ item.total }}</td>
+                  <td>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#itemModal{{ loop.index }}">
+                      View
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
 
-    {# --- Quotation Items Table --- #}
-    <h3>Items in this Quotation</h3>
-    {% if quotation_item_data_2|length > 0 %}
-      <table class="table table-bordered table-striped align-middle">
-        <thead class="table-light">
-          <tr>
-            <th>Product Name</th>
-            <th>Unit Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
+          {# --------- PER-ITEM MODALS (keep after the table) --------- #}
           {% for item in quotation_item_data_2 %}
-            <tr>
-              <td>{{ item.product_title }}</td>
-              <td>₹{{ item.unit_price }}</td>
-              <td>{{ item.quantity }}</td>
-              <td>₹{{ item.total }}</td>
-              <td>
-                <button type="button"
-                        class="btn btn-sm btn-outline-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#itemModal{{ loop.index }}">
-                  View
-                </button>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+            <div class="modal fade" id="itemModal{{ loop.index }}" tabindex="-1"
+                 aria-labelledby="itemModalLabel{{ loop.index }}" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold" id="itemModalLabel{{ loop.index }}">
+                      Item Details – {{ item.product_title }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
 
-      {# --- Modals for Each Item (Rendered After Table) --- #}
-      {% for item in quotation_item_data_2 %}
-        <div class="modal fade" id="itemModal{{ loop.index }}" tabindex="-1"
-            aria-labelledby="itemModalLabel{{ loop.index }}" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-              <div class="modal-header bg-light">
-                <h5 class="modal-title fw-bold" id="itemModalLabel{{ loop.index }}">
-                  Item Details – {{ item.product_title }}
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-
-                <!-- Basic Item Info -->
-                <table class="table table-bordered mb-0">
-                  <tbody>
-                    <tr>
-                      <th style="width: 35%;">Product</th>
-                      <td>{{ item.product_title }}</td>
-                    </tr>
-                    <tr>
-                      <th>Quantity</th>
-                      <td>{{ item.quantity }}</td>
-                    </tr>
-                    <tr>
-                      <th>Unit Price</th>
-                      <td>₹{{ item.unit_price }}</td>
-                    </tr>
-                    <tr>
-                      <th>Total</th>
-                      <td>₹{{ item.total }}</td>
-                    </tr>
-                    <tr>
-                      <th>Linked Quotation</th>
-                      <td>{{ node.label }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <!-- Attributes Section -->
-                {% if item.attributes is defined and item.attributes|length > 0 %}
-                  <h5 class="mt-4 mb-2 fw-bold text-primary">Attributes</h5>
-                  {% for attr in item.attributes %}
-                    <table class="table table-sm table-striped mb-4">
-                      <thead class="table-light">
-                        <tr>
-                          <th colspan="2">{{ attr.bundle }}</th>
-                        </tr>
-                      </thead>
+                    <table class="table table-bordered mb-0">
                       <tbody>
-                        {% for label, value in attr.fields %}
-                          <tr>
-                            <td>{{ label }}</td>
-                            <td>{{ value }}</td>
-                          </tr>
-                        {% endfor %}
+                        <tr><th style="width:35%;">Product</th><td>{{ item.product_title }}</td></tr>
+                        <tr><th>Quantity</th><td>{{ item.quantity }}</td></tr>
+                        <tr><th>Unit Price</th><td>₹{{ item.unit_price }}</td></tr>
+                        <tr><th>Total</th><td>₹{{ item.total }}</td></tr>
+                        <tr><th>Linked Quotation</th><td>{{ node.label }}</td></tr>
                       </tbody>
                     </table>
-                  {% endfor %}
-                {% endif %}
+
+                    {% if item.attributes is defined and item.attributes|length > 0 %}
+                      <h5 class="mt-4 mb-2 fw-bold text-primary">Attributes</h5>
+                      {% for attr in item.attributes %}
+                        <table class="table table-sm table-striped mb-4">
+                          <thead class="table-light">
+                            <tr><th colspan="2">{{ attr.bundle }}</th></tr>
+                          </thead>
+                          <tbody>
+                            {% for label, value in attr.fields %}
+                              <tr>
+                                <td>{{ label }}</td>
+                                <td>{{ value }}</td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
               </div>
             </div>
+          {% endfor %}
+
+        {% else %}
+          <p>No items found in this quotation.</p>
+        {% endif %}
+      </div>
+
+      {# ================= TAB 2 : INVENTORY LOGS ================= #}
+      <div class="tab-pane fade" id="inventoryTabContent" role="tabpanel" aria-labelledby="inventory-tab">
+        <div class="inventory-section mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Inventory Logs</h4>
+            <button id="add-inventory-log" class="btn btn-success btn-sm">+ Add Log</button>
           </div>
+
+          {% if inventory_logs|length > 0 %}
+            <table class="table table-bordered table-striped align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Inventory Item</th>
+                  <th>Current Stock</th>
+                  <th>Unit of Measure</th>
+                  <th>Cost Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for log in inventory_logs %}
+                  <tr>
+                    <td>{{ log.item_name }}</td>
+                    <td>{{ log.opening_stock }}</td>
+                    <td>{{ log.unit_of_measure }}</td>
+                    <td>₹{{ log.cost_price }}</td>
+                    <td>{{ log.quantity }}</td>
+                    <td>₹{{ log.total }}</td>
+                    <td>
+                      <button class="btn btn-outline-danger btn-sm remove-log" data-id="{{ log.id }}">Remove</button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <div class="text-end fw-bold fs-5 mt-2">
+              Total Cost: ₹<span id="inventory-total-sum">{{ inventory_total }}</span>
+            </div>
+
+          {% else %}
+            <p>No inventory logs found.</p>
+          {% endif %}
         </div>
-      {% endfor %}
-    {% else %}
-      <p>No items found in this quotation.</p>
-    {% endif %}
+      </div>
+    </div>
   </main>
 </article>
 
-{# --- Custom Scrollbar Styling for Right Card --- #}
+{# ================= Add Inventory Log Modal ================= #}
+<div class="modal fade" id="inventoryModal" tabindex="-1" aria-labelledby="inventoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title fw-bold" id="inventoryModalLabel">Add Inventory Log</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="inventory-item-autocomplete" class="form-label fw-bold">Inventory Item</label>
+          <input type="text" id="inventory-item-autocomplete" class="form-control"
+                 placeholder="Start typing…" data-autocomplete-path="/inventory/item/autocomplete">
+        </div>
+
+        <div id="inventory-item-details" class="border rounded bg-light p-3 mb-3" style="display:none;">
+          <p class="mb-1"><strong>Name:</strong> <span id="inv-name"></span></p>
+          <p class="mb-1"><strong>Cost Price:</strong> ₹<span id="inv-cost"></span></p>
+          <p class="mb-1"><strong>Unit:</strong> <span id="inv-unit"></span></p>
+          <p class="mb-0"><strong>Current Stock:</strong> <span id="inv-stock"></span></p>
+        </div>
+
+        <div class="mb-3">
+          <label for="inventory-quantity" class="form-label fw-bold">Quantity</label>
+          <input type="number" id="inventory-quantity" class="form-control" min="1" value="1">
+        </div>
+
+        <div id="inventory-total" class="alert alert-info p-2" style="display:none;">
+          <strong>Total Cost:</strong> ₹<span id="inv-total-cost"></span>
+        </div>
+
+        <div class="text-end">
+          <button type="button" id="save-inventory-log" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ---- small styles & helpers ---- #}
 <style>
-  .card .card-body[style*="overflow-y"]::-webkit-scrollbar {
-    width: 6px;
-  }
-  .card .card-body[style*="overflow-y"]::-webkit-scrollbar-thumb {
-    background-color: rgba(0,0,0,0.25);
-    border-radius: 3px;
-  }
-  .card .card-body[style*="overflow-y"]::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0,0,0,0.4);
-  }
+  .card .card-body[style*="overflow-y"]::-webkit-scrollbar { width:6px; }
+  .card .card-body[style*="overflow-y"]::-webkit-scrollbar-thumb { background:rgba(0,0,0,.25); border-radius:3px; }
+  .card .card-body[style*="overflow-y"]::-webkit-scrollbar-thumb:hover { background:rgba(0,0,0,.4); }
 </style>
 
 <script>
   function showPhone() {
     const el = document.getElementById('vendor-phone');
-    el.style.display = el.style.display === "none" ? "inline" : "none";
+    el.style.display = (el.style.display === 'none' || !el.style.display) ? 'inline' : 'none';
   }
 </script>

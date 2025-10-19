@@ -130,3 +130,32 @@ stitchlyn_quotation.view_item:
     _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAjaxController::viewAttributeItem'
   requirements:
     _permission: 'access content'
+stitchlyn_quotation.inventory_autocomplete:
+  path: '/inventory/item/autocomplete'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\InventoryController::autocomplete'
+  requirements:
+    _permission: 'access content'
+stitchlyn_quotation.inventory_item_details:
+  path: '/inventory/item/details'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\InventoryController::getItemDetails'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+stitchlyn_quotation.save_inventory_log:
+  path: '/quotation/{quotation}/inventory-log/save'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\InventoryController::saveLog'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+stitchlyn_quotation.delete_inventory_log:
+  path: '/inventory-log/{id}/delete'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\InventoryController::deleteLog'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'

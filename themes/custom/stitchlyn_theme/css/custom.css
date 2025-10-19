@@ -110,3 +110,12 @@
     display: block !important;
   }
 }
+/* Ensure the autocomplete list shows add logs on quotation modals */
+.ui-autocomplete {
+  z-index: 1055 !important;
+  background: #fff;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute !important;
+}

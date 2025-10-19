@@ -23,3 +23,15 @@ global-styling:
     - core/drupal
     - core/jquery
     - core/jquery.once
+inventory_log:
+  css:
+    theme:
+      https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.min.css: { type: external }
+  js:
+    https://code.jquery.com/ui/1.13.2/jquery-ui.min.js: { type: external }
+    js/inventory_log.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once
+    - core/drupalSettings
