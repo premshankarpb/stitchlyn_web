@@ -1,0 +1,21 @@
+uuid: 7448fb7c-f00b-4e5a-8a79-db391ee01a6b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_expected_due_date
+    - node.type.quotation
+  module:
+    - datetime
+id: node.quotation.field_expected_due_date
+field_name: field_expected_due_date
+entity_type: node
+bundle: quotation
+label: 'Expected Due Date'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

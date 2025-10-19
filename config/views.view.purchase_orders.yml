@@ -2314,7 +2314,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: text_custom
-          empty: false
+          empty: true
           content: '<a class="btn btn-primary" href="add/purchase-order">Add Purchase Order</a>'
           tokenize: false
       display_extenders: {  }

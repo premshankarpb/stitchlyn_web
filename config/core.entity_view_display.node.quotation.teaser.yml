@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.quotation.body
     - field.field.node.quotation.field_customer_reference
     - field.field.node.quotation.field_discount
+    - field.field.node.quotation.field_expected_due_date
     - field.field.node.quotation.field_payment_status
     - field.field.node.quotation.field_quotation_date
     - field.field.node.quotation.field_quotation_number
@@ -30,6 +31,11 @@ content:
     third_party_settings: {  }
     weight: 101
     region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   links:
     settings: {  }
     third_party_settings: {  }
@@ -38,6 +44,7 @@ content:
 hidden:
   field_customer_reference: true
   field_discount: true
+  field_expected_due_date: true
   field_payment_status: true
   field_quotation_date: true
   field_quotation_number: true

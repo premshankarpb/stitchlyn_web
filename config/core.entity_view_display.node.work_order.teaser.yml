@@ -9,7 +9,6 @@ dependencies:
     - field.field.node.work_order.field_linked_line_item
     - field.field.node.work_order.field_linked_quotation
     - field.field.node.work_order.field_order_status
-    - field.field.node.work_order.field_product
     - field.field.node.work_order.field_quantity
     - field.field.node.work_order.field_unit_assigned
     - field.field.node.work_order.field_work_order_number
@@ -40,7 +39,6 @@ hidden:
   field_linked_line_item: true
   field_linked_quotation: true
   field_order_status: true
-  field_product: true
   field_quantity: true
   field_unit_assigned: true
   field_work_order_number: true

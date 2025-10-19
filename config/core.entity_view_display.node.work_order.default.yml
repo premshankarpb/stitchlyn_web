@@ -8,7 +8,6 @@ dependencies:
     - field.field.node.work_order.field_linked_line_item
     - field.field.node.work_order.field_linked_quotation
     - field.field.node.work_order.field_order_status
-    - field.field.node.work_order.field_product
     - field.field.node.work_order.field_quantity
     - field.field.node.work_order.field_unit_assigned
     - field.field.node.work_order.field_work_order_number
@@ -62,14 +61,6 @@ content:
       link: true
     third_party_settings: {  }
     weight: 117
-    region: content
-  field_product:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 102
     region: content
   field_quantity:
     type: number_decimal
