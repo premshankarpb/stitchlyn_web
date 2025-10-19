@@ -260,6 +260,7 @@ function stitchlyn_basic_node_insert(\Drupal\Core\Entity\EntityInterface $node) 
     $inventory_node = Node::create([
       'type'  => 'inventory_transaction_log',
       'title' => 'INV_ITEM_' . $node->id(),
+      'body' => 'Added from ' . $node->id(),
       'status' => 1, // Published.
       'field_inventory_item' => [
         'target_id' => $item_reference,
@@ -275,12 +276,17 @@ function stitchlyn_basic_node_insert(\Drupal\Core\Entity\EntityInterface $node) 
         'target_id' => $ord_term_id,
       ],
     ]);
-
-    // (Optional) Copy other fields if needed.
-    // Example:
-    // $inventory_node->set('field_quantity', $node->get('field_quantity')->value);
-    // $inventory_node->set('field_po_reference', $node->id());
-
     $inventory_node->save();
+
+    // 4️⃣ Load and update the inventory item node.
+    $inventory_item_node = Node::load($item_reference);
+    // Get current inventory quantity (default to 0 if empty).
+    $current_inventory_qty = $inventory_item_node->get('field_opening_stock')->value;
+    // Add the new quantity (assuming "IN" adds stock).
+    $new_quantity = $current_inventory_qty + $quantity_value;
+
+    // Update and save.
+    $inventory_item_node->set('field_opening_stock', $new_quantity);
+    $inventory_item_node->save();
   }
 }
