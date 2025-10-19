@@ -6,6 +6,7 @@ use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\user\UserInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\file\Entity\File;
+use Drupal\node\Entity\Node;
 
 function stitchlyn_basic_theme($existing, $type, $theme, $path) {
   return [
@@ -222,5 +223,64 @@ function stitchlyn_basic_profile_manage_url(UserInterface $account, string $prof
   catch (\Exception $e) {
     // Fallback to path.
     return Url::fromUserInput('/user/' . $account->id() . '/profiles/' . $profile_type . '/update');
+  }
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function stitchlyn_basic_node_insert(\Drupal\Core\Entity\EntityInterface $node) {
+  // Only act on 'purchase_order_items' nodes.
+  if ($node->getType() === 'purchase_order_items') {
+    // Get the referenced item (entity reference field).
+    $item_reference = $node->get('field_item_reference')->target_id;
+    $purchase_reference = $node->get('field_purchase_order')->target_id;
+
+    // Load taxonomy term ID for term "IN" from vocabulary 'transaction_type'.
+    $trans_term_ids = \Drupal::entityQuery('taxonomy_term')
+      ->accessCheck(TRUE)
+      ->condition('vid', 'transaction_type') // Replace with your vocabulary machine name.
+      ->condition('name', 'IN')
+      ->range(0, 1)
+      ->execute();
+    $trans_term_id = reset($trans_term_ids);
+
+    $quantity_value = $node->get('field_quantity')->value;
+
+    // Load taxonomy term ID for term "Purchase Order" from vocabulary 'order_type'.
+    $ord_term_ids = \Drupal::entityQuery('taxonomy_term')
+      ->accessCheck(TRUE)
+      ->condition('vid', 'order_type') // Replace with your vocabulary machine name.
+      ->condition('name', 'Purchase Order')
+      ->range(0, 1)
+      ->execute();
+    $ord_term_id = reset($ord_term_ids);
+
+    // Create the inventory transaction log node.
+    $inventory_node = Node::create([
+      'type'  => 'inventory_transaction_log',
+      'title' => 'INV_ITEM_' . $node->id(),
+      'status' => 1, // Published.
+      'field_inventory_item' => [
+        'target_id' => $item_reference,
+      ],
+      'field_purchase_order' => [
+        'target_id' => $purchase_reference  ,
+      ],
+      'field_transaction_type' => [
+        'target_id' => $trans_term_id,
+      ],
+      'field_quantity' => $quantity_value,
+      'field_order_type' => [
+        'target_id' => $ord_term_id,
+      ],
+    ]);
+
+    // (Optional) Copy other fields if needed.
+    // Example:
+    // $inventory_node->set('field_quantity', $node->get('field_quantity')->value);
+    // $inventory_node->set('field_po_reference', $node->id());
+
+    $inventory_node->save();
   }
 }
