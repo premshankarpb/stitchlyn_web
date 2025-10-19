@@ -188,4 +188,45 @@ class PurchaseOrderDetailController extends ControllerBase {
     );
   }
 
+  public function my_view(NodeInterface $node) {
+    // Check that this is a purchase_order node
+    if ($node->bundle() !== 'purchase_order') {
+      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+    }
+
+    // Get nodes referencing this purchase_order
+    $referencing_nodes = [];
+
+    $item_nodes = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties([
+      'type' => 'purchase_order_items',
+      'field_purchase_order' => $node->id(),
+    ]);
+
+    // Get user reference (e.g., vendor)
+    $user = NULL;
+    $profile = NULL;
+    if ($node->hasField('field_vendor') && !$node->get('field_vendor')->isEmpty()) {
+      $user = $node->field_vendor->entity;
+      // Load profile (assuming profile type is 'vendor_profile')
+      $profiles = \Drupal::entityTypeManager()
+        ->getStorage('profile')
+        ->loadByProperties([
+          'uid' => $user->id(),
+          'type' => 'vendor',
+        ]);
+      $profile = reset($profiles);
+    }
+
+    return [
+      '#theme' => 'stitchlyn_po_detail',
+      '#node' => $node,
+      '#vendor_user' => $user,
+      '#vendor_profile' => $profile,
+      '#referencing_nodes' => $item_nodes,
+      '#title' => $node->label(),
+    ];
+  }
+
 }
