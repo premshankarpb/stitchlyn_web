@@ -1,0 +1,306 @@
+<?php
+
+namespace Drupal\stitchlyn_quotation\Controller;
+
+use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+
+/**
+ * Handles Work Order creation, autocomplete, and deletion.
+ */
+class WorkOrderController extends ControllerBase {
+
+  /**
+   * Autocomplete for Quotation Line Items (case-insensitive).
+   */
+  public function lineItemAutocomplete($quotation, Request $request) {
+    $search = trim($request->query->get('q'));
+    $results = [];
+
+    if (strlen($search) > 1 && !empty($quotation)) {
+      $query = \Drupal::entityQuery('node')
+        ->condition('type', 'quatation_line_items') // ✅ also fix the typo here
+        ->condition('title', $search, 'CONTAINS')
+        ->condition('field_linked_quotation', $quotation)
+        ->accessCheck(FALSE)
+        ->range(0, 10);
+      $nids = $query->execute();
+
+      if (!empty($nids)) {
+        $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
+        foreach ($nodes as $node) {
+          $results[] = [
+            'label' => $node->label(),
+            'value' => $node->id(),
+          ];
+        }
+      }
+    }
+
+    return new JsonResponse($results);
+  }
+
+  /**
+   * Autocomplete for Production Units taxonomy.
+   */
+  public function productionUnitAutocomplete(Request $request) {
+    $search = trim($request->query->get('q'));
+    $results = [];
+
+    if (strlen($search) > 1) {
+      $terms = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term')
+        ->loadByProperties(['vid' => 'production_units']);
+
+      foreach ($terms as $term) {
+        if (stripos($term->label(), $search) !== FALSE) {
+          $results[] = [
+            'value' => $term->id(),
+            'label' => $term->label(),
+          ];
+        }
+      }
+    }
+
+    return new JsonResponse($results);
+  }
+
+  /**
+   * Autocomplete for Order Status terms (taxonomy: order_status).
+   */
+  public function orderStatusAutocomplete(Request $request) {
+    $query = $request->query->get('q');
+    $results = [];
+
+    if (!$query) {
+      return new JsonResponse($results);
+    }
+
+    $query = trim($query);
+    $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $terms = $storage->loadByProperties(['vid' => 'order_status']);
+    foreach ($terms as $term) {
+      if (stripos($term->label(), $query) !== FALSE) {
+        $results[] = [
+          'label' => $term->label(),
+          'value' => $term->id(),
+        ];
+      }
+    }
+
+    return new JsonResponse($results);
+  }
+
+  /**
+   * Save Work Order (with Expected Due Date and Order Status).
+   */
+  public function saveWorkOrder(Request $request) {
+    $quotation = $request->get('quotation');
+    $line_item_id = trim($request->get('line_item'));
+    $unit_id = trim($request->get('unit'));
+    $quantity = trim($request->get('quantity'));
+    $due_date = trim($request->get('due_date'));
+    $status_id = trim($request->get('status'));
+    $remarks = trim($request->get('remarks'));
+
+    // --- Validation ---
+    if (empty($quotation) || empty($line_item_id) || empty($unit_id) || empty($quantity) || empty($status_id)) {
+      return new JsonResponse([
+        'status' => 'error',
+        'message' => 'Missing or invalid input. Ensure all fields are selected properly.',
+      ]);
+    }
+
+    // --- Load related entities ---
+    $entityTypeManager = \Drupal::entityTypeManager();
+
+    $line_item = $entityTypeManager->getStorage('node')->load($line_item_id);
+    $unit = $entityTypeManager->getStorage('taxonomy_term')->load($unit_id);
+    $status_term = $entityTypeManager->getStorage('taxonomy_term')->load($status_id);
+
+    if (!$line_item || !$unit || !$status_term) {
+      return new JsonResponse([
+        'status' => 'error',
+        'message' => 'One or more related entities could not be loaded (line item, unit, or status).',
+      ]);
+    }
+
+    // --- Format due date ---
+    $formatted_due_date = NULL;
+    if (!empty($due_date)) {
+      try {
+        $formatted_due_date = (new \DateTime($due_date))->format('Y-m-d');
+      } catch (\Exception $e) {
+        $formatted_due_date = NULL;
+      }
+    }
+
+    // --- Create the Work Order node ---
+    $node_storage = $entityTypeManager->getStorage('node');
+    $work_order = $node_storage->create([
+      'type' => 'work_order',
+      'title' => 'Temporary', // Placeholder to satisfy DB constraints
+      'field_linked_quotation' => ['target_id' => $quotation],
+      'field_linked_line_item' => ['target_id' => $line_item_id],
+      'field_unit_assigned' => ['target_id' => $unit_id],
+      'field_quantity' => $quantity,
+      'field_order_status' => ['target_id' => $status_id],
+      'field_expected_due_date' => $formatted_due_date ?: NULL,
+      'body' => ['value' => $remarks, 'format' => 'basic_html'],
+      'status' => 1,
+    ]);
+
+    $work_order->save();
+
+    // --- Update title with Serial Number if available ---
+    if ($work_order->hasField('field_work_order_number')) {
+      $serial = $work_order->get('field_work_order_number')->value ?? $work_order->id();
+      $work_order->setTitle('Work Order - ' . $serial);
+      $work_order->save();
+    }
+
+    // --- Rebuild Work Orders Table ---
+    $work_orders_data = [];
+    $query = $entityTypeManager->getStorage('node')->getQuery()
+      ->condition('type', 'work_order')
+      ->condition('field_linked_quotation', $quotation)
+      ->sort('created', 'DESC')
+      ->accessCheck(FALSE);
+    $nids = $query->execute();
+
+    if (!empty($nids)) {
+      $nodes = $entityTypeManager->getStorage('node')->loadMultiple($nids);
+      foreach ($nodes as $wo) {
+        $line_item_label = $wo->get('field_linked_line_item')->entity->label() ?? '';
+        $unit_label = $wo->get('field_unit_assigned')->entity->label() ?? '';
+        $qty = $wo->get('field_quantity')->value ?? '';
+        $expected_due = $wo->get('field_expected_due_date')->value ?? '';
+        $order_status = $wo->get('field_order_status')->entity->label() ?? '';
+        $serial = $wo->get('field_work_order_number')->value ?? '';
+        $work_orders_data[] = [
+          'id' => $wo->id(),
+          'title' => $wo->label(),
+          'serial' => $serial,
+          'line_item' => $line_item_label,
+          'unit' => $unit_label,
+          'quantity' => $qty,
+          'expected_due' => $expected_due,
+          'order_status' => $order_status,
+        ];
+      }
+    }
+
+    // --- Generate updated table HTML ---
+    $html = '<table class="table table-bordered table-striped align-middle" id="workorder-table">';
+    $html .= '<thead class="table-light"><tr>';
+    $html .= '<th>Work Order #</th><th>Line Item</th><th>Unit Assigned</th><th>Quantity</th><th>Due Date</th><th>Status</th><th>Actions</th>';
+    $html .= '</tr></thead><tbody>';
+
+    if (!empty($work_orders_data)) {
+      foreach ($work_orders_data as $wo) {
+        $html .= '<tr>';
+        $html .= '<td>' . $wo['title'] . '</td>';
+        $html .= '<td>' . $wo['line_item'] . '</td>';
+        $html .= '<td>' . $wo['unit'] . '</td>';
+        $html .= '<td>' . $wo['quantity'] . '</td>';
+        $html .= '<td>' . $wo['expected_due'] . '</td>';
+        $html .= '<td>' . $wo['order_status'] . '</td>';
+        $html .= '<td>
+          <button class="btn btn-outline-primary btn-sm view-workorder" data-id="' . $wo['id'] . '">View</button>
+          <button class="btn btn-outline-secondary btn-sm edit-workorder" data-id="' . $wo['id'] . '">Edit</button>
+        </td>';
+        $html .= '</tr>';
+      }
+    } else {
+      $html .= '<tr><td colspan="7" class="text-center text-muted">No work orders found.</td></tr>';
+    }
+    $html .= '</tbody></table>';
+
+    // --- Return JSON Response ---
+    $response = new JsonResponse([
+      'status' => 'success',
+      'message' => 'Work order added successfully.',
+      'html' => $html,
+    ]);
+
+    // Prevent caching of this AJAX response
+    $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    $response->headers->set('Pragma', 'no-cache');
+    $response->headers->set('Expires', '0');
+
+    return $response;
+  }
+
+  /**
+   * Delete a Work Order entry.
+   */
+  public function deleteWorkOrder($id) {
+    $node = \Drupal::entityTypeManager()->getStorage('node')->load($id);
+    if ($node && $node->bundle() === 'work_order') {
+      $node->delete();
+      return new JsonResponse(['status' => 'success', 'message' => 'Work order deleted.']);
+    }
+    return new JsonResponse(['status' => 'error', 'message' => 'Work order not found.']);
+  }
+
+  /**
+   * AJAX callback to update work order status and remarks.
+   */
+  public function updateWorkOrder($id, Request $request) {
+    $node = \Drupal::entityTypeManager()->getStorage('node')->load($id);
+    if (!$node || $node->bundle() !== 'work_order') {
+      return new JsonResponse(['status' => 'error', 'message' => 'Work order not found.']);
+    }
+
+    $status = trim($request->request->get('status'));
+    $remarks = trim($request->request->get('remarks'));
+
+    if ($status) {
+      // Lookup taxonomy term for given label.
+      $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+        'name' => $status,
+        'vid' => 'order_status',
+      ]);
+      if ($terms) {
+        $term = reset($terms);
+        $node->set('field_order_status', ['target_id' => $term->id()]);
+      }
+    }
+
+    if ($remarks !== '') {
+      $node->set('body', ['value' => $remarks, 'format' => 'basic_html']);
+    }
+
+    $node->save();
+
+    return new JsonResponse([
+      'status' => 'success',
+      'message' => 'Work order updated successfully.',
+    ]);
+  }
+
+  /**
+   * AJAX callback to fetch work order details.
+   */
+  public function getWorkOrder($id) {
+    $node = \Drupal::entityTypeManager()->getStorage('node')->load($id);
+    if (!$node || $node->bundle() !== 'work_order') {
+      return new JsonResponse(['status' => 'error', 'message' => 'Work order not found.']);
+    }
+
+    $data = [
+      'title' => $node->label(),
+      'line_item' => $node->get('field_linked_line_item')->entity->label() ?? '',
+      'unit' => $node->get('field_unit_assigned')->entity->label() ?? '',
+      'quantity' => $node->get('field_quantity')->value ?? '',
+      'expected_due_date' => $node->get('field_expected_due_date')->value ?? '',
+      'order_status' => $node->get('field_order_status')->entity->label() ?? '',
+      'remarks' => $node->get('body')->value ?? '',
+    ];
+
+    return new JsonResponse(['status' => 'success', 'data' => $data]);
+  }
+
+
+}

@@ -119,3 +119,7 @@
   overflow-y: auto;
   position: absolute !important;
 }
+.wo-suggest {
+  max-height: 260px; 
+  overflow-y: auto; 
+}

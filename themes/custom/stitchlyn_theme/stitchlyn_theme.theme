@@ -305,11 +305,69 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
     $variables['inventory_logs'] = $log_data;
     $variables['inventory_total'] = $grand_total;
 
+    // ---- Load Work Orders ----
+    $work_orders_data = [];
+    $work_orders = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties([
+        'type' => 'work_order',
+        'field_linked_quotation' => $node->id(),
+      ]);
+
+    foreach ($work_orders as $wo) {
+      $line_item_label = '';
+      $unit_label = '';
+      $qty = (float) ($wo->get('field_quantity')->value ?? 0);
+      $remarks = $wo->get('body')->value ?? '';
+      $order_status = '';
+
+      // Line item
+      if ($wo->hasField('field_linked_line_item') && !$wo->get('field_linked_line_item')->isEmpty()) {
+        $linked_item = $wo->get('field_linked_line_item')->entity;
+        if ($linked_item) {
+          $line_item_label = $linked_item->label();
+        }
+      }
+
+      // Unit
+      if ($wo->hasField('field_unit_assigned') && !$wo->get('field_unit_assigned')->isEmpty()) {
+        $unit_term = $wo->get('field_unit_assigned')->entity;
+        if ($unit_term) {
+          $unit_label = $unit_term->label();
+        }
+      }
+
+      // ✅ Order Status (safe check)
+      if ($wo->hasField('field_order_status') && !$wo->get('field_order_status')->isEmpty()) {
+        $term = $wo->get('field_order_status')->entity;
+        if ($term) {
+          $order_status = $term->label();
+        }
+      }
+      $serial = $wo->get('field_work_order_number')->value ?? '';
+      $expected_due = $wo->get('field_expected_due_date')->value ?? '';
+      $wo_title = $wo->label();
+
+      $work_orders_data[] = [
+        'id' => $wo->id(),
+        'title' => $wo_title,
+        'serial' => $serial,
+        'line_item' => $line_item_label,
+        'unit' => $unit_label,
+        'quantity' => $qty,
+        'remarks' => $remarks,
+        'expected_due' => $expected_due,
+        'order_status' => $order_status,
+      ];
+    }
+
+    $variables['work_orders'] = $work_orders_data;
+    \Drupal::logger('what_a_nicwork_orders_datae_logName')->warning('<pre><code>' . print_r($work_orders_data, TRUE) . '</code></pre>');
     // Attach JS
     $variables['#attached']['library'][] = 'stitchlyn_theme/inventory_log';
     $variables['#attached']['drupalSettings']['quotationId'] = $node->id();
+    $variables['#cache']['max-age'] = 0;
     \Drupal::service('page_cache_kill_switch')->trigger();
-    
   }
 
 

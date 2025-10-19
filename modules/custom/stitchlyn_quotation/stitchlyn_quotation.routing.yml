@@ -159,3 +159,52 @@ stitchlyn_quotation.delete_inventory_log:
     _format: 'json'
   requirements:
     _permission: 'access content'
+
+stitchlyn_quotation.add_work_order:
+  path: '/quotation/{quotation}/work-order/save'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\WorkOrderController::saveWorkOrder'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+stitchlyn_quotation.update_work_order:
+  path: '/quotation/work-order/{id}/update'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\WorkOrderController::updateWorkOrder'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+  methods: [POST]
+
+stitchlyn_quotation.get_work_order:
+  path: '/quotation/work-order/{id}/view'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\WorkOrderController::getWorkOrder'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+stitchlyn_quotation.line_item_autocomplete:
+  path: '/quotation/{quotation}/line-item/autocomplete'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\WorkOrderController::lineItemAutocomplete'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+stitchlyn_quotation.production_unit_autocomplete:
+  path: '/production-unit/autocomplete'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\WorkOrderController::productionUnitAutocomplete'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+stitchlyn_quotation.order_status_autocomplete:
+  path: '/order-status/autocomplete'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\WorkOrderController::orderStatusAutocomplete'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'

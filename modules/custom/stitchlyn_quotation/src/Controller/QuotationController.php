@@ -75,7 +75,7 @@ class QuotationController extends ControllerBase {
     // DATES
     // -----------------------------------------------------------------------
     $issue_date = $node->get('field_quotation_date')->value ?? date('Y-m-d');
-    $due_date = date('Y-m-d', strtotime($issue_date . ' +3 days'));
+    $due_date = $node->get('field_expected_due_date')->value ?? date('Y-m-d');
 
     // -----------------------------------------------------------------------
     // CUSTOMER DETAILS

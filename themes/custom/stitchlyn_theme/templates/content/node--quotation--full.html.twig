@@ -1,4 +1,5 @@
 {{ attach_library('stitchlyn_theme/inventory_log') }}
+{{ attach_library('stitchlyn_theme/work_order') }}
 <article class="quotation-detail">
 
   {# Payment badge #}
@@ -23,6 +24,13 @@
                 data-bs-target="#inventoryTabContent" type="button" role="tab"
                 aria-controls="inventoryTabContent" aria-selected="false">
           Inventory Logs
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="workorder-tab" data-bs-toggle="tab"
+                data-bs-target="#workOrdersTabContent" type="button" role="tab"
+                aria-controls="workOrdersTabContent" aria-selected="false">
+          Work Orders
         </button>
       </li>
     </ul>
@@ -52,6 +60,7 @@
                 </span>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item"><strong>Date:</strong> {{ node.created.value|date('d M Y') }}</li>
+                  <li class="list-group-item"><strong>Due Date:</strong> {{ node.field_expected_due_date.value|date('d M Y') }}</li>
                   <li class="list-group-item"><strong>Customer:</strong> {{ node.field_customer_reference.entity.label }}</li>
                   <li class="list-group-item"><strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }}</li>
                   <li class="list-group-item"><strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }}</li>
@@ -219,6 +228,205 @@
           {% endif %}
         </div>
       </div>
+
+      {# ================= TAB 3 : WORK ORDERS ================= #}
+      <div class="tab-pane fade" id="workOrdersTabContent" role="tabpanel" aria-labelledby="work-orders-tab">
+        <div class="workorder-section mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Work Orders</h4>
+            <button id="add-workorder" class="btn btn-success btn-sm">+ Add Work Order</button>
+          </div>
+
+          {# Wrapper for dynamic table replacement #}
+          <div id="workorder-wrapper">
+            {% if work_orders|length > 0 %}
+              <table class="table table-bordered table-striped align-middle" id="workorder-table">
+                <thead class="table-light">
+                  <tr>
+                    <th>Work Order #</th>
+                    <th>Linked Line Item</th>
+                    <th>Unit Assigned</th>
+                    <th>Quantity</th>
+                    <th>Expected Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for wo in work_orders %}
+                    <tr>
+                      <td>{{ wo.title }}</td>
+                      <td>{{ wo.line_item }}</td>
+                      <td>{{ wo.unit }}</td>
+                      <td>{{ wo.quantity }}</td>
+                      <td>{{ wo.expected_due }}</td>
+                      <td>{{ wo.order_status }}</td>
+                      <td>
+                        <button class="btn btn-outline-primary btn-sm view-workorder" data-id="{{ wo.id }}">View</button>
+                        <button class="btn btn-outline-secondary btn-sm edit-workorder" data-id="{{ wo.id }}">Edit</button>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p>No work orders found.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {# ================= Add Work Order Modal ================= #}
+      <div class="modal fade" id="workOrderModal" tabindex="-1" aria-labelledby="workOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+          <div class="modal-content">
+            <div class="modal-header bg-light">
+              <h5 class="modal-title fw-bold" id="workOrderModalLabel">Add Work Order</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="wo-line-item" class="form-label fw-bold">Linked Line Item</label>
+                <input
+                  type="text" id="wo-line-item" class="form-control" placeholder="Start typing..."
+                  data-autocomplete-path="/quotation/{{ node.id }}/line-item/autocomplete">
+              </div>
+
+              <div class="mb-3">
+                <label for="wo-unit" class="form-label fw-bold">Production Unit</label>
+                <input type="text" id="wo-unit" class="form-control" placeholder="Start typing..." data-autocomplete-path="/production-unit/autocomplete">
+              </div>
+
+              <div class="mb-3">
+                <label for="wo-quantity" class="form-label fw-bold">Quantity Assigned</label>
+                <input type="number" id="wo-quantity" class="form-control" min="1" step="1">
+              </div>
+
+              <div class="mb-3">
+                <label for="wo-due-date" class="form-label fw-bold">Expected Due Date</label>
+                <input type="date" id="wo-due-date" class="form-control">
+              </div>
+
+              <div class="mb-3">
+                <label for="wo-status" class="form-label fw-bold">Order Status</label>
+                <input type="text" id="wo-status" class="form-control" placeholder="Start typing status..." data-autocomplete-path="/order-status/autocomplete">
+              </div>
+
+              <div class="mb-3">
+                <label for="wo-remarks" class="form-label fw-bold">Remarks</label>
+                <textarea id="wo-remarks" class="form-control" rows="3"></textarea>
+              </div>
+
+              <div class="text-end">
+                <button type="button" id="wo-save" class="btn btn-primary">Save Work Order</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ================= View Work Order Modal ================= #}
+      <div class="modal fade" id="workOrderViewModal" tabindex="-1" aria-labelledby="workOrderViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+          <div class="modal-content">
+            <div class="modal-header bg-light">
+              <h5 class="modal-title fw-bold" id="workOrderViewModalLabel">Work Order Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <table class="table table-bordered table-striped mb-0">
+                <tbody>
+                  <tr>
+                    <th>Work Order #</th>
+                    <td id="view-wo-title">—</td>
+                  </tr>
+                  <tr>
+                    <th>Linked Line Item</th>
+                    <td id="view-wo-line-item">—</td>
+                  </tr>
+                  <tr>
+                    <th>Production Unit</th>
+                    <td id="view-wo-unit">—</td>
+                  </tr>
+                  <tr>
+                    <th>Quantity</th>
+                    <td id="view-wo-quantity">—</td>
+                  </tr>
+                  <tr>
+                    <th>Expected Due Date</th>
+                    <td id="view-wo-due">—</td>
+                  </tr>
+                  <tr>
+                    <th>Status</th>
+                    <td id="view-wo-status">—</td>
+                  </tr>
+                  <tr>
+                    <th>Remarks</th>
+                    <td id="view-wo-remarks">—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ================= Edit Work Order Modal ================= #}
+      <div class="modal fade" id="workOrderEditModal" tabindex="-1" aria-labelledby="workOrderEditModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+          <div class="modal-content">
+            <div class="modal-header bg-light">
+              <h5 class="modal-title fw-bold" id="workOrderEditModalLabel">Edit Work Order</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="workorder-edit-form">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Work Order #</label>
+                  <input type="text" class="form-control" id="edit-wo-title" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Linked Line Item</label>
+                  <input type="text" class="form-control" id="edit-wo-line-item" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Production Unit</label>
+                  <input type="text" class="form-control" id="edit-wo-unit" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Quantity</label>
+                  <input type="text" class="form-control" id="edit-wo-quantity" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Expected Due Date</label>
+                  <input type="text" class="form-control" id="edit-wo-due" readonly>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Order Status</label>
+                  <select class="form-select" id="edit-wo-status">
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Remarks</label>
+                  <textarea class="form-control" id="edit-wo-remarks" rows="3"></textarea>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="save-wo-edit">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 </article>

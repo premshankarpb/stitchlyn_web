@@ -137,6 +137,10 @@
                 } else {
                   // If table didn't exist (first entry)
                   $('.inventory-section').html(`
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h4>Inventory Logs</h4>
+                      <button id="add-inventory-log" class="btn btn-success btn-sm">+ Add Log</button>
+                    </div>
                     <table class="table table-bordered table-striped align-middle">
                       <thead class="table-light">
                         <tr>

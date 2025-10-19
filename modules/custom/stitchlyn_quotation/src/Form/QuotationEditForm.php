@@ -62,6 +62,12 @@ class QuotationEditForm extends FormBase {
       '#default_value' => $node->get('field_quotation_date')->value ?? date('Y-m-d'),
     ];
 
+    $form['quotation_info']['field_expected_due_date'] = [
+      '#type' => 'date',
+      '#title' => $this->t('Due Date'),
+      '#default_value' => $node->get('field_expected_due_date')->value ?? date('Y-m-d'),
+    ];
+
     $form['quotation_info']['body'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Remarks'),
@@ -246,6 +252,7 @@ class QuotationEditForm extends FormBase {
     $node->setTitle($values['title']);
     $node->set('field_customer_reference', $values['field_customer_reference']);
     $node->set('field_quotation_date', $values['field_quotation_date']);
+    $node->set('field_expected_due_date', $values['field_expected_due_date']);
     $node->set('body', ['value' => $values['body'], 'format' => 'basic_html']);
     $node->set('field_discount', $values['field_discount']);
 
