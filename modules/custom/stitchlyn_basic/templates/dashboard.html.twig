@@ -1,10 +1,91 @@
 <div class="dashboard-summary">
-  <h2>Inventory Dashboard</h2>
-  <ul class="summary-list">
-    <li>Product Inventory: {{ counts.product }}</li>
-    <li>Raw Material Inventory: {{ counts.raw_material }}</li>
-    <li>Tool Inventory: {{ counts.tool }}</li>
-    <li>Purchase Orders: {{ counts.purchase_orders }}</li>
-    <li>Work Orders: {{ counts.work_orders }}</li>
-  </ul>
+
+  <h2>Inventory</h2>
+  <div class="dashboard-grid">
+    <div class="dashboard-box box-inventory">
+      <div class="box-title">Product Inventory</div>
+      <div class="box-count">{{ counts.product }}</div>
+    </div>
+    <div class="dashboard-box box-inventory">
+      <div class="box-title">Raw Materials</div>
+      <div class="box-count">{{ counts.raw_material }}</div>
+    </div>
+    <div class="dashboard-box box-inventory">
+      <div class="box-title">Tools</div>
+      <div class="box-count">{{ counts.tool }}</div>
+    </div>
+  </div>
+  <div class="section-footer">
+    <a href="/dashboard/inventory" class="view-link">View Details →</a>
+  </div>
+
+  <h2>Quotations</h2>
+  <div class="dashboard-grid">
+    <div class="dashboard-box box-quotation">
+      <div class="box-title">Total Quotations</div>
+      <div class="box-count">{{ counts.quotations.total }}</div>
+    </div>
+    <div class="dashboard-box box-quotation">
+      <div class="box-title">Fulfilled Quotations</div>
+      <div class="box-count">{{ counts.quotations.fulfilled }}</div>
+    </div>
+    <div class="dashboard-box box-quotation">
+      <div class="box-title">Not Completed Quotations</div>
+      <div class="box-count">{{ counts.quotations.not_completed }}</div>
+    </div>
+  </div>
+  <div class="section-footer">
+    <a href="/dashboard/quotations" class="view-link">View Details →</a>
+  </div>
+
+  <h2>Work Orders</h2>
+  <div class="dashboard-grid">
+    <div class="dashboard-box box-work">
+      <div class="box-title">Total Work Orders</div>
+      <div class="box-count">{{ counts.work_orders.total }}</div>
+    </div>
+    <div class="dashboard-box box-work">
+      <div class="box-title">Done</div>
+      <div class="box-count">{{ counts.work_orders.done }}</div>
+    </div>
+    <div class="dashboard-box box-work">
+      <div class="box-title">In Progress</div>
+      <div class="box-count">{{ counts.work_orders.in_progress }}</div>
+    </div>
+    <div class="dashboard-box box-work">
+      <div class="box-title">To Do</div>
+      <div class="box-count">{{ counts.work_orders.to_do }}</div>
+    </div>
+    <div class="dashboard-box box-work">
+      <div class="box-title">Rejected</div>
+      <div class="box-count">{{ counts.work_orders.rejected }}</div>
+    </div>
+  </div>
+  <div class="section-footer">
+    <a href="/dashboard/work-orders" class="view-link">View Details →</a>
+  </div>
+
+  <h2>Purchase Orders</h2>
+  <div class="dashboard-grid">
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Total POs</div>
+      <div class="box-count">{{ counts.purchase_orders.total }}</div>
+    </div>
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Paid</div>
+      <div class="box-count">{{ counts.purchase_orders.paid }}</div>
+    </div>
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Partial</div>
+      <div class="box-count">{{ counts.purchase_orders.partial }}</div>
+    </div>
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Unpaid</div>
+      <div class="box-count">{{ counts.purchase_orders.unpaid }}</div>
+    </div>
+  </div>
+  <div class="section-footer">
+    <a href="/dashboard/purchase-orders" class="view-link">View Details →</a>
+  </div>
+
 </div>

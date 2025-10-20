@@ -362,7 +362,6 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
     }
 
     $variables['work_orders'] = $work_orders_data;
-    \Drupal::logger('what_a_nicwork_orders_datae_logName')->warning('<pre><code>' . print_r($work_orders_data, TRUE) . '</code></pre>');
     // Attach JS
     $variables['#attached']['library'][] = 'stitchlyn_theme/inventory_log';
     $variables['#attached']['drupalSettings']['quotationId'] = $node->id();

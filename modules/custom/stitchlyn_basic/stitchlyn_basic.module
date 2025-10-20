@@ -11,7 +11,7 @@ use Drupal\node\Entity\Node;
 function stitchlyn_basic_theme($existing, $type, $theme, $path) {
   return [
     'stitchlyn_dashboard' => [
-      'variables' => ['counts' => NULL],
+      'variables' => ['counts' => []],
       'template' => 'dashboard',
       'path' => $path . '/templates',
     ],
