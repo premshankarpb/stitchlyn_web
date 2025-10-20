@@ -311,15 +311,20 @@ class PurchaseOrderEditForm extends FormBase {
     // Retrieve all submitted values (flattened).
     $values = $form_state->getValues();
 
+    // Prevent errors like "Tax @ 18% is not a valid number"
+    $subtotal = isset($values['subtotal']) ? (float) preg_replace('/[^\d.]/', '', $values['subtotal']) : 0;
+    $tax_total = isset($values['tax_total']) ? (float) preg_replace('/[^\d.]/', '', $values['tax_total']) : 0;
+    $grand_total = isset($values['grand_total']) ? (float) preg_replace('/[^\d.]/', '', $values['grand_total']) : 0;
+
     // --- Save Purchase Order fields ---
     $po->set('field_vendor', $values['vendor'] ?: NULL);
     $po->set('field_date_of_purchase', $values['date_of_purchase'] ?: NULL);
     $po->set('field_payment_status', $values['payment_status'] ?: NULL);
     $po->set('body', ['value' => $values['remarks'] ?? '', 'format' => 'basic_html']);
 
-    $po->set('field_subtotal_amount', $values['subtotal'] ?? 0);
-    $po->set('field_tax_amount', $values['tax_total'] ?? 0);
-    $po->set('field_total_amount', $values['grand_total'] ?? 0);
+    $po->set('field_subtotal_amount', $subtotal ?? 0);
+    $po->set('field_tax_amount', $tax_total ?? 0);
+    $po->set('field_total_amount', $grand_total ?? 0);
 
     // First save (ensures serial field auto-generates).
     $po->save();
