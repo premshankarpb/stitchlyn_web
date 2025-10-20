@@ -133,3 +133,7 @@ form#node-product-form .entity-content-form-footer {
 form#node-product-form #edit-actions {
   margin-top: 3%;
 }
+em.placeholder {
+  cursor: pointer;
+  background-color: white;
+}
