@@ -123,3 +123,13 @@
   max-height: 260px; 
   overflow-y: auto; 
 }
+
+form#node-product-form .js-form-type-vertical-tabs {
+  display: none !important;
+}
+form#node-product-form .entity-content-form-footer {
+  display: none !important;
+}
+form#node-product-form #edit-actions {
+  margin-top: 3%;
+}
