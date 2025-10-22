@@ -18,7 +18,7 @@
         {% endif %}
 
         {# ---- User Account Menu (profile dropdown) ---- #}
-        {% if menus.user_account %}
+        {% if logged_in and menus.user_account|render|trim is not empty %}
           <div class="profile-dropdown dropdown ms-lg-3">
             <a
               class="profile-avatar d-flex align-items-center justify-content-center rounded-circle"
@@ -33,6 +33,12 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
               {{ menus.user_account }}
             </ul>
+          </div>
+        {% elseif not logged_in %}
+          <div class="profile-dropdown ms-lg-3">
+            <a class="btn btn-outline-primary px-3" href="{{ path('user.login') }}">
+              <i class="fas fa-sign-in-alt me-1"></i> Log in
+            </a>
           </div>
         {% endif %}
       </div>
