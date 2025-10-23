@@ -13,9 +13,7 @@
 
     <div class="admin-layout">
       <aside class="admin-sidebar dark-sidebar">
-        {% include "@stitchlyn_theme/navigation/menu--backend.html.twig" with {
-          backend_menu: page.backend_menu
-        } %}
+        {{ page.backend_menu }}
       </aside>
 
       <main class="admin-main">

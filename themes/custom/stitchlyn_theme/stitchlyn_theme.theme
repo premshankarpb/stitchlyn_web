@@ -88,9 +88,11 @@ function stitchlyn_theme_preprocess_paragraph(array &$variables) {
 function stitchlyn_theme_preprocess_page(array &$variables) {
   $current_user = \Drupal::currentUser();
   $variables['logged_in'] = $current_user->isAuthenticated();
-  $menu_tree = \Drupal::menuTree();
 
-  // ---------- MAIN MENU ----------
+  $block_manager = \Drupal::service('plugin.manager.block');
+
+  // === MAIN MENU ===
+  $menu_tree = \Drupal::menuTree();
   $parameters = new MenuTreeParameters();
   $main_tree = $menu_tree->load('main', $parameters);
   $manipulators = [
@@ -101,53 +103,35 @@ function stitchlyn_theme_preprocess_page(array &$variables) {
   $main_menu = $menu_tree->build($main_tree);
   $variables['menus']['main_menu'] = \Drupal::service('renderer')->render($main_menu);
 
-  // ---------- USER ACCOUNT MENU ----------
-  $account_params = new MenuTreeParameters();
-  $account_tree = $menu_tree->load('account', $account_params);
+  // === USER ACCOUNT MENU ===
+  $account_block = $block_manager->createInstance('system_menu_block:account', []);
+  $account_render = $account_block->build();
+  $account_render['#cache']['contexts'][] = 'user.roles';
+  $variables['menus']['user_account'] = \Drupal::service('renderer')->render($account_render);
 
-  // Apply access checks & sorting
-  $account_tree = $menu_tree->transform($account_tree, $manipulators);
+  // === BACKEND MENU ===
+  $backend_block = $block_manager->createInstance('system_menu_block:backend', []);
+  $backend_render = $backend_block->build();
+  $backend_render['#cache']['contexts'][] = 'user.roles';
+  $variables['page']['backend_menu'] = $backend_render;
 
-  // ---- Filter by role (extra safety over Menu Item Role Access) ----
-  $roles = $current_user->getRoles();
+  // === FOOTER MENU ===
+  $footer_block = $block_manager->createInstance('system_menu_block:footer', []);
+  $footer_render = $footer_block->build();
+  $footer_render['#cache']['contexts'][] = 'user.roles';
+  $variables['page']['footer_menu'] = $footer_render['#items'] ?? [];
 
-  foreach ($account_tree as $key => $element) {
-    // Each element has a link object we can inspect.
-    if (isset($element->link) && method_exists($element->link, 'getOptions')) {
-      $options = $element->link->getOptions();
+  // === SUPPORT MENU ===
+  $support_block = $block_manager->createInstance('system_menu_block:support', []);
+  $support_render = $support_block->build();
+  $support_render['#cache']['contexts'][] = 'user.roles';
+  $variables['page']['support_menu'] = $support_render['#items'] ?? [];
 
-      // Custom Role Access Module stores roles in "menu_item_roles" option.
-      if (isset($options['menu_item_roles']) && is_array($options['menu_item_roles'])) {
-        $allowed_roles = $options['menu_item_roles'];
-
-        // If current user has none of the allowed roles, remove the menu item.
-        if (empty(array_intersect($roles, $allowed_roles))) {
-          unset($account_tree[$key]);
-        }
-      }
-    }
-  }
-
-  // Only build the menu if items remain
-  if (!empty($account_tree)) {
-    $account_menu = $menu_tree->build($account_tree);
-    $variables['menus']['user_account'] = \Drupal::service('renderer')->render($account_menu);
-  }
-  else {
-    $variables['menus']['user_account'] = '';
-  }
-
-  // Support Menu (custom format)
-  $variables['page']['support_menu'] = _stitchlyn_prepare_menu_array('support');
-
-  // Social Links Menu (custom format)
-  $variables['page']['social_links'] = _stitchlyn_prepare_menu_array('social-links');
-
-  // Footer Quick Links Menu (optional)
-  $variables['page']['footer_menu'] = _stitchlyn_prepare_menu_array('footer');
-
-  // Backend Sidebar Menu
-  $variables['page']['backend_menu'] = _stitchlyn_prepare_menu_array('backend');
+  // === SOCIAL LINKS MENU ===
+  $social_block = $block_manager->createInstance('system_menu_block:social-links', []);
+  $social_render = $social_block->build();
+  $social_render['#cache']['contexts'][] = 'user.roles';
+  $variables['page']['social_links'] = $social_render['#items'] ?? [];
 }
 
 /**

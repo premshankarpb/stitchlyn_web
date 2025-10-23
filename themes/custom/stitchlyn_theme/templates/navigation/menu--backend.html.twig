@@ -1,9 +1,8 @@
-{# templates/navigation/menu--backend.html.twig #}
 <div class="sidebar-content">
   <nav class="sidebar-menu aesthetic-sidebar">
     <ul class="sidebar-list">
-      {% for item in backend_menu %}
-        {% set has_children = item.children is defined and item.children|length > 0 %}
+      {% for item in items %}
+        {% set has_children = item.below is defined and item.below|length > 0 %}
 
         <li class="sidebar-group {{ has_children ? 'has-submenu' }}">
           {% if has_children %}
@@ -12,7 +11,7 @@
               <i class="fas fa-chevron-right sidebar-arrow"></i>
             </a>
             <ul class="sidebar-sublist" style="display: none;">
-              {% for child in item.children %}
+              {% for child in item.below %}
                 <li>
                   <a href="{{ child.url }}" class="sidebar-link">
                     <i class="fas fa-table-list me-2"></i>{{ child.title }}
@@ -22,7 +21,7 @@
             </ul>
           {% else %}
             <a href="{{ item.url }}" class="sidebar-link d-flex align-items-center">
-              <i class="fas fa-list me-2"></i>{{ item.title }}
+              <i class="fas fa-list me-2"></i>{{ item.title }}</i>
             </a>
           {% endif %}
         </li>
