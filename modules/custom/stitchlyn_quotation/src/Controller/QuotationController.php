@@ -55,6 +55,9 @@ class QuotationController extends ControllerBase {
     $build = $this->entityTypeManager()
       ->getViewBuilder('node')
       ->view($node, $view_mode);
+
+    $build['#attributes']['class'][] = 'stichlyn-my-quote-nav';
+    $build['#attributes']['id'][] = 'stichlyn-my-quote';
     $build['#cache']['contexts'][] = 'user.permissions';
 
     return $build;

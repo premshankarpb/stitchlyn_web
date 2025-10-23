@@ -19,14 +19,14 @@
           Quotation Details
         </button>
       </li>
-      <li class="nav-item" role="presentation">
+      <li class="nav-item {{ attributes.class }}" role="presentation">
         <button class="nav-link" id="inventory-tab" data-bs-toggle="tab"
                 data-bs-target="#inventoryTabContent" type="button" role="tab"
                 aria-controls="inventoryTabContent" aria-selected="false">
           Inventory Logs
         </button>
       </li>
-      <li class="nav-item" role="presentation">
+      <li class="nav-item {{ attributes.class }}" role="presentation">
         <button class="nav-link" id="workorder-tab" data-bs-toggle="tab"
                 data-bs-target="#workOrdersTabContent" type="button" role="tab"
                 aria-controls="workOrdersTabContent" aria-selected="false">
@@ -35,7 +35,7 @@
       </li>
     </ul>
 
-    <div class="tab-content" id="quotationTabsContent">
+    <div class="tab-content" id="quotationTabsContent {{ attributes.id }}">
 
       {# ================= TAB 1 : QUOTATION DETAILS ================= #}
       <div class="tab-pane fade show active" id="quotationTabContent" role="tabpanel" aria-labelledby="quotation-tab">

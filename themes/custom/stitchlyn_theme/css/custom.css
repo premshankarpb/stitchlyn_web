@@ -141,3 +141,7 @@ em.placeholder {
   cursor: pointer;
   background-color: white;
 }
+
+.stichlyn-my-quote-nav{
+  display: none;
+}
