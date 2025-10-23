@@ -1,0 +1,44 @@
+uuid: f545824e-525c-49f2-bdd9-a304db7b7402
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.payment_record.body
+    - field.field.node.payment_record.field_amount_due
+    - field.field.node.payment_record.field_amount_paid
+    - field.field.node.payment_record.field_order_type
+    - field.field.node.payment_record.field_payment_date
+    - field.field.node.payment_record.field_payment_id
+    - field.field.node.payment_record.field_payment_mode
+    - field.field.node.payment_record.field_reference_order
+    - node.type.payment_record
+  module:
+    - text
+    - user
+id: node.payment_record.teaser
+targetEntityType: node
+bundle: payment_record
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_amount_due: true
+  field_amount_paid: true
+  field_order_type: true
+  field_payment_date: true
+  field_payment_id: true
+  field_payment_mode: true
+  field_reference_order: true

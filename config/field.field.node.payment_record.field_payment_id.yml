@@ -1,0 +1,21 @@
+uuid: 4ef6fbd1-4f69-49a0-a8d4-6c7701e0538b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_payment_id
+    - node.type.payment_record
+  module:
+    - serial
+id: node.payment_record.field_payment_id
+field_name: field_payment_id
+entity_type: node
+bundle: payment_record
+label: 'Payment id'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: serial

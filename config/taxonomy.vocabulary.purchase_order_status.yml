@@ -1,0 +1,9 @@
+uuid: 955052ae-a222-4bbc-a377-af7122c35316
+langcode: en
+status: true
+dependencies: {  }
+name: 'Purchase Order status'
+vid: purchase_order_status
+description: 'Status of the Purchase order created'
+weight: 0
+new_revision: false

@@ -1,0 +1,19 @@
+uuid: 8e03bedb-0cdc-46e0-a7e3-7f59a4fd29ab
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_candle_length
+    - paragraphs.paragraphs_type.candle_attribute
+id: paragraph.candle_attribute.field_candle_length
+field_name: field_candle_length
+entity_type: paragraph
+bundle: candle_attribute
+label: 'Candle length'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

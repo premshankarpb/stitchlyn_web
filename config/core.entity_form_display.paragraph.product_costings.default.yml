@@ -1,0 +1,33 @@
+uuid: a4dc40b4-d015-444e-bcdf-34bbd1a9b262
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.product_costings.field_inventory_item
+    - field.field.paragraph.product_costings.field_quantity
+    - paragraphs.paragraphs_type.product_costings
+id: paragraph.product_costings.default
+targetEntityType: paragraph
+bundle: product_costings
+mode: default
+content:
+  field_inventory_item:
+    type: entity_reference_autocomplete
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_quantity:
+    type: number
+    weight: 1
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

@@ -1,0 +1,99 @@
+uuid: f51a4288-cd4f-4c62-b974-af1be9bc761b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.payment_record.body
+    - field.field.node.payment_record.field_amount_due
+    - field.field.node.payment_record.field_amount_paid
+    - field.field.node.payment_record.field_order_type
+    - field.field.node.payment_record.field_payment_date
+    - field.field.node.payment_record.field_payment_id
+    - field.field.node.payment_record.field_payment_mode
+    - field.field.node.payment_record.field_reference_order
+    - node.type.payment_record
+  module:
+    - datetime
+    - serial
+    - text
+    - user
+id: node.payment_record.default
+targetEntityType: node
+bundle: payment_record
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_amount_due:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 110
+    region: content
+  field_amount_paid:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  field_order_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_payment_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_payment_id:
+    type: serial_default_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_payment_mode:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_reference_order:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

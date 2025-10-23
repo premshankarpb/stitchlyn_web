@@ -1,0 +1,10 @@
+uuid: 3d3e9388-ce82-431e-8972-cea38096290d
+langcode: en
+status: true
+dependencies: {  }
+id: product_costings
+label: 'Product Costings'
+icon_uuid: null
+icon_default: null
+description: 'Paragraph for recording the inventory cost for a product'
+behavior_plugins: {  }

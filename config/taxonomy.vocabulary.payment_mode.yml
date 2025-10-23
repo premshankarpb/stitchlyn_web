@@ -1,0 +1,9 @@
+uuid: df702d1e-1a36-43e3-aa94-bbad54c06e05
+langcode: en
+status: true
+dependencies: {  }
+name: 'Payment Mode'
+vid: payment_mode
+description: 'Terms that records the type of payment'
+weight: 0
+new_revision: false

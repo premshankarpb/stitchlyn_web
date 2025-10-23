@@ -1,0 +1,10 @@
+uuid: b638cfb1-04bf-484a-9e82-620fac4ec915
+langcode: en
+status: true
+dependencies: {  }
+id: candle_attribute
+label: 'Candle attribute'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

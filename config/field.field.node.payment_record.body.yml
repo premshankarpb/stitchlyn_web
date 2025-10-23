@@ -1,0 +1,24 @@
+uuid: 9edc66a3-3d8f-48c8-aed4-0eb2911fa8ac
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.payment_record
+  module:
+    - text
+id: node.payment_record.body
+field_name: body
+entity_type: node
+bundle: payment_record
+label: Remarks
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+  allowed_formats: {  }
+field_type: text_with_summary

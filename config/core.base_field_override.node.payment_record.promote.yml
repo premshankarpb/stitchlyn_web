@@ -1,0 +1,22 @@
+uuid: ea063e4d-b200-4f69-a2e7-2c1393445e51
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.payment_record
+id: node.payment_record.promote
+field_name: promote
+entity_type: node
+bundle: payment_record
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

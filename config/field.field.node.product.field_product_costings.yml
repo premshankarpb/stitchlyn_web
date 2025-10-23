@@ -1,0 +1,71 @@
+uuid: b690dd3a-ab88-4555-a4dd-bf4904e7b2ac
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_product_costings
+    - node.type.product
+    - paragraphs.paragraphs_type.product_costings
+id: node.product.field_product_costings
+field_name: field_product_costings
+entity_type: node
+bundle: product
+label: 'Product Costings'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      product_costings: product_costings
+    negate: 0
+    target_bundles_drag_drop:
+      banner_item:
+        weight: 16
+        enabled: false
+      candle_attribute:
+        weight: 17
+        enabled: false
+      cta_banner:
+        weight: 18
+        enabled: false
+      feature_item:
+        weight: 20
+        enabled: false
+      features:
+        weight: 19
+        enabled: false
+      hero_banner:
+        weight: 21
+        enabled: false
+      home_banner:
+        weight: 22
+        enabled: false
+      product_costings:
+        weight: 23
+        enabled: true
+      shirt_attribute:
+        weight: 24
+        enabled: false
+      simple_card:
+        weight: 25
+        enabled: false
+      simple_card_item:
+        weight: 26
+        enabled: false
+      st:
+        weight: 27
+        enabled: false
+      stats:
+        weight: 28
+        enabled: false
+      type_a_card_cta:
+        weight: 29
+        enabled: false
+      umbrella_attributes:
+        weight: 30
+        enabled: false
+field_type: entity_reference

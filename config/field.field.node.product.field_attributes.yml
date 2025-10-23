@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.node.field_attributes
     - node.type.product
+    - paragraphs.paragraphs_type.candle_attribute
     - paragraphs.paragraphs_type.shirt_attribute
     - paragraphs.paragraphs_type.umbrella_attributes
   module:
@@ -23,6 +24,7 @@ settings:
   handler: 'default:paragraph'
   handler_settings:
     target_bundles:
+      candle_attribute: candle_attribute
       shirt_attribute: shirt_attribute
       umbrella_attributes: umbrella_attributes
     negate: 0
@@ -30,6 +32,9 @@ settings:
       banner_item:
         weight: 13
         enabled: false
+      candle_attribute:
+        weight: 16
+        enabled: true
       cta_banner:
         weight: 14
         enabled: false

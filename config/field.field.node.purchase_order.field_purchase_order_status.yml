@@ -1,0 +1,33 @@
+uuid: b03fa1b0-0c04-4418-8c16-9a7d95f13eed
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_purchase_order_status
+    - node.type.purchase_order
+    - taxonomy.vocabulary.purchase_order_status
+  content:
+    - 'taxonomy_term:purchase_order_status:ccd10b89-aad1-4b76-b7fe-ae9c36e72369'
+id: node.purchase_order.field_purchase_order_status
+field_name: field_purchase_order_status
+entity_type: node
+bundle: purchase_order
+label: 'Purchase Order status'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    target_uuid: ccd10b89-aad1-4b76-b7fe-ae9c36e72369
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      purchase_order_status: purchase_order_status
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

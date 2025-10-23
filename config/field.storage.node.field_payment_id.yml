@@ -1,0 +1,21 @@
+uuid: f57dd394-b102-4d4d-8f29-972e203f04ac
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - serial
+id: node.field_payment_id
+field_name: field_payment_id
+entity_type: node
+type: serial
+settings:
+  start_value: 1
+  init_existing_entities: 0
+module: serial
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

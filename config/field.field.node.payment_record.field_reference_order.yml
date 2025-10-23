@@ -1,0 +1,31 @@
+uuid: ebbfb81f-1b6a-44b6-8686-cfca0ab975eb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_reference_order
+    - node.type.payment_record
+    - node.type.purchase_order
+    - node.type.quotation
+id: node.payment_record.field_reference_order
+field_name: field_reference_order
+entity_type: node
+bundle: payment_record
+label: 'Reference order'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      purchase_order: purchase_order
+      quotation: quotation
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: purchase_order
+field_type: entity_reference

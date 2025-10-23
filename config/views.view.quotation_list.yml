@@ -1639,8 +1639,156 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+      filters:
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: in
+          value:
+            quotation: quotation
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_quotation_number_value:
+          id: field_quotation_number_value
+          table: node__field_quotation_number
+          field: field_quotation_number_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: numeric
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_quotation_number_value_op
+            label: 'Quotation Number'
+            description: ''
+            use_operator: false
+            operator: field_quotation_number_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_quotation_number_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              content_editor: '0'
+              administrator: '0'
+              vendor: '0'
+              unit_manager: '0'
+            min_placeholder: ''
+            max_placeholder: ''
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_payment_status_target_id:
+          id: field_payment_status_target_id
+          table: node__field_payment_status
+          field: field_payment_status_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_payment_status_target_id_op
+            label: 'Payment Status'
+            description: ''
+            use_operator: false
+            operator: field_payment_status_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_payment_status_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              content_editor: '0'
+              administrator: '0'
+              vendor: '0'
+              unit_manager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: payment_status
+          type: textfield
+          hierarchy: false
+          limit: true
+          error_message: true
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
       defaults:
         fields: false
+        filters: false
+        filter_groups: false
       display_extenders: {  }
       path: export/quotation
       filename: ''
@@ -2620,55 +2768,6 @@ display:
               vendor: '0'
               unit_manager: '0'
             reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-        field_customer_reference_target_id:
-          id: field_customer_reference_target_id
-          table: node__field_customer_reference
-          field: field_customer_reference_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: numeric
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_customer_reference_target_id_op
-            label: Customer
-            description: ''
-            use_operator: false
-            operator: field_customer_reference_target_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_customer_reference_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              content_editor: '0'
-              administrator: '0'
-              vendor: '0'
-              unit_manager: '0'
-            min_placeholder: ''
-            max_placeholder: ''
-            placeholder: ''
           is_grouped: false
           group_info:
             label: ''

@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.product.field_attributes
     - field.field.node.product.field_category
     - field.field.node.product.field_cost_price
+    - field.field.node.product.field_product_costings
     - field.field.node.product.field_product_images
     - field.field.node.product.field_sku_code
     - field.field.node.product.field_unit_of_measure
@@ -55,6 +56,14 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 109
+    region: content
+  field_product_costings:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 112
     region: content
   field_product_images:
     type: image

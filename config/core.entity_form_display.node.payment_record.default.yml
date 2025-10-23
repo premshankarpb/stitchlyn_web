@@ -1,27 +1,26 @@
-uuid: 3e6c6eed-1d76-4390-bf8c-33dfffc0fb99
+uuid: 2c618325-d96d-4466-97f2-e1324260f41f
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.purchase_order.body
-    - field.field.node.purchase_order.field_date_of_purchase
-    - field.field.node.purchase_order.field_payment_status
-    - field.field.node.purchase_order.field_po_number
-    - field.field.node.purchase_order.field_purchase_order_status
-    - field.field.node.purchase_order.field_subtotal_amount
-    - field.field.node.purchase_order.field_tax_amount
-    - field.field.node.purchase_order.field_total_amount
-    - field.field.node.purchase_order.field_vendor
-    - node.type.purchase_order
+    - field.field.node.payment_record.body
+    - field.field.node.payment_record.field_amount_due
+    - field.field.node.payment_record.field_amount_paid
+    - field.field.node.payment_record.field_order_type
+    - field.field.node.payment_record.field_payment_date
+    - field.field.node.payment_record.field_payment_id
+    - field.field.node.payment_record.field_payment_mode
+    - field.field.node.payment_record.field_reference_order
+    - node.type.payment_record
   module:
     - content_moderation
     - datetime
     - path
     - serial
     - text
-id: node.purchase_order.default
+id: node.payment_record.default
 targetEntityType: node
-bundle: purchase_order
+bundle: payment_record
 mode: default
 content:
   body:
@@ -40,62 +39,55 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_date_of_purchase:
-    type: datetime_default
-    weight: 123
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_payment_status:
-    type: entity_reference_autocomplete
-    weight: 124
+  field_amount_due:
+    type: number
+    weight: 130
     region: content
     settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_po_number:
-    type: serial_default_widget
-    weight: 128
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_purchase_order_status:
-    type: entity_reference_autocomplete
+  field_amount_paid:
+    type: number
     weight: 129
     region: content
     settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_order_type:
+    type: entity_reference_autocomplete
+    weight: 125
+    region: content
+    settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_subtotal_amount:
-    type: number
-    weight: 125
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_tax_amount:
-    type: number
-    weight: 126
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_total_amount:
-    type: number
+  field_payment_date:
+    type: datetime_default
     weight: 127
     region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_payment_id:
+    type: serial_default_widget
+    weight: 122
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_payment_mode:
+    type: entity_reference_autocomplete
+    weight: 128
+    region: content
     settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_vendor:
+  field_reference_order:
     type: entity_reference_autocomplete
-    weight: 122
+    weight: 126
     region: content
     settings:
       match_operator: CONTAINS

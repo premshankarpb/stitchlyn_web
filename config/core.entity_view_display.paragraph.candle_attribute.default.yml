@@ -1,0 +1,53 @@
+uuid: 9172c6d7-2a5e-4ab3-886a-cd2ae609ef3b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.candle_attribute.field_candle_colour
+    - field.field.paragraph.candle_attribute.field_candle_images
+    - field.field.paragraph.candle_attribute.field_candle_length
+    - field.field.paragraph.candle_attribute.field_candle_radius
+    - paragraphs.paragraphs_type.candle_attribute
+  module:
+    - image
+id: paragraph.candle_attribute.default
+targetEntityType: paragraph
+bundle: candle_attribute
+mode: default
+content:
+  field_candle_colour:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_candle_images:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_candle_length:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_candle_radius:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

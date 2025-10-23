@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.product.field_attributes
     - field.field.node.product.field_category
     - field.field.node.product.field_cost_price
+    - field.field.node.product.field_product_costings
     - field.field.node.product.field_product_images
     - field.field.node.product.field_sku_code
     - field.field.node.product.field_unit_of_measure
@@ -37,6 +38,7 @@ hidden:
   field_attributes: true
   field_category: true
   field_cost_price: true
+  field_product_costings: true
   field_product_images: true
   field_sku_code: true
   field_unit_of_measure: true

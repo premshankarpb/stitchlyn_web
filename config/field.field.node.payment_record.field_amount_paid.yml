@@ -1,0 +1,23 @@
+uuid: 59d7b72c-0011-4f99-bf81-8ac6760fad85
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_amount_paid
+    - node.type.payment_record
+id: node.payment_record.field_amount_paid
+field_name: field_amount_paid
+entity_type: node
+bundle: payment_record
+label: 'Amount Paid'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

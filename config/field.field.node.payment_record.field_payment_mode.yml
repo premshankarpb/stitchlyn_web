@@ -1,0 +1,33 @@
+uuid: 782c1947-0fec-4c0c-988b-f9d3fdec125a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_payment_mode
+    - node.type.payment_record
+    - taxonomy.vocabulary.payment_mode
+  content:
+    - 'taxonomy_term:payment_mode:3d8a5dc1-db64-4154-8582-55f629f7c29c'
+id: node.payment_record.field_payment_mode
+field_name: field_payment_mode
+entity_type: node
+bundle: payment_record
+label: 'Payment Mode'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    target_uuid: 3d8a5dc1-db64-4154-8582-55f629f7c29c
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      payment_mode: payment_mode
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
