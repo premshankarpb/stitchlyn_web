@@ -86,6 +86,13 @@ stitchlyn_vendor.my_purchase_orders:
     _title_callback: '\Drupal\node\Controller\NodeViewController::title'
   requirements:
     _permission: 'access content'
+stitchlyn_vendor.my_quotation:
+  path: '/my-quotation'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\MyQuotation::view'
+    _title_callback: '\Drupal\node\Controller\NodeViewController::title'
+  requirements:
+    _permission: 'access content'
 stitchlyn_vendor.purchase_order_create:
   path: '/dashboard/add/purchase-order'
   defaults:

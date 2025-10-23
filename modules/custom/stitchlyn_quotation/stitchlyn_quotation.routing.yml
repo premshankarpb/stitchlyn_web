@@ -10,6 +10,18 @@ stitchlyn_quotation.detail:
       node:
         type: entity:node
 
+stitchlyn_quotation.my_detail:
+  path: '/quotation/{node}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationController::my_view'
+    _title_callback: '\Drupal\stitchlyn_quotation\Controller\QuotationController::title'
+  requirements:
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
 stitchlyn_quotation.pdf:
   path: '/dashboard/quotation/{node}/pdf'
   defaults:

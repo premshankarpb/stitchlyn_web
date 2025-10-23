@@ -58,9 +58,10 @@
                 <span class="badge {{ pay_class }} mb-3">
                   Payment Status: {{ node.field_payment_status.entity.label }}
                 </span>
+                {% set due_date_value = node.field_expected_due_date.0.value %}
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item"><strong>Date:</strong> {{ node.created.value|date('d M Y') }}</li>
-                  <li class="list-group-item"><strong>Due Date:</strong> {{ node.field_expected_due_date.value|date('d M Y') }}</li>
+                  <li class="list-group-item"><strong>Due Date:</strong> {{ due_date_value|date('d M Y') }}</li>
                   <li class="list-group-item"><strong>Customer:</strong> {{ node.field_customer_reference.entity.label }}</li>
                   <li class="list-group-item"><strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }}</li>
                   <li class="list-group-item"><strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }}</li>

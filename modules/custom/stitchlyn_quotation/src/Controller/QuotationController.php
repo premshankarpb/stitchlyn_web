@@ -44,6 +44,23 @@ class QuotationController extends ControllerBase {
   }
 
   /**
+   * My quotation view page.
+   */
+  public function my_view(NodeInterface $node) {
+    if ($node->bundle() !== 'quotation') {
+      throw new NotFoundHttpException();
+    }
+
+    $view_mode = 'full';
+    $build = $this->entityTypeManager()
+      ->getViewBuilder('node')
+      ->view($node, $view_mode);
+    $build['#cache']['contexts'][] = 'user.permissions';
+
+    return $build;
+  }
+
+  /**
    * Generate Quotation PDF.
    */
   public function pdf(Node $node) {
