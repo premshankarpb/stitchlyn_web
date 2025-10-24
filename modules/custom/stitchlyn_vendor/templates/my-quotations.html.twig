@@ -1,0 +1,59 @@
+<article class="purchase-orders-full">
+
+  {% if node.field_payment_status.entity.label == 'Paid' %}
+    {% set pay_class = 'bg-success' %}
+  {% else %}
+    {% set pay_class = 'bg-danger' %}
+  {% endif %}
+
+  <h2>{{ title }}</h2>  <!-- Display the page title -->
+
+  {% if node %}
+    <ul class="purchase-order-list">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Subtotal Cost</th>
+              <th>Tax</th>
+              <th>Total Cost</th>
+              <th>Payment Status</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          
+            {% for node_item in node %}
+            {% set get_mod_status = node_item.moderation_state.value %}
+            {% if get_mod_status == 'published' %}
+              {% set set_mod_status = 'Fullfilled' %}
+            {% elseif get_mod_status == 'requested' or get_mod_status == 'draft' %}
+              {% set set_edit = ' | <a href="quotation/' ~ node_item.id ~ '">Edit</a>' %}
+              {% set set_mod_status = get_mod_status %}
+            {% else %}
+              {% set set_mod_status = get_mod_status %}
+            {% endif %}
+              <tr>
+                <td>{{ node_item.label }}</td>
+                <td>{{ node_item.field_date_of_purchase.value|date('m/d/Y') }}</td>
+                <td>₹{{ node_item.field_subtotal_amount.value }}</td>
+                <td>₹{{ node_item.field_tax_amount.value }}</td>
+                <td>₹{{ node_item.field_total_amount.value }}</td>
+                <td>₹{{ node_item.field_payment_status.entity.label }}</td>
+                <td> {{ set_mod_status|capitalize  }}
+                <td><a href='quotation/{{node_item.id}}'>View</a> {{ set_edit|raw }}</td>
+
+              </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+    </ul>
+  {% else %}
+  <p>No purchase orders found.</p>
+  {% endif %}
+
+
+</article>

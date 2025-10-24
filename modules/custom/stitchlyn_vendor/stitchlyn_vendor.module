@@ -66,5 +66,11 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
       ],
       'template' => 'my-purchase-orders',
     ],
+    'stitchlyn_quotation' => [
+      'variables' => [
+        'node' => NULL
+      ],
+      'template' => 'my-quotations',
+    ],
   ];
 }
