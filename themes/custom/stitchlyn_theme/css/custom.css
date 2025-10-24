@@ -149,3 +149,13 @@ em.placeholder {
 .my-quot-form-edit .form-item-field-payment-status{
     display: none;
 }
+
+.purchase-orders-full .my-quot-heading {
+  padding: 30px 0;
+  background: none;
+  font-size: x-large;
+  font-weight: 800;
+}
+.purchase-orders-full .add-my-quot{
+  padding-bottom: 40px;
+}
