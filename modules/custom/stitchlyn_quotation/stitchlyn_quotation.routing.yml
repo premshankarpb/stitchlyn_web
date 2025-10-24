@@ -91,6 +91,28 @@ stitchlyn_quotation.edit:
       node:
         type: entity:node
 
+# Add new quotation and redirect to edit page
+stitchlyn_quotation.myadd:
+  path: '/add/quotation'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\QuotationAddController::createMyQuotation'
+    _title: 'Add Quotation'
+  requirements:
+    _permission: 'access content'
+
+stitchlyn_quotation.myedit:
+  path: '/quotation/{node}/edit'
+  defaults:
+    _form: '\Drupal\stitchlyn_quotation\Form\MyQuotationEditForm'
+    _title_callback: '\Drupal\stitchlyn_quotation\Form\MyQuotationEditForm::title'
+  requirements:
+    _permission: 'access content'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
 # Load product attribute popup
 stitchlyn_quotation.ajax_attributes:
   path: '/quotation/ajax/attributes/{product}/{quotation}'

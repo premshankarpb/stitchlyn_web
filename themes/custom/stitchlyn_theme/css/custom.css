@@ -145,3 +145,7 @@ em.placeholder {
 .stichlyn-my-quote-nav{
   display: none;
 }
+
+.my-quot-form-edit .form-item-field-payment-status{
+    display: none;
+}
