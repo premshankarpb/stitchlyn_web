@@ -1,6 +1,6 @@
 <div class="inventory-item-form-wrapper">
   <h2>Add Inventory Item</h2>
-
+  {{ form.field_inv_title }}
   {{ form.field_sku_code }}
   {{ form.field_category }}
   {{ form.field_inventory_type }}
@@ -11,4 +11,6 @@
   {{ form.body }}
 
   {{ form.actions }}
+
+  {{ form|without('field_inv_title','field_sku_code','field_category','field_inventory_type','field_unit_of_measure','field_cost_price','field_opening_stock','field_reorder_level','body','actions') }}
 </div>
