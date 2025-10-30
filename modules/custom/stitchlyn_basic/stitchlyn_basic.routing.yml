@@ -23,3 +23,18 @@ stitchlyn_basic.erp_settings:
     _title: 'ERP Client Settings'
   requirements:
     _permission: 'administer site configuration'
+stitchlyn_basic.payment_add:
+  path: 'dashboard/payments/add'
+  defaults:
+    _controller: '\Drupal\stitchlyn_basic\Controller\PaymentController::add'
+    _title: 'Add Payment'
+  requirements:
+    _permission: 'create payment_record content'
+stitchlyn_basic.payment_edit:
+  path: 'dashboard/payments/{node}/edit'
+  defaults:
+    _controller: '\Drupal\stitchlyn_basic\Controller\PaymentController::edit'
+    _title_callback: '\Drupal\stitchlyn_basic\Controller\PaymentController::title'
+  requirements:
+    _entity_access: 'node.update'
+    node: \d+

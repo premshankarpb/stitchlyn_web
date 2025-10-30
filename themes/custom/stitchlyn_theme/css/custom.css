@@ -159,3 +159,15 @@ em.placeholder {
 .purchase-orders-full .add-my-quot{
   padding-bottom: 40px;
 }
+
+.node-product-edit-form .js-form-type-vertical-tabs{
+  display: none;
+}
+
+.node-payment-record-edit-form .js-form-type-vertical-tabs{
+  display: none;
+}
+
+.node-payment-record-form .js-form-type-vertical-tabs{
+    display: none;
+}

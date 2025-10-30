@@ -605,7 +605,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<a href='payments/{{ nid }}'>View </a> {{ edit_node }}"
+            text: "<a href='payments/{{ nid }}'>View </a> | <a href='payments/{{ nid }}/edit/'>Edit</a>"
             make_link: false
             path: ''
             absolute: false
