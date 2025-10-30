@@ -14,7 +14,7 @@ class ItemInfoController extends ControllerBase {
   /**
    * AJAX endpoint to fetch item info by node ID.
    */
-  public function getItemInfo() {
+  public function itemInfo() {
     $nid = \Drupal::request()->query->get('nid');
     $data = ['rate' => 0];
 

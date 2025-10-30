@@ -1,50 +1,100 @@
-<div class="purchase-order-wrapper">
-  <h2>Create Purchase Order</h2>
+{#
+  Custom theme for Purchase Order Edit Form
+  Linked to stitchlyn_vendor_theme() and attached via $form['#theme'] = 'purchase_order_form';
+#}
 
-  <div class="form-section">
-    {{ form.field_date_of_purchase }}
-    {{ form.field_vendor }}
-    {{ form.field_payment_status }}
-    {{ form.body }}
-  </div>
+<div id="stitchlyn-po-edit-form"
+     class="stitchlyn-po-edit-container"
+     data-po-nid="{{ form['#nid']|default('') }}">
 
-  <div class="form-section">
-    <table class="purchase-order-items">
-      <thead>
-        <tr>
-          <th>Item Name</th>
-          <th>Quantity</th>
-          <th>Item Rate</th>
-          <th>Tax Amount</th>
-          <th>Total</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="items-wrapper">
-        {% for row in form.items %}
-          <tr>
-            <td>{{ row.item_reference }}</td>
-            <td>{{ row.quantity }}</td>
-            <td>{{ row.item_rate }}</td>
-            <td>{{ row.tax_amount }}</td>
-            <td>{{ row.total_amount }}</td>
-            <td>{{ row.remove_row }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <div class="form-add-row">
-      {{ form.add_row }}
+  <h2 class="po-title mb-3">Edit Purchase Order</h2>
+
+  {# --- Header / Basic Fields --- #}
+  <div class="po-header mb-4">
+    <div class="row g-3">
+      <div class="col-md-6">{{ form.title }}</div>
+      <div class="col-md-6">{{ form.field_vendor }}</div>
+      <div class="col-md-4">{{ form.field_date_of_purchase }}</div>
+      <div class="col-md-4">{{ form.order_status }}</div>
+      <div class="col-md-12">{{ form.body }}</div>
     </div>
   </div>
 
-  <div class="form-section">
-    {{ form.field_subtotal_amount }}
-    {{ form.field_tax_amount }}
-    {{ form.field_total_amount }}
+  {# --- Purchase Items Section --- #}
+  <div class="po-items-section card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">Purchase Order Items</h4>
+      <button type="button" class="btn btn-primary po-add-item">
+        <i class="bi bi-plus-lg"></i> Add Item
+      </button>
+    </div>
+    <div class="card-body" id="po-items-wrapper">
+      <div class="text-center text-muted">Loading items...</div>
+    </div>
   </div>
 
-  <div class="form-actions">
+  {# --- Purchase Summary Section --- #}
+  <div class="po-summary card shadow-sm mb-4">
+    <div class="card-header">
+      <h4 class="mb-0">Purchase Summary</h4>
+    </div>
+    <div class="card-body row">
+      <div class="col-md-4">{{ form.field_subtotal_amount }}</div>
+      <div class="col-md-4">{{ form.field_tax_amount }}</div>
+      <div class="col-md-4">{{ form.field_total_amount }}</div>
+    </div>
+  </div>
+
+  {# --- Submit --- #}
+  <div class="po-actions text-center mt-4">
     {{ form.actions }}
+  </div>
+
+  {{ form.form_build_id }}
+  {{ form.form_token }}
+  {{ form.form_id }}
+</div>
+
+{# --- Modal for Add/Edit Item --- #}
+<div id="po-item-modal" class="po-modal" style="display:none;">
+  <div class="po-modal-content">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h4 id="po-item-modal-title" class="mb-0">Add Item</h4>
+      <span class="po-close" id="po-item-cancel">&times;</span>
+    </div>
+
+    <form id="po-item-form" class="mb-2">
+      <input type="hidden" name="item_id" value="">
+
+      <div class="mb-2">
+        <label>Item Reference</label>
+        <input type="text" name="item_reference" class="form-control" required>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-md-4">
+          <label>Rate</label>
+          <input type="number" step="0.01" name="rate" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label>Quantity</label>
+          <input type="number" step="0.01" name="quantity" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label>Total</label>
+          <input type="number" name="total" class="form-control" readonly>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label>Remarks</label>
+        <textarea name="remarks" rows="2" class="form-control"></textarea>
+      </div>
+
+      <div class="text-end">
+        <button type="button" class="btn btn-secondary me-2" id="po-item-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="po-item-save">Save</button>
+      </div>
+    </form>
   </div>
 </div>

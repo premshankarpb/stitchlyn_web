@@ -1,0 +1,48 @@
+.po-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+.po-modal-content { background: #fff; padding: 20px; border-radius: 8px; width: 480px; }
+.po-modal .form-item { margin-bottom: 10px; }
+.po-modal-actions { text-align: right; margin-top: 10px; }
+.po-add-item-float {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  background-color: #007bff;
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 9999;
+  transition: background-color 0.3s ease;
+}
+
+.po-add-item-float:hover {
+  background-color: #0056b3;
+}
+
+/* Fix jQuery UI dropdown visibility */
+#stitchlyn-po-edit-form .ui-autocomplete {
+  z-index: 999999 !important;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.ui-menu-item {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.ui-menu-item:hover {
+  background: #f7f7f7;
+}
+

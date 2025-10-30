@@ -5,411 +5,232 @@ namespace Drupal\stitchlyn_vendor\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\taxonomy\Entity\Term;
 
 /**
- * Edit / Add Purchase Order (with dynamic items).
+ * Class PurchaseOrderEditForm.
  */
 class PurchaseOrderEditForm extends FormBase {
 
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  public static function create(ContainerInterface $container) {
-    $instance = new static();
-    $instance->entityTypeManager = $container->get('entity_type.manager');
-    return $instance;
-  }
-
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId() {
-    return 'stitchlyn_purchase_order_edit_form';
+    return 'stitchlyn_vendor_po_edit_form';
   }
 
-  public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL) {
-    // Keep the node handy.
-    if ($node) {
-      $form_state->set('po_node', $node);
-    }
-    else {
-      $node = $form_state->get('po_node');
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state, $nid = NULL) {
+    if (!$nid || !is_numeric($nid)) {
+      \Drupal::messenger()->addError($this->t('Invalid Purchase Order.'));
+      return $form;
     }
 
-    // Number of rows.
-    if (!$form_state->has('num_rows')) {
-      // If existing PO has items, show that many rows; else 1.
-      $existing_count = $this->loadItemNodes($node ? $node->id() : 0, TRUE);
-      $form_state->set('num_rows', max(1, $existing_count));
+    $po = Node::load($nid);
+    if (!$po || $po->bundle() !== 'purchase_order') {
+      \Drupal::messenger()->addError($this->t('Invalid Purchase Order.'));
+      return $form;
     }
-    $rows = (int) $form_state->get('num_rows');
 
-    // Use a stable outer wrapper for recalculation.
-    $form['#prefix'] = '<div id="po-form-root">';
-    $form['#suffix'] = '</div>';
+    $form['#attributes']['id'] = 'stitchlyn-po-edit-form';
+    $form['#attributes']['data-po-nid'] = $nid;
 
-    /***********************  GENERAL INFO  ***************************/
-    $form['general'] = [
-      '#type'  => 'details',
+    $form['po_details'] = [
+      '#type' => 'details',
       '#title' => $this->t('Purchase Order Details'),
-      '#open'  => TRUE,
+      '#open' => TRUE,
     ];
 
-    $form['general']['title'] = [
+    $form['po_details']['title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Title'),
-      '#default_value' => $node ? $node->label() : '',
+      '#default_value' => $po->label(),
       '#required' => TRUE,
-      '#description' => $this->t('Will be overwritten on save to Purchase-Order_&lt;Serial&gt;.'),
     ];
 
-    $form['general']['vendor'] = [
+    $form['po_details']['field_vendor'] = [
       '#type' => 'entity_autocomplete',
       '#title' => $this->t('Vendor'),
       '#target_type' => 'user',
-      '#default_value' => $node && !$node->isNew() && $node->get('field_vendor')->entity
-        ? $node->get('field_vendor')->entity
-        : NULL,
-      '#attributes' => ['class' => ['vendor-autocomplete']],
+      '#default_value' => $po->get('field_vendor')->entity ?? NULL,
+      '#required' => TRUE,
+      '#attributes' => [
+        'class' => ['vendor-autocomplete'],
+      ],
     ];
 
-    $form['general']['date_of_purchase'] = [
+    $form['po_details']['field_date_of_purchase'] = [
       '#type' => 'date',
       '#title' => $this->t('Date of Purchase'),
-      '#default_value' => $node && !$node->isNew() ? ($node->get('field_date_of_purchase')->value ?: '') : '',
+      '#default_value' => $po->get('field_date_of_purchase')->value ?? '',
     ];
 
-    // Payment status (taxonomy).
+    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('purchase_order_status');
     $options = [];
-    $terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('payment_status');
-    foreach ($terms as $t) {
-      $options[$t->tid] = $t->name;
+    foreach ($terms as $term) {
+      $options[$term->tid] = $term->name;
     }
-    $form['general']['payment_status'] = [
+
+    $form['po_details']['order_status'] = [
       '#type' => 'select',
-      '#title' => $this->t('Payment Status'),
+      '#title' => $this->t('Order Status'),
       '#options' => $options,
-      '#default_value' => $node && !$node->isNew() ? $node->get('field_payment_status')->target_id : '',
-      '#empty_option' => $this->t('- Select -'),
+      '#default_value' => $po ? $po->get('field_purchase_order_status')->target_id : '',
+      '#required' => TRUE,
     ];
 
-    $form['general']['remarks'] = [
-      '#type' => 'textarea',
+    $form['po_details']['body'] = [
+      '#type' => 'text_format',
       '#title' => $this->t('Remarks'),
-      '#default_value' => $node && !$node->isNew() ? ($node->get('body')->value ?: '') : '',
+      '#default_value' => $po->get('body')->value ?? '',
+      '#format' => 'basic_html',
     ];
 
-    /********************  RECALC WRAPPER (TABLE + SUMMARY)  ******************/
-    $form['recalc'] = [
-      '#type' => 'container',
-      '#attributes' => ['id' => 'po-recalc-wrapper'],
-    ];
-
-    // ----------- ITEMS SECTION -----------
-    $form['recalc']['items_section'] = [
+    // ---------------------------------------------------------------------------
+    // Purchase Items Section (with Add Item button + wrapper div)
+    // ---------------------------------------------------------------------------
+    $form['po_items'] = [
       '#type' => 'details',
       '#title' => $this->t('Purchase Items'),
-      '#open'  => TRUE,
-    ];
+      '#open' => TRUE,
+      'content' => [
+        '#type' => 'inline_template',
+        '#template' => '
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Purchase Order Items</h5>
+            <button type="button" class="btn btn-primary btn-sm po-add-item">
+              <i class="bi bi-plus-lg"></i> Add Item
+            </button>
+          </div>
+          <div id="po-items-wrapper" class="border rounded p-2 bg-light">
+            <div class="text-muted">Loading items...</div>
+          </div>
 
-    $form['recalc']['items_section']['items'] = [
-      '#type'   => 'table',
-      '#header' => [
-        $this->t('Item'),
-        $this->t('Rate'),
-        $this->t('Quantity'),
-        $this->t('Total'),
-        $this->t('Action'),
-      ],
-      '#tree'   => TRUE,
-    ];
-
-    // Build rows. Use user input if available to prevent resets.
-    $input = (array) $form_state->getUserInput();
-    $input_items = $input['items'] ?? [];
-
-    // Preload existing item nodes for edit (first build only).
-    $existing_items = $node && !$node->isNew() ? $this->loadItemNodes($node->id()) : [];
-
-    $subtotal = 0;
-
-    for ($i = 0; $i < $rows; $i++) {
-      // Source values: user input → existing items → zeros.
-      $rate = $input_items[$i]['rate'] ?? ($existing_items[$i]['rate'] ?? 0);
-      $qty  = $input_items[$i]['quantity'] ?? ($existing_items[$i]['quantity'] ?? 0);
-      $item_default = NULL;
-      if (isset($existing_items[$i]['item']) && $existing_items[$i]['item']) {
-        $item_default = $this->entityTypeManager->getStorage('node')->load($existing_items[$i]['item']);
-      }
-
-      $total = (float) $rate * (float) $qty;
-      $subtotal += $total;
-
-      // Item (inventory node).
-      $form['recalc']['items_section']['items'][$i]['item'] = [
-        '#type' => 'entity_autocomplete',
-        '#target_type' => 'node',
-        '#selection_settings' => ['target_bundles' => ['inventory_item']],
-        '#default_value' => $item_default,
-        '#attributes' => ['class' => ['item-autocomplete']],
-      ];
-
-      // Rate.
-      $form['recalc']['items_section']['items'][$i]['rate'] = [
-        '#type' => 'number',
-        '#step' => '0.01',
-        '#default_value' => $rate,
-        '#ajax' => [
-          'callback' => '::ajaxRecalculate',
-          'event'    => 'change',
-          'wrapper'  => 'po-recalc-wrapper',
-        ],
-      ];
-
-      // Quantity.
-      $form['recalc']['items_section']['items'][$i]['quantity'] = [
-        '#type' => 'number',
-        '#step' => '1',
-        '#default_value' => $qty,
-        '#ajax' => [
-          'callback' => '::ajaxRecalculate',
-          'event'    => 'change',
-          'wrapper'  => 'po-recalc-wrapper',
-        ],
-      ];
-
-      // Total (read-only number for visual feedback)
-      $form['recalc']['items_section']['items'][$i]['total'] = [
-        '#type' => 'number',
-        '#default_value' => $total,
-        '#attributes' => ['readonly' => 'readonly'],
-      ];
-
-      // Remove button
-      $form['recalc']['items_section']['items'][$i]['remove'] = [
-        '#type'  => 'submit',
-        '#value' => $this->t('X'),
-        '#name'  => 'remove_' . $i,
-        '#limit_validation_errors' => [],
-        '#submit' => ['::removeItem'],
-        '#ajax'   => [
-          'callback' => '::ajaxRecalculate',
-          'wrapper'  => 'po-recalc-wrapper',
-        ],
-      ];
-    }
-
-    // Add item
-    $form['recalc']['items_section']['add_item'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Add Item'),
-      '#limit_validation_errors' => [],
-      '#submit' => ['::addItem'],
-      '#ajax'   => [
-        'callback' => '::ajaxRecalculate',
-        'wrapper'  => 'po-recalc-wrapper',
+          <!-- Modal -->
+          <div id="po-item-modal" class="po-modal">
+            <div class="po-modal-content">
+              <h4 id="po-item-modal-title" class="mb-3">Add Item</h4>
+              <form id="po-item-form">
+                <input type="hidden" name="item_id" value="">
+                <div class="mb-2">
+                  <label>Inventory Item</label>
+                  <input
+                    type="text"
+                    name="item_reference"
+                    id="po-item-reference"
+                    class="form-control inventory-autocomplete"
+                    placeholder="Search Inventory Item"
+                    data-autocomplete-path="/inventory-item/autocomplete"
+                  />
+                  <input type="hidden" id="po-inventory-nid" name="inventory_nid" value="">
+                </div>
+                <div class="row mb-2">
+                  <div class="col-md-4">
+                    <label>Rate</label>
+                    <input type="number" name="rate" class="form-control" value="0" step="0.01">
+                  </div>
+                  <div class="col-md-4">
+                    <label>Quantity</label>
+                    <input type="number" name="quantity" class="form-control" value="1" step="0.01">
+                  </div>
+                  <div class="col-md-4">
+                    <label>Total</label>
+                    <input type="number" name="total" class="form-control" readonly>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label>Remarks</label>
+                  <textarea name="remarks" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="text-end">
+                  <button type="button" id="po-item-cancel" class="btn btn-secondary me-2">Cancel</button>
+                  <button type="button" id="po-item-save" class="btn btn-primary">Save</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        ',
       ],
     ];
 
-    // --- SUMMARY ---
-    $config = $this->config('stitchlyn_basic.erp_settings');
-    $tax_percent = (float) ($config->get('tax_percentage') ?? 0);
-
-    // Compute live values from user input, not just defaults.
-    $input = $form_state->getUserInput();
-    if (!empty($input['items_section']['items'])) {
-      $subtotal = 0;
-      foreach ($input['items_section']['items'] as $row) {
-        $r = (float) ($row['rate'] ?? 0);
-        $q = (float) ($row['quantity'] ?? 0);
-        $subtotal += $r * $q;
-      }
-    }
-
-    $tax_total   = ($subtotal * $tax_percent) / 100;
-    $grand_total = $subtotal + $tax_total;
-
-    $form['recalc']['summary'] = [
+    // Summary section.
+    $form['po_summary'] = [
       '#type' => 'details',
       '#title' => $this->t('Purchase Summary'),
-      '#open'  => TRUE,
+      '#open' => TRUE,
     ];
-
-    $form['recalc']['summary']['subtotal'] = [
+    $form['po_summary']['field_subtotal_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Subtotal'),
-      '#value' => $subtotal,
-      '#attributes' => ['readonly' => 'readonly'],
+      '#step' => '0.01',
+      '#default_value' => $po->get('field_subtotal_amount')->value ?? 0,
     ];
-
-    $form['recalc']['summary']['tax_total'] = [
+    $form['po_summary']['field_tax_amount'] = [
       '#type' => 'number',
-      '#title' => $this->t('Tax @ @t%', ['@t' => $tax_percent]),
-      '#value' => $tax_total,
-      '#attributes' => ['readonly' => 'readonly'],
+      '#title' => $this->t('Tax'),
+      '#step' => '0.01',
+      '#default_value' => $po->get('field_tax_amount')->value ?? 0,
     ];
-
-    $form['recalc']['summary']['grand_total'] = [
+    $form['po_summary']['field_total_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Total Amount'),
-      '#value' => $grand_total,
-      '#attributes' => ['readonly' => 'readonly'],
+      '#step' => '0.01',
+      '#default_value' => $po->get('field_total_amount')->value ?? 0,
     ];
 
-    /*************************** ACTIONS ****************************/
-    $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save Purchase Order'),
-      '#button_type' => 'primary',
     ];
 
-    // Attach our JS
+    $form['#attached']['library'][] = 'stitchlyn_vendor/purchase_order_edit';
     $form['#attached']['library'][] = 'stitchlyn_vendor/vendor_info';
-    $form['#attached']['drupalSettings']['stitchlyn_vendor'] = [
-      'vendorInfoUrl' => '/stitchlyn/vendor/info',
-      'itemInfoUrl'   => '/stitchlyn/item/info',
-    ];
 
     return $form;
   }
 
-  /** AJAX callback: rebuild items + summary. */
-  public function ajaxRecalculate(array &$form, FormStateInterface $form_state) {
-    return $form['recalc'];
-  }
-
-  /** Add a new row. */
-  public function addItem(array &$form, FormStateInterface $form_state) {
-    $form_state->set('num_rows', ((int) $form_state->get('num_rows')) + 1);
-    $form_state->setRebuild(TRUE);
-  }
-
-  /** Remove a row. */
-  public function removeItem(array &$form, FormStateInterface $form_state) {
-    $trigger = $form_state->getTriggeringElement();
-    if (!empty($trigger['#name']) && str_starts_with($trigger['#name'], 'remove_')) {
-      $idx = (int) substr($trigger['#name'], 7);
-      $rows = (int) $form_state->get('num_rows');
-      $rows = max(1, $rows - 1);
-
-      // Drop the removed row from user input (so values shift correctly).
-      $input = $form_state->getUserInput();
-      if (isset($input['items'][$idx])) {
-        array_splice($input['items'], $idx, 1);
-        $form_state->setUserInput($input);
-      }
-
-      $form_state->set('num_rows', $rows);
-      $form_state->setRebuild(TRUE);
-    }
-  }
-
-  /** Submit handler: save PO and items. */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\node\Entity\Node $po */
-    $po = $form_state->get('po_node');
-
-    // Retrieve all submitted values (flattened).
-    $values = $form_state->getValues();
-
-    // Prevent errors like "Tax @ 18% is not a valid number"
-    $subtotal = isset($values['subtotal']) ? (float) preg_replace('/[^\d.]/', '', $values['subtotal']) : 0;
-    $tax_total = isset($values['tax_total']) ? (float) preg_replace('/[^\d.]/', '', $values['tax_total']) : 0;
-    $grand_total = isset($values['grand_total']) ? (float) preg_replace('/[^\d.]/', '', $values['grand_total']) : 0;
-
-    // --- Save Purchase Order fields ---
-    $po->set('field_vendor', $values['vendor'] ?: NULL);
-    $po->set('field_date_of_purchase', $values['date_of_purchase'] ?: NULL);
-    $po->set('field_payment_status', $values['payment_status'] ?: NULL);
-    $po->set('body', ['value' => $values['remarks'] ?? '', 'format' => 'basic_html']);
-
-    $po->set('field_subtotal_amount', $subtotal ?? 0);
-    $po->set('field_tax_amount', $tax_total ?? 0);
-    $po->set('field_total_amount', $grand_total ?? 0);
-
-    // First save (ensures serial field auto-generates).
-    $po->save();
-
-    // --- Title Update ---
-    $serial = $po->get('field_po_number')->value;
-    $title = 'Purchase-Order_' . $serial;
-    if ($po->label() !== $title) {
-      $po->setTitle($title);
-      $po->save();
-    }
-
-    // --- Clear old items ---
-    $this->deleteExistingItems($po->id());
-
-    // --- Save new Purchase Order Items ---
-    $items = $values['items'] ?? $values['items_section']['items'] ?? [];
-    foreach ($items as $row) {
-      $item_nid = $row['item'] ?? NULL;
-      $rate     = isset($row['rate']) ? (float) $row['rate'] : 0;
-      $qty      = isset($row['quantity']) ? (float) $row['quantity'] : 0;
-      if (!$item_nid || (!$rate && !$qty)) continue;
-
-      $total = $rate * $qty;
-
-      $item_node = Node::create([
-        'type' => 'purchase_order_items',
-        'title' => 'Item for PO ' . $po->id(),
-        'field_purchase_order' => $po->id(),
-        'field_item_reference' => $item_nid,
-        'field_item_rate' => $rate,
-        'field_quantity' => $qty,
-        'field_total_amount' => $total,
-        'status' => 1,
-      ]);
-      $item_node->save();
-    }
-
-    $this->messenger()->addStatus($this->t('Purchase Order and items saved successfully.'));
-  }
-
-  /** Helpers *********************************************************** */
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {}
 
   /**
-   * Load existing item rows for a PO.
-   *
-   * @param int $po_nid
-   * @param bool $count_only
-   * @return array|int
+   * {@inheritdoc}
    */
-  protected function loadItemNodes($po_nid, $count_only = FALSE) {
-    if (!$po_nid) return $count_only ? 0 : [];
-
-    $storage = $this->entityTypeManager->getStorage('node');
-    $ids = $storage->getQuery()
-      ->condition('type', 'purchase_order_items')
-      ->condition('field_purchase_order', $po_nid)
-      ->accessCheck(FALSE)
-      ->execute();
-    if ($count_only) return count($ids);
-
-    $nodes = $storage->loadMultiple($ids);
-    $rows = [];
-    foreach ($nodes as $n) {
-      $rows[] = [
-        'item'     => (int) $n->get('field_item_reference')->target_id,
-        'rate'     => (float) $n->get('field_item_rate')->value,
-        'quantity' => (float) $n->get('field_quantity')->value,
-      ];
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $nid = $form['#attributes']['data-po-nid'];
+    $po = Node::load($nid);
+    if (!$po || $po->bundle() !== 'purchase_order') {
+      $this->messenger()->addError($this->t('Invalid Purchase Order.'));
+      return;
     }
-    return $rows;
+
+    // Update core fields.
+    $po->setTitle($form_state->getValue(['po_details', 'title']));
+    $po->set('field_vendor', $form_state->getValue(['po_details', 'field_vendor']) ?: NULL);
+    $po->set('field_date_of_purchase', $form_state->getValue(['po_details', 'field_date_of_purchase']) ?: NULL);
+    $po->set('field_purchase_order_status', $form_state->getValue(['po_details', 'field_purchase_order_status']) ?: NULL);
+
+    // Body.
+    $body = $form_state->getValue(['po_details', 'body']);
+    $po->set('body', $body);
+
+    // Summary fields.
+    $subtotal = (float) $form_state->getValue(['summary', 'field_subtotal_amount']);
+    $tax = (float) $form_state->getValue(['summary', 'field_tax_amount']);
+    $total = (float) $form_state->getValue(['summary', 'field_total_amount']);
+
+    $po->set('field_subtotal_amount', $subtotal);
+    $po->set('field_tax_amount', $tax);
+    $po->set('field_total_amount', $total);
+    $po->set('field_payment_status', $form_state->getValue(['summary', 'field_payment_status']) ?: NULL);
+
+    $po->save();
+    $this->messenger()->addStatus($this->t('Purchase Order saved successfully.'));
+    $form_state->setRedirect('<current>');
   }
 
-  /** Delete all child items for a PO. */
-  protected function deleteExistingItems($po_nid) {
-    if (!$po_nid) return;
-    $storage = $this->entityTypeManager->getStorage('node');
-    $ids = $storage->getQuery()
-      ->condition('type', 'purchase_order_items')
-      ->condition('field_purchase_order', $po_nid)
-      ->accessCheck(FALSE)
-      ->execute();
-    if ($ids) {
-      $entities = $storage->loadMultiple($ids);
-      $storage->delete($entities);
-    }
-  }
 }

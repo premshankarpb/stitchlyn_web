@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Url;
+
 /**
  * Implements hook_theme().
  */
@@ -73,4 +75,15 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
       'template' => 'my-quotations',
     ],
   ];
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function stitchlyn_vendor_page_attachments(array &$attachments) {
+  $attachments['#attached']['drupalSettings']['stitchlyn_vendor']['vendorInfoUrl'] =
+    Url::fromRoute('stitchlyn_vendor.vendor_info')->toString();
+
+  $attachments['#attached']['drupalSettings']['stitchlyn_vendor']['itemInfoUrl'] =
+    Url::fromRoute('stitchlyn_vendor.item_info')->toString();
 }

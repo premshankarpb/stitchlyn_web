@@ -101,7 +101,7 @@ stitchlyn_vendor.purchase_order_create:
   requirements:
     _permission: 'access content'
 stitchlyn_vendor.purchase_order_edit:
-  path: '/dashboard/purchase-order/{node}/edit'
+  path: '/dashboard/purchase-order/{nid}/edit'
   defaults:
     _form: '\Drupal\stitchlyn_vendor\Form\PurchaseOrderEditForm'
     _title: 'Edit Purchase Order'
@@ -112,15 +112,76 @@ stitchlyn_vendor.purchase_order_edit:
     parameters:
       node:
         type: entity:node
+
 stitchlyn_vendor.vendor_info:
-  path: '/stitchlyn/vendor/info'
+  path: '/stitchlyn-vendor/info'
   defaults:
-    _controller: '\Drupal\stitchlyn_vendor\Controller\VendorInfoController::getVendorInfo'
+    _controller: '\Drupal\stitchlyn_vendor\Controller\VendorInfoController::vendorInfo'
+    _format: 'json'
   requirements:
-    _permission: 'access content'
+    _access: 'TRUE'
+
 stitchlyn_vendor.item_info:
-  path: '/stitchlyn/item/info'
+  path: '/stitchlyn-vendor/item-info'
   defaults:
-    _controller: '\Drupal\stitchlyn_vendor\Controller\ItemInfoController::getItemInfo'
+    _controller: '\Drupal\stitchlyn_vendor\Controller\VendorInfoController::itemInfo'
+    _format: 'json'
+  requirements:
+    _access: 'TRUE'
+
+stitchlyn_vendor.po_items_table:
+  path: '/dashboard/purchase-order/{nid}/items'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\PurchaseOrderItemsController::itemsTable'
   requirements:
     _permission: 'access content'
+    nid: '\d+'
+
+stitchlyn_vendor.po_item_add:
+  path: '/dashboard/purchase-order/{po}/item/add'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\PurchaseOrderItemsController::addItem'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+    po: '\d+'
+  methods: [POST]
+
+stitchlyn_vendor.po_item_update:
+  path: '/dashboard/purchase-order/{nid}/item/{item_id}/update'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\PurchaseOrderItemsController::updateItem'
+  requirements:
+    _permission: 'access content'
+    _method: 'POST'
+    nid: '\d+'
+    item_id: '\d+'
+
+stitchlyn_vendor.po_item_delete:
+  path: '/dashboard/purchase-order/{nid}/item/{item_id}/delete'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\PurchaseOrderItemsController::deleteItem'
+  requirements:
+    _permission: 'access content'
+    _method: 'POST'
+    nid: '\d+'
+    item_id: '\d+'
+stitchlyn_vendor.inventory_autocomplete:
+  path: '/inventory-item/autocomplete'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\InventoryController::autocomplete'
+    _format: 'json'
+    _title: 'Inventory Autocomplete'
+  requirements:
+    _permission: 'access content'
+stitchlyn_vendor.purchase_order_item_json:
+  path: '/dashboard/purchase-order/{po}/item/{item_id}/json'
+  defaults:
+    _controller: '\Drupal\stitchlyn_vendor\Controller\PurchaseOrderItemsController::getItemJson'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      po:
+        type: entity:node

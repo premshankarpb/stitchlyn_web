@@ -1,9 +1,25 @@
+purchase_order_edit:
+  css:
+    theme:
+      css/purchase_order_edit.css: {}
+  js:
+    js/purchase_order_edit.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui
+    - core/jquery.ui.autocomplete
+    - core/drupal
+    - core/once
+    - core/drupalSettings
+
 vendor_info:
-  version: 1.x
+  css:
+    theme:
+      css/vendor_info.css: {}
   js:
     js/vendor_info.js: {}
   dependencies:
     - core/jquery
-    - core/once
     - core/drupal
+    - core/once
     - core/drupalSettings
