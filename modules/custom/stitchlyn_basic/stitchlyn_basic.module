@@ -395,3 +395,45 @@ function stitchlyn_basic_profile_manage_url(UserInterface $account, string $prof
 //     }
 //   }
 // }
+
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function stitchlyn_basic_preprocess_node(array &$variables) {
+  // Get the node object.
+  $node = $variables['node'];
+
+  // Only run for 'payment_record' content type.
+  if ($node->getType() === 'payment_record') {
+
+    // Check if the field has a value.
+    if (!$node->get('field_payment_date')->isEmpty()) {
+
+      // Get the raw date value (stored as a string like '2025-10-29T00:00:00').
+      $payment_date_value = $node->get('field_payment_date')->value;
+
+      // Optionally format the date for display.
+      $formatted_date = \Drupal::service('date.formatter')->format(
+        strtotime($payment_date_value),
+        'custom',
+        'F j, Y' // e.g., "October 29, 2025"
+      );
+
+      // Pass values to Twig template.
+      $variables['payment_date_raw'] = $payment_date_value;
+      $variables['payment_date_formatted'] = $formatted_date;
+    }
+  }
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function stitchlyn_basic_node_presave(\Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getType() === 'payment_record') {
+    // Create a clean alias, e.g., /payments/1234 or /payments/{title}
+    $alias = '/dashboard/payments/' . $entity->id();
+    $entity->path = ['alias' => $alias];
+  }
+}

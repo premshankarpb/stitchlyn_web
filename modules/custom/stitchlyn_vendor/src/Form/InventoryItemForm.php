@@ -13,6 +13,13 @@ class InventoryItemForm extends FormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state) {
+
+    $form['field_inv_title'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Title'),
+      '#required' => TRUE,
+    ];
+
     $form['field_sku_code'] = [
       '#type' => 'textfield',
       '#title' => $this->t('SKU Code'),
@@ -76,7 +83,7 @@ class InventoryItemForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $node = Node::create([
       'type' => 'inventory_item',
-      'title' => $form_state->getValue('field_sku_code'),
+      'title' => $form_state->getValue('field_inv_title'),
       'field_sku_code' => $form_state->getValue('field_sku_code'),
       'field_category' => $form_state->getValue('field_category'),
       'field_inventory_type' => $form_state->getValue('field_inventory_type'),
