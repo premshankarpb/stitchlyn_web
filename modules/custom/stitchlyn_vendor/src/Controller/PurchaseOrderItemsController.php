@@ -67,6 +67,20 @@ class PurchaseOrderItemsController extends ControllerBase {
       $rows = '<tr><td colspan="5"><em>No items added yet.</em></td></tr>';
     }
 
+    $tax_amount =  $total_after_tax = 0;
+    if($subtotal != 0) {
+      $config = \Drupal::config('stitchlyn_basic.erp_settings');
+      $tax_percent = (float) ($config->get('tax_percentage') ?? 18);
+
+      $tax_amount = ($subtotal * $tax_percent) / 100;
+      $total_after_tax = $subtotal + $tax_amount;
+
+      // Optional: Round properly
+      $subtotal = round($subtotal, 2);
+      $tax_amount = round($tax_amount, 2);
+      $total_after_tax = round($total_after_tax, 2);
+    }
+
     $html = '
       <table class="table table-bordered table-striped align-middle">
         <thead class="table-light">
@@ -86,9 +100,9 @@ class PurchaseOrderItemsController extends ControllerBase {
       'status' => 'success',
       'html' => $html,
       'summary' => [
-        'subtotal' => $subtotal,
-        'tax' => (float) ($po->get('field_tax_amount')->value ?? 0),
-        'total' => $subtotal + (float) ($po->get('field_tax_amount')->value ?? 0),
+        'subtotal' => (float) ($subtotal),
+        'tax' => (float) ($tax_amount),
+        'total' => (float) ($total_after_tax),
       ],
     ]);
   }
@@ -153,7 +167,7 @@ class PurchaseOrderItemsController extends ControllerBase {
       'summary' => [
         'subtotal' => number_format($summary['subtotal'], 2, '.', ''),
         'tax' => number_format($summary['tax_amount'], 2, '.', ''),
-        'total' => number_format($summary['total'], 2, '.', ''),
+        'total' => number_format($summary['total_after_tax'], 2, '.', ''),
       ],
     ]);
   }

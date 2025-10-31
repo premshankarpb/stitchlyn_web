@@ -1,26 +1,16 @@
 (function ($, Drupal, once) {
   'use strict';
 
+  /** -------------------------------
+   *  Utility helpers
+   *  -----------------------------*/
   function getNid() {
     return $('#stitchlyn-po-edit-form').data('po-nid');
   }
 
-  function loadItems() {
-    const nid = getNid();
-    if (!nid) return;
-    $.get('/dashboard/purchase-order/' + nid + '/items', function (res) {
-      if (res?.status === 'success') {
-        $('#po-items-wrapper').html(res.html);
-        updateSummaryFields(res.summary);
-      }
-    });
-  }
-
-  function updateSummaryFields(summary) {
-    if (!summary) return;
-    $('[name="field_subtotal_amount"]').val(parseFloat(summary.subtotal).toFixed(2));
-    $('[name="field_tax_amount"]').val(parseFloat(summary.tax).toFixed(2));
-    $('[name="field_total_amount"]').val(parseFloat(summary.total).toFixed(2));
+  function toNumber(value) {
+    const num = parseFloat(value);
+    return isNaN(num) ? 0 : num;
   }
 
   function recalcTotal() {
@@ -30,66 +20,27 @@
   }
 
   function attachRecalcHandlers() {
-    $('[name="rate"], [name="quantity"]').off('change.recalc input.recalc keyup.recalc')
-      .on('change.recalc input.recalc keyup.recalc', recalcTotal);
+    $('[name="rate"], [name="quantity"]')
+      .off('input.recalc change.recalc keyup.recalc')
+      .on('input.recalc change.recalc keyup.recalc', recalcTotal);
   }
 
-  function toNumber(value) {
-    const num = parseFloat(value);
-    return isNaN(num) ? 0 : num;
+  function updateSummaryFields(summary) {
+    if (!summary) return;
+    $('[name="field_subtotal_amount"]').val(parseFloat(summary.subtotal).toFixed(2));
+    $('[name="field_tax_amount"]').val(parseFloat(summary.tax).toFixed(2));
+    $('[name="field_total_amount"]').val(parseFloat(summary.total).toFixed(2));
   }
 
-  window.recalcTotal = recalcTotal;
-  window.closeModal = closeModal;
-  window.openModal = openModal;
-
-  function openModal(mode, data) {
-    const $modal = $('#po-item-modal');
-    const $form = $('#po-item-form');
-    if (!$modal.length) return;
-
-    closeModal();
-    $('#po-item-modal-title').text(
-      mode === 'edit' ? 'Edit Item' : mode === 'view' ? 'View Item' : 'Add Item'
-    );
-
-    // Reset form first
-    // $form[0]?.reset();
-    $form.find('input, textarea').val('');
-    $('#po-inventory-nid').val('');
-
-    // Populate if edit/view
-    if (data) {
-      $form.find('[name="item_id"]').val(data.item_id || '');
-      $form.find('[name="item_reference"]').val(data.item_reference || '');
-      $form.find('[name="rate"]').val(data.rate || '');
-      $form.find('[name="quantity"]').val(data.quantity || '');
-      recalcTotal();
-      $form.find('[name="remarks"]').val(data.remarks || '');
-    }
-
-    // Disable inputs if view mode
-    if (mode === 'view') {
-      // make read-only & hide save
-      $form.find('input, textarea').prop('disabled', true);
-      $('#po-item-cancel').prop('disabled', false);
-      $('#po-item-save').hide();
-    } else {
-      attachRecalcHandlers();
-    }
-
-    $modal.fadeIn(200);
-  }
-
-  function closeModal() {
-    const $modal = $('#po-item-modal');
-    const $form = $('#po-item-modal');
-
-    // $form[0]?.reset();
-    $form.find('input, textarea').val('');
-    $('#po-inventory-nid').val('');
-    $form.find('input, textarea, button').attr('disabled', false);
-    $modal.fadeOut(150);
+  function loadItems() {
+    const nid = getNid();
+    if (!nid) return;
+    $.get(`/dashboard/purchase-order/${nid}/items`, (res) => {
+      if (res?.status === 'success') {
+        $('#po-items-wrapper').html(res.html);
+        updateSummaryFields(res.summary);
+      }
+    });
   }
 
   function showMessage(message, type = 'success') {
@@ -98,6 +49,96 @@
       .hide()
       .fadeIn(200);
     setTimeout(() => $msg.fadeOut(300, () => $msg.remove()), 2000);
+  }
+
+  /** -------------------------------
+   *  Modal handling
+   *  -----------------------------*/
+  function openModal(mode, data = {}) {
+    const $modal = $('#po-item-modal');
+    const $form = $('#po-item-modal');
+    if (!$modal.length) return;
+
+    // Reset form and enable inputs
+    $form.find('input, textarea').each(function () {
+      $(this).val('').prop('disabled', false);
+    });
+    $('#po-inventory-nid').val('');
+    $('#po-item-save').show();
+
+    // Set modal title
+    const title =
+      mode === 'edit' ? 'Edit Item' :
+      mode === 'view' ? 'View Item' :
+      'Add Item';
+    $('#po-item-modal-title').text(title);
+
+    // Fill data if available
+    if (data && Object.keys(data).length > 0) {
+      $form.find('[name="item_id"]').val(data.id || data.item_id || '');
+      $form.find('[name="item_reference"]').val(data.title || data.item_reference || '');
+      $form.find('[name="rate"]').val(data.rate || '');
+      $form.find('[name="quantity"]').val(data.quantity || '');
+      $form.find('[name="total"]').val(
+        (toNumber(data.rate) * toNumber(data.quantity)).toFixed(2)
+      );
+      $form.find('[name="remarks"]').val(data.remarks || '');
+    }
+
+    // Handle mode-specific behavior
+    if (mode === 'view') {
+      $form.find('input, textarea').prop('disabled', true);
+      $('#po-item-save').hide();
+    } else if (mode === 'edit') {
+      // Disable only inventory field in edit mode
+      $form.find('.inventory-autocomplete').prop('disabled', true);
+      attachRecalcHandlers();
+      $('#po-item-save').show();
+    } else {
+      attachRecalcHandlers();
+      $('#po-item-save').show();
+    }
+
+    // Open Bootstrap modal safely
+    try {
+      if (typeof $modal.modal === 'function') {
+        $modal.modal({ backdrop: 'static', keyboard: true }).modal('show');
+      } else {
+        // fallback if bootstrap not loaded
+        $modal.show();
+      }
+    } catch (err) {
+      console.warn('Bootstrap modal not available, fallback to .show()');
+      $modal.show();
+    }
+  }
+
+  function closeModal() {
+    const $modal = $('#po-item-modal');
+    const $form = $('#po-item-modal');
+
+    // Reset all fields and re-enable inputs
+    $form.find('input, textarea').val('').prop('disabled', false);
+    $('#po-inventory-nid').val('');
+    $('#po-item-save').show();
+
+    // Safely close the modal (Bootstrap or fallback)
+    try {
+      if (typeof $modal.modal === 'function') {
+        $modal.modal('hide');
+      } else {
+        $modal.hide();
+      }
+    } catch (err) {
+      $modal.hide();
+    }
+
+    // Clean up any remaining overlay or scroll lock
+    $('.modal-backdrop').remove();
+    $('body').removeClass('modal-open').css('overflow', '');
+
+    // Reload items table after closing (refresh data view)
+    loadItems();
   }
 
   function postItem(url, payload, cb) {
@@ -117,85 +158,85 @@
       },
       error: function () {
         alert('Request failed');
-      }
+      },
     });
   }
 
-  function fetchItem(id, onOk) {
-    const nid = getNid();
-    $.getJSON(`/dashboard/purchase-order/${nid}/item/${id}/json`, function (res) {
-      if (res && res.status === 'success' && res.item) return onOk(res.item);
-      // Fallback: read row data if JSON not implemented
-      const $row = $(`#po-items-wrapper button[data-id="${id}"]`).closest('tr');
-      if ($row.length) {
-        return onOk({
-          id,
-          label: $row.find('td').eq(0).text().trim(),
-          rate:  toNumber($row.find('td').eq(1).text()),
-          quantity: toNumber($row.find('td').eq(2).text()),
-          remarks: ''
-        });
-      }
-      alert('Unable to load item details.');
-    });
-  }
-
-
+  /** -------------------------------
+   *  Drupal behavior
+   *  -----------------------------*/
   Drupal.behaviors.stitchlynPoEdit = {
     attach: function (context) {
-      once('po-hide-modal', context).forEach(() => $('#po-item-modal').hide());
+
+      // ✅ Hide modal safely on page load
+      once('po-hide-modal', context).forEach(() => {
+        const $modal = $('#po-item-modal');
+        if ($modal.length) {
+          try {
+            if (typeof $modal.modal === 'function') {
+              $modal.modal('hide');
+            } else {
+              $modal.hide();
+            }
+          } catch (e) {
+            $modal.hide();
+          }
+        }
+      });
+
+      // Load purchase order items
       once('po-init', context).forEach(() => loadItems());
 
-      // Add Item
-      once('po-add', '.po-add-item, .po-add-item-float', context).forEach(el => {
-        $(el).on('click', e => {
+      // Add item button
+      once('po-add', '.po-add-item, .po-add-item-float', context).forEach((el) => {
+        $(el).on('click', (e) => {
           e.preventDefault();
           openModal('add');
         });
       });
 
       // Cancel modal
-      once('po-cancel', '#po-item-cancel', context).forEach(el => {
-        $(el).on('click', e => {
+      once('po-cancel', '#po-item-cancel', context).forEach((el) => {
+        $(el).on('click', (e) => {
           e.preventDefault();
           closeModal();
         });
       });
 
-      // Overlay close
-      once('po-overlay', '#po-item-modal', context).forEach(el => {
-        $(el).on('click', e => {
-          if ($(e.target).is('#po-item-modal')) closeModal();
-        });
-      });
-
       // Inventory autocomplete
-      once('inventory-autocomplete', '.inventory-autocomplete', context).forEach(el => {
+      once('inventory-autocomplete', '.inventory-autocomplete', context).forEach((el) => {
         const $el = $(el);
         $el.autocomplete({
           minLength: 2,
-          appendTo: "#po-item-modal",
+          appendTo: '#po-item-modal',
           source: function (request, response) {
             $.getJSON('/inventory-item/autocomplete', { q: request.term }, function (data) {
-              response($.map(data, function (item) {
-                return { label: item.label, value: item.label, nid: item.nid, rate: item.rate };
-              }));
+              response(
+                $.map(data, function (item) {
+                  return {
+                    label: item.label,
+                    value: item.label,
+                    nid: item.nid,
+                    rate: item.rate,
+                  };
+                })
+              );
             });
           },
           select: function (event, ui) {
             $('#po-inventory-nid').val(ui.item.nid);
             $('[name="rate"]').val(ui.item.rate);
             recalcTotal();
-          }
-        }).autocomplete("instance")._renderItem = function (ul, item) {
-          return $("<li>")
+          },
+        }).autocomplete('instance')._renderItem = function (ul, item) {
+          return $('<li>')
             .append(`<div><strong>${item.label}</strong><br><small>Rate: ₹${item.rate}</small></div>`)
             .appendTo(ul);
         };
       });
 
-      // Save or Update item
-      once('po-save', '#po-item-save', context).forEach(el => {
+      // Save or update item
+      once('po-save', '#po-item-save', context).forEach((el) => {
         $(el).on('click', function (e) {
           e.preventDefault();
           const nid = getNid();
@@ -214,60 +255,53 @@
         });
       });
 
-      // --- View Item ---
-      $(document).on('click', '.po-item-view', function () {
-        const itemId = $(this).data('id');
-        const nid = $('[data-po-nid]').attr('data-po-nid');
+      /** -----------------------------
+       *  Prevent duplicate handlers
+       *  -----------------------------*/
+      once('po-item-handlers', 'body', context).forEach(() => {
 
-        $.ajax({
-          url: `/dashboard/purchase-order/${nid}/item/${itemId}/json?_format=json`,
-          type: 'GET',
-          dataType: 'json',
-          success: function (data) {
-            // Open modal and fill data (read-only)
-            $('#po-item-modal .modal-title').text('View Item');
-            $('#po-item-form [name="inventory_item"]').val(data.title).prop('disabled', true);
-            $('#po-item-form [name="rate"]').val(toNumber(data.rate)).prop('disabled', true);
-            $('#po-item-form [name="quantity"]').val(toNumber(data.quantity)).prop('disabled', true);
-            $('#po-item-form [name="total"]').val(toNumber(data.total)).prop('disabled', true);
-            $('#po-item-form [name="remarks"]').val(data.remarks).prop('disabled', true);
-            $('#po-item-save').hide();
-            $('#po-item-modal').modal('show');
-          },
-          error: function (xhr) {
-            alert('Unable to load item details.');
-          }
-        });
+        // --- View Item ---
+        $(document)
+          .off('click.poView', '.po-item-view')
+          .on('click.poView', '.po-item-view', function (e) {
+            e.preventDefault();
+            const itemId = $(this).data('id');
+            const nid = $('[data-po-nid]').attr('data-po-nid');
+            $.ajax({
+              url: `/dashboard/purchase-order/${nid}/item/${itemId}/json?_format=json`,
+              type: 'GET',
+              dataType: 'json',
+              success: function (data) {
+                openModal('view', data);
+              },
+              error: function () {
+                alert('Unable to load item details.');
+              },
+            });
+          });
+
+        // --- Edit Item ---
+        $(document)
+          .off('click.poEdit', '.po-item-edit')
+          .on('click.poEdit', '.po-item-edit', function (e) {
+            e.preventDefault();
+            const itemId = $(this).data('id');
+            const nid = $('[data-po-nid]').attr('data-po-nid');
+            $.ajax({
+              url: `/dashboard/purchase-order/${nid}/item/${itemId}/json?_format=json`,
+              type: 'GET',
+              dataType: 'json',
+              success: function (data) {
+                openModal('edit', data);
+              },
+              error: function () {
+                alert('Unable to load item details.');
+              },
+            });
+          });
       });
 
-
-      // --- Edit Item ---
-      $(document).on('click', '.po-item-edit', function () {
-        const itemId = $(this).data('id');
-        const nid = $('[data-po-nid]').attr('data-po-nid');
-
-        $.ajax({
-          url: `/dashboard/purchase-order/${nid}/item/${itemId}/json?_format=json`,
-          type: 'GET',
-          dataType: 'json',
-          success: function (data) {
-            // Open modal and pre-fill form for editing
-            $('#po-item-modal .modal-title').text('Edit Item');
-            $('#po-item-form [name="item_id"]').val(data.id);
-            $('#po-item-form [name="inventory_item"]').val(data.title).prop('disabled', false);
-            $('#po-item-form [name="rate"]').val(toNumber(data.rate)).prop('disabled', false);
-            $('#po-item-form [name="quantity"]').val(toNumber(data.quantity)).prop('disabled', false);
-            $('#po-item-form [name="total"]').val(toNumber(data.total)).prop('disabled', false);
-            $('#po-item-form [name="remarks"]').val(data.remarks).prop('disabled', false);
-            $('#po-item-save').show();
-            $('#po-item-modal').modal('show');
-          },
-          error: function (xhr) {
-            alert('Unable to load item details.');
-          }
-        });
-      });
-
+      // Remove item
       $('#po-items-wrapper')
         .off('click.poDelete')
         .on('click.poDelete', '.po-item-remove', function (e) {
@@ -279,6 +313,6 @@
             showMessage('Item deleted successfully!', 'success');
           }
         });
-    }
+    },
   };
 })(jQuery, Drupal, once);
