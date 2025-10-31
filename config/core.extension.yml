@@ -42,6 +42,7 @@ module:
   path_alias: 0
   phonenumber: 0
   profile: 0
+  purchase_order_notify: 0
   quick_node_clone: 0
   rest: 0
   search: 0

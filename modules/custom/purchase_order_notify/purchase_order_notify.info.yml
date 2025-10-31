@@ -1,0 +1,7 @@
+name: 'Email Notification'
+type: module
+description: 'Sends an email when a Purchase Order node is Fullfilled or a Quotation is Accepted.'
+core_version_requirement: ^10
+package: Custom
+dependencies:
+  - drupal:node

@@ -1,0 +1,89 @@
+<?php
+
+namespace Drupal\purchase_order_notify\Service;
+
+use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Service to send email notifications for Purchase Orders and Quotations.
+ */
+class PurchaseOrderMailService {
+
+  protected MailManagerInterface $mailManager;
+  protected LoggerChannelInterface $logger;
+  protected ConfigFactoryInterface $configFactory;
+
+  public function __construct(
+    MailManagerInterface $mail_manager,
+    LoggerChannelInterface $logger,
+    ConfigFactoryInterface $config_factory
+  ) {
+    $this->mailManager = $mail_manager;
+    $this->logger = $logger;
+    $this->configFactory = $config_factory;
+  }
+
+  /**
+   * Send an email when a Purchase Order is marked as "Fulfilled".
+   */
+  public function sendPurchaseOrderFulfilledMail(NodeInterface $node): void {
+    $to = 'admin@example.com'; // Make configurable later
+    $langcode = $node->language()->getId();
+
+    $params['subject'] = 'Purchase Order Fulfilled';
+    $params['message'] = sprintf(
+      "A Purchase Order has been fulfilled.\n\nTitle: %s\nURL: %s",
+      $node->label(),
+      $node->toUrl('canonical', ['absolute' => TRUE])->toString()
+    );
+
+    $result = $this->mailManager->mail(
+      'purchase_order_notify',
+      'purchase_order_fulfilled',
+      $to,
+      $langcode,
+      $params
+    );
+
+    if (empty($result['result'])) {
+      $this->logger->error('Failed to send Fulfilled email for Purchase Order @title.', ['@title' => $node->label()]);
+    }
+    else {
+      $this->logger->info('Fulfilled email sent successfully for Purchase Order @title.', ['@title' => $node->label()]);
+    }
+  }
+
+  /**
+   * Send an email when a Quotation node is created (accepted).
+   */
+  public function sendQuotationAcceptedMail(NodeInterface $node): void {
+    $to = 'admin@example.com'; // Make configurable later
+    $langcode = $node->language()->getId();
+
+    $params['subject'] = 'Quotation Accepted';
+    $params['message'] = sprintf(
+      "A quotation has been accepted.\n\nTitle: %s\nURL: %s",
+      $node->label(),
+      $node->toUrl('canonical', ['absolute' => TRUE])->toString()
+    );
+
+    $result = $this->mailManager->mail(
+      'purchase_order_notify',
+      'quotation_accepted', // <-- Correct mail key
+      $to,
+      $langcode,
+      $params
+    );
+
+    if (empty($result['result'])) {
+      $this->logger->error('Failed to send Quotation Accepted email for @title.', ['@title' => $node->label()]);
+    }
+    else {
+      $this->logger->info('Quotation Accepted email sent successfully for @title.', ['@title' => $node->label()]);
+    }
+  }
+
+}
