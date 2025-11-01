@@ -1,0 +1,71 @@
+<?php
+
+use Drupal\node\NodeInterface;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_mail().
+ */
+function purchase_order_notify_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'purchase_order_fulfilled':
+    case 'quotation_accepted':
+      $message['subject'] = $params['subject'];
+      $message['body'][] = $params['message'];
+      break;
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ *
+ * Fires when an entity is updated (after save).
+ */
+function purchase_order_notify_entity_update(EntityInterface $entity) {
+  if (!$entity instanceof NodeInterface) {
+    return;
+  }
+
+  $bundle = $entity->bundle();
+
+  // ✅ Handle Purchase Order status changes.
+  if ($bundle === 'purchase_order') {
+    if ($entity->hasField('field_purchase_order_status') && !$entity->get('field_purchase_order_status')->isEmpty()) {
+      $term = $entity->get('field_purchase_order_status')->entity;
+      if ($term && strcasecmp($term->label(), 'Fulfilled') === 0) {
+
+        // Optional: Only send when the status actually changed.
+        if (isset($entity->original)) {
+          $old_term = $entity->original->get('field_purchase_order_status')->entity ?? NULL;
+          if ($old_term && $old_term->id() == $term->id()) {
+            // Status didn’t change, skip.
+            return;
+          }
+        }
+
+        \Drupal::service('purchase_order_notify.mail_service')->sendPurchaseOrderFulfilledMail($entity);
+      }
+    }
+  }
+
+  // ✅ Handle Quotation (moderation-based status).
+  if ($bundle === 'quotation') {
+    if ($entity->hasField('moderation_state')) {
+      $current_state = $entity->get('moderation_state')->value;
+
+      // Check if it changed to "accepted".
+      if (strcasecmp($current_state, 'accepted') === 0) {
+        if (isset($entity->original)) {
+          $old_state = $entity->original->get('moderation_state')->value ?? NULL;
+          if ($old_state === $current_state) {
+            // State didn't change → skip.
+            return;
+          }
+        }
+
+        // Send the email when moderation_state changes to Accepted.
+        \Drupal::service('purchase_order_notify.mail_service')->sendQuotationAcceptedMail($entity);
+      }
+    }
+  }
+}

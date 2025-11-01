@@ -1,0 +1,9 @@
+services:
+  logger.channel.purchase_order_notify:
+    parent: logger.channel_base
+    arguments: ['purchase_order_notify']
+
+  purchase_order_notify.mail_service:
+    class: Drupal\purchase_order_notify\Service\PurchaseOrderMailService
+    arguments: ['@plugin.manager.mail', '@logger.channel.purchase_order_notify', '@config.factory']
+
