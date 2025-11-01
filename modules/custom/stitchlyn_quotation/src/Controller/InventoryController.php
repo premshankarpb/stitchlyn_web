@@ -78,19 +78,19 @@ class InventoryController extends ControllerBase {
 
 
   /**
-   * Save a new Inventory Transaction Log linked to Quotation (AJAX dynamic).
+   * Save or update an Inventory Transaction Log linked to Quotation (AJAX dynamic).
    */
   public function saveLog($quotation, Request $request) {
     try {
       $data = json_decode($request->getContent(), TRUE);
       $title = trim($data['item'] ?? '');
-      $qty = (float) ($data['quantity'] ?? 0);
+      $qty   = (float) ($data['quantity'] ?? 0);
 
       if ($title === '' || $qty <= 0) {
         return new JsonResponse(['status' => 'error', 'message' => 'Invalid input data.']);
       }
 
-      // Load Inventory Item by title
+      // --- Load Inventory Item by title ---
       $items = \Drupal::entityTypeManager()
         ->getStorage('node')
         ->loadByProperties([
@@ -103,50 +103,56 @@ class InventoryController extends ControllerBase {
         return new JsonResponse(['status' => 'error', 'message' => 'Item not found.']);
       }
 
-      // --- Fetch Taxonomy terms ---
-      $order_type_tid = NULL;
-      $transaction_type_tid = NULL;
-
+      // --- Fetch taxonomy terms (Order Type = Quotation, Transaction Type = In) ---
       $order_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
         ->loadByProperties(['vid' => 'order_type', 'name' => 'Quotation']);
-      if ($order_terms) {
-        $order_type_tid = reset($order_terms)->id();
-      }
+      $order_type_tid = $order_terms ? reset($order_terms)->id() : NULL;
 
       $txn_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
         ->loadByProperties(['vid' => 'transaction_type', 'name' => 'In']);
-      if ($txn_terms) {
-        $transaction_type_tid = reset($txn_terms)->id();
+      $transaction_type_tid = $txn_terms ? reset($txn_terms)->id() : NULL;
+
+      // --- Check if a log already exists for this quotation + item ---
+      $existing_log_ids = \Drupal::entityQuery('node')
+        ->condition('type', 'inventory_transaction_log')
+        ->condition('field_inventory_item', $item->id())
+        ->condition('field_purchase_order', $quotation)
+        ->accessCheck(FALSE)
+        ->range(0, 1)
+        ->execute();
+
+      if (!empty($existing_log_ids)) {
+        // --- Update existing log ---
+        $log_nid = reset($existing_log_ids);
+        $log = \Drupal\node\Entity\Node::load($log_nid);
+
+        $existing_qty = (float) ($log->get('field_quantity')->value ?? 0);
+        $new_qty = $existing_qty + $qty;
+
+        $log->set('field_quantity', $new_qty);
+        $log->save();
+
+        $message = 'Existing inventory log updated successfully.';
+      }
+      else {
+        // --- Create new log ---
+        $log = \Drupal::entityTypeManager()->getStorage('node')->create([
+          'type' => 'inventory_transaction_log',
+          'title' => 'Inventory Log - ' . $item->label(),
+          'field_inventory_item' => ['target_id' => $item->id()],
+          'field_purchase_order' => ['target_id' => $quotation],
+          'field_order_type' => ['target_id' => $order_type_tid],
+          'field_transaction_type' => ['target_id' => $transaction_type_tid],
+          'field_quantity' => $qty,
+          'status' => 1,
+        ]);
+        $log->save();
+
+        $message = 'New inventory log created successfully.';
       }
 
-      // --- Create the Inventory Log Node ---
-      $log = \Drupal::entityTypeManager()->getStorage('node')->create([
-        'type' => 'inventory_transaction_log',
-        'title' => 'Inventory Log - ' . $item->label(),
-        'field_inventory_item' => ['target_id' => $item->id()],
-        'field_purchase_order' => ['target_id' => $quotation],
-        'field_order_type' => ['target_id' => $order_type_tid],
-        'field_transaction_type' => ['target_id' => $transaction_type_tid],
-        'field_quantity' => $qty,
-        'status' => 1,
-      ]);
-      $log->save();
-
-      // ✅ Update inventory item stock and create new revision.
-      if ($item->hasField('field_opening_stock')) {
-        $current_stock = (float) ($item->get('field_opening_stock')->value ?? 0);
-        $new_stock = max(0, $current_stock - $qty); // avoid negative stock
-        $item->set('field_opening_stock', $new_stock);
-
-        // Force a new revision for audit
-        $item->setNewRevision(TRUE);
-        $item->setRevisionLogMessage('Stock decreased by ' . $qty . ' due to Quotation #' . $quotation);
-        $item->save();
-      }
-
-
-      // --- Calculate row values ---
-      $cost = (float) ($item->get('field_cost_price')->value ?? 0);
+      // --- Calculate values for row display ---
+      $cost  = (float) ($item->get('field_cost_price')->value ?? 0);
       $total = $cost * $qty;
 
       // --- Return JSON with HTML row ---
@@ -156,23 +162,23 @@ class InventoryController extends ControllerBase {
           <td>' . ($item->get('field_opening_stock')->value ?? '') . '</td>
           <td>' . ($item->get('field_unit_of_measure')->entity->label() ?? '') . '</td>
           <td>₹' . number_format($cost, 2) . '</td>
-          <td>' . $qty . '</td>
-          <td>₹' . number_format($total, 2) . '</td>
+          <td>' . $log->get('field_quantity')->value . '</td>
+          <td>₹' . number_format($cost * (float) $log->get('field_quantity')->value, 2) . '</td>
           <td><button class="btn btn-outline-danger btn-sm remove-log" data-id="' . $log->id() . '">Remove</button></td>
         </tr>
       ';
 
       return new JsonResponse([
-        'status' => 'success',
-        'message' => 'Inventory log added successfully.',
-        'html' => $row_html,
-        'total' => $total,
+        'status'  => 'success',
+        'message' => $message,
+        'html'    => $row_html,
+        'total'   => $total,
       ]);
     }
     catch (\Exception $e) {
       \Drupal::logger('stitchlyn_quotation')->error($e->getMessage());
       return new JsonResponse([
-        'status' => 'error',
+        'status'  => 'error',
         'message' => 'Exception: ' . $e->getMessage(),
       ]);
     }

@@ -242,3 +242,19 @@ stitchlyn_quotation.order_status_autocomplete:
     _format: 'json'
   requirements:
     _permission: 'access content'
+
+stitchlyn_quotation.payment_save:
+  path: '/quotation/{quotation}/payment/save'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\PaymentController::savePayment'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+stitchlyn_quotation.payment_delete:
+  path: '/quotation/payment/{nid}/delete'
+  defaults:
+    _controller: '\Drupal\stitchlyn_quotation\Controller\PaymentController::deletePayment'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'

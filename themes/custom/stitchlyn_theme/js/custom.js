@@ -26,3 +26,18 @@
     },
   };
 })(jQuery, Drupal);
+
+(function ($, Drupal) {
+  Drupal.behaviors.stitchlynSidebar = {
+    attach: function (context, settings) {
+      $('.sidebar-parent', context).once('sidebarToggle').on('click', function (e) {
+        e.preventDefault();
+        const $this = $(this);
+        const $submenu = $this.next('.sidebar-sublist');
+        $submenu.slideToggle(200);
+        $this.toggleClass('open');
+        $this.find('.sidebar-arrow').toggleClass('rotate');
+      });
+    }
+  };
+})(jQuery, Drupal);

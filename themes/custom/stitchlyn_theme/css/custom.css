@@ -169,5 +169,8 @@ em.placeholder {
 }
 
 .node-payment-record-form .js-form-type-vertical-tabs{
-    display: none;
+  display: none;
+}
+.messages__wrapper .messages__content a {
+  color: black;
 }

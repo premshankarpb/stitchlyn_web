@@ -276,8 +276,73 @@ class QuotationEditForm extends FormBase {
       $node->set('moderation_state', $values['moderation_state']);
     }
 
-
     $node->save();
+
+    // Get moderation state from form or from node object.
+    $moderation_state = NULL;
+
+    // If moderation field exists in form submission, use that.
+    if ($form_state->hasValue('moderation_state')) {
+      $moderation_state = $form_state->getValue('moderation_state');
+    }
+    else {
+      // Else fallback: load it from the current node being edited.
+      /** @var \Drupal\node\Entity\Node $node */
+      $node = $form_state->getFormObject()->getEntity();
+      if ($node->hasField('moderation_state') && !$node->get('moderation_state')->isEmpty()) {
+        $moderation_state = $node->get('moderation_state')->value;
+      }
+    }
+
+    // Normalize capitalization just in case.
+    $moderation_state = strtolower(trim($moderation_state));
+
+
+    if ($moderation_state == 'accepted') {
+      // Get the quotation node ID.
+      $quotation_id = $form_state->getValue('nid') ?? $form_state->getValue('node_id') ?? NULL;
+
+      if ($quotation_id) {
+        // Fetch all inventory logs linked to this quotation.
+        $log_ids = \Drupal::entityQuery('node')
+          ->condition('type', 'inventory_transaction_log')
+          ->condition('field_purchase_order', $quotation_id)
+          ->accessCheck(FALSE)
+          ->execute();
+
+        if (!empty($log_ids)) {
+          $logs = \Drupal\node\Entity\Node::loadMultiple($log_ids);
+
+          foreach ($logs as $log) {
+            /** @var \Drupal\node\Entity\Node $log */
+            $inv_target_id = $log->get('field_inventory_item')->target_id ?? NULL;
+            $used_qty      = (float) ($log->get('field_quantity')->value ?? 0);
+
+            if ($inv_target_id && $used_qty > 0) {
+              $inventory_item = \Drupal\node\Entity\Node::load($inv_target_id);
+
+              if ($inventory_item && $inventory_item->bundle() === 'inventory_item') {
+                $opening_stock = (float) ($inventory_item->get('field_opening_stock')->value ?? 0);
+                $new_stock     = max(0, $opening_stock - $used_qty);
+
+                // --- Create new revision and comment ---
+                $inventory_item->setNewRevision(TRUE);
+                $inventory_item->setRevisionUserId(\Drupal::currentUser()->id());
+                $inventory_item->setRevisionCreationTime(REQUEST_TIME);
+                $inventory_item->setRevisionLogMessage(
+                  'Stock reduced by ' . $used_qty . ' due to Quotation ID #' . $quotation_id .
+                  ' (previous stock: ' . $opening_stock . ', new stock: ' . $new_stock . ').'
+                );
+
+                // --- Update stock field and save ---
+                $inventory_item->set('field_opening_stock', $new_stock);
+                $inventory_item->save();
+              }
+            }
+          }
+        }
+      }
+    }
 
     $this->messenger()->addMessage($this->t('Quotation saved successfully with updated totals.'));
   }

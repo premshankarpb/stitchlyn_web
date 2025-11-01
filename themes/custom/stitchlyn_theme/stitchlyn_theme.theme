@@ -113,7 +113,14 @@ function stitchlyn_theme_preprocess_page(array &$variables) {
   $backend_block = $block_manager->createInstance('system_menu_block:backend', []);
   $backend_render = $backend_block->build();
   $backend_render['#cache']['contexts'][] = 'user.roles';
-  $variables['page']['backend_menu'] = $backend_render;
+
+  // Extract menu items from the render array for your custom Twig file
+  if (isset($backend_render['#items'])) {
+    $variables['page']['backend_menu'] = $backend_render['#items'];
+  } else {
+    // fallback: use the render array directly
+    $variables['page']['backend_menu'] = [];
+  }
 
   // === FOOTER MENU ===
   $footer_block = $block_manager->createInstance('system_menu_block:footer', []);

@@ -203,103 +203,155 @@ class QuotationAjaxController extends ControllerBase {
   }
 
   /**
-   * AJAX: Save attribute + quantity for product into Quotation Line Item.
+   * Handles saving or updating a quotation line item,
+   * and updates corresponding inventory transaction logs.
    */
   public function saveAttributeItem(Request $request, $product_id, $quotation_id) {
+    $response = ['status' => 'failed', 'message' => 'Unknown error'];
+
+    // Retrieve posted values.
+    $orderedQty = (float) ($request->request->get('quantity') ?? 1);
+    $unitPrice  = (float) ($request->request->get('unit_price') ?? 0);
+    $remarks    = (string) ($request->request->get('remarks') ?? '');
+
+    // Load quotation.
+    $quotation = Node::load($quotation_id);
+    if (!$quotation || $quotation->bundle() !== 'quotation') {
+      return new JsonResponse(['status' => 'failed', 'message' => 'Invalid quotation.'], 400);
+    }
+
+    // Load product.
+    $product = Node::load($product_id);
+    if (!$product || $product->bundle() !== 'product') {
+      return new JsonResponse(['status' => 'failed', 'message' => 'Invalid product.'], 400);
+    }
+
+    // Begin transaction for rollback safety.
+    $transaction = Database::getConnection()->startTransaction();
+
     try {
-      // Decode payload.
-      $data = json_decode($request->getContent(), TRUE);
-      if (empty($data)) {
-        return new JsonResponse([
-          'status' => 'error',
-          'message' => 'No data received.',
+      /* -----------------------------------------------------------------------
+      * 1. CREATE OR UPDATE QUOTATION LINE ITEM
+      * ---------------------------------------------------------------------*/
+      $existingLineIds = \Drupal::entityQuery('node')
+        ->condition('type', 'quotation_line_item')
+        ->condition('field_quotation', $quotation_id)
+        ->condition('field_product_reference', $product_id)
+        ->range(0, 1)
+        ->execute();
+
+      if ($existingLineIds) {
+        // Update existing line item.
+        $lineNid = reset($existingLineIds);
+        $line = Node::load($lineNid);
+
+        $currentQty  = (float) $line->get('field_quantity')->value;
+        $currentUnit = (float) $line->get('field_unit_price')->value;
+
+        $newQty     = $currentQty + $orderedQty;
+        $finalUnit  = $unitPrice > 0 ? $unitPrice : $currentUnit;
+        $newTotal   = $newQty * $finalUnit;
+
+        $line->set('field_quantity', $newQty);
+        $line->set('field_unit_price', $finalUnit);
+        $line->set('field_total', $newTotal);
+
+        if (!empty($remarks)) {
+          $line->set('body', ['value' => $remarks, 'format' => 'basic_html']);
+        }
+        $line->save();
+      }
+      else {
+        // Create a new line item.
+        $line = Node::create([
+          'type'                   => 'quotation_line_item',
+          'title'                  => $product->label() . ' – ' . $quotation->label(),
+          'field_quotation'        => $quotation_id,
+          'field_product_reference'=> $product_id,
+          'field_quantity'         => $orderedQty,
+          'field_unit_price'       => $unitPrice,
+          'field_total'            => $orderedQty * $unitPrice,
+          'body'                   => ['value' => $remarks, 'format' => 'basic_html'],
+          'status'                 => 1,
         ]);
+        $line->save();
       }
 
-      $attributes = $data['attributes'] ?? [];
-      $quantity = !empty($data['quantity']) ? (float) $data['quantity'] : 1;
+      /* -----------------------------------------------------------------------
+      * 2. UPDATE OR CREATE INVENTORY TRANSACTION LOGS
+      * ---------------------------------------------------------------------*/
+      if ($product->hasField('field_product_costings') && !$product->get('field_product_costings')->isEmpty()) {
+        foreach ($product->get('field_product_costings')->referencedEntities() as $costing) {
 
-      // 1️⃣ Load Quotation node.
-      $quotation = $this->entityTypeManager->getStorage('node')->load($quotation_id);
-      if (!$quotation) {
-        return new JsonResponse(['status' => 'error', 'message' => 'Invalid quotation ID.']);
-      }
+          if (
+            !$costing->hasField('field_inventory_item') || $costing->get('field_inventory_item')->isEmpty() ||
+            !$costing->hasField('field_quantity') || $costing->get('field_quantity')->isEmpty()
+          ) {
+            continue;
+          }
 
-      // 2️⃣ Load Product node.
-      $product_node = $this->entityTypeManager->getStorage('node')->load($product_id);
-      if (!$product_node) {
-        return new JsonResponse(['status' => 'error', 'message' => 'Invalid product ID.']);
-      }
+          $inventoryItemId = (int) $costing->get('field_inventory_item')->target_id;
+          $perUnitQty      = (float) $costing->get('field_quantity')->value;
+          if ($inventoryItemId <= 0 || $perUnitQty <= 0) {
+            continue;
+          }
 
-      // 3️⃣ Determine paragraph type (fallback: shirt_attribute).
-      $paragraph_type = 'shirt_attribute';
-      if ($product_node->hasField('field_attributes') && !$product_node->get('field_attributes')->isEmpty()) {
-        $refs = $product_node->get('field_attributes')->referencedEntities();
-        if (!empty($refs)) {
-          $paragraph_type = $refs[0]->bundle();
+          $totalQty = $perUnitQty * $orderedQty;
+
+          // Check if an inventory log already exists for this quotation + item.
+          $existingLogIds = \Drupal::entityQuery('node')
+            ->condition('type', 'inventory_transaction_log')
+            ->condition('field_inventory_item', $inventoryItemId)
+            ->condition('field_purchase_order', $quotation_id)
+            ->range(0, 1)
+            ->execute();
+
+          if ($existingLogIds) {
+            // Update existing log.
+            $logNid = reset($existingLogIds);
+            $log = Node::load($logNid);
+
+            $prevQty = (float) $log->get('field_quantity')->value;
+            $log->set('field_quantity', $prevQty + $totalQty);
+            $log->save();
+          }
+          else {
+            // Create a new log.
+            $log = Node::create([
+              'type'                  => 'inventory_transaction_log',
+              'title'                 => 'Inventory Log – Q' . $quotation_id . ' – Item ' . $inventoryItemId,
+              'field_inventory_item'  => $inventoryItemId,
+              'field_purchase_order'  => $quotation_id,
+              'field_quantity'        => $totalQty,
+              'body' => [
+                'value'  => 'Auto-created from Quotation line item for ' . $product->label(),
+                'format' => 'basic_html',
+              ],
+              'status' => 1,
+            ]);
+            $log->save();
+          }
+
+          // Optional: update available stock in inventory item.
+          /*
+          $inventoryNode = Node::load($inventoryItemId);
+          if ($inventoryNode && $inventoryNode->hasField('field_opening_stock')) {
+            $currentStock = (float) $inventoryNode->get('field_opening_stock')->value;
+            $inventoryNode->set('field_opening_stock', max(0, $currentStock - $totalQty));
+            $inventoryNode->save();
+          }
+          */
         }
       }
 
-      // 4️⃣ Create new Paragraph.
-      $paragraph = $this->entityTypeManager->getStorage('paragraph')->create([
-        'type' => $paragraph_type,
-      ]);
-
-      // 5️⃣ Populate paragraph fields.
-      foreach ($attributes as $field_name => $value) {
-        if (!$paragraph->hasField($field_name)) {
-          continue;
-        }
-
-        $field_def = $paragraph->get($field_name)->getFieldDefinition();
-        $field_type = $field_def->getType();
-
-        // Handle taxonomy/entity reference.
-        if (is_numeric($value) && $field_type === 'entity_reference') {
-          $paragraph->set($field_name, ['target_id' => (int) $value]);
-        }
-        // Handle text/number fields.
-        elseif (in_array($field_type, ['string', 'string_long', 'text', 'text_long', 'integer', 'decimal', 'float'])) {
-          $paragraph->set($field_name, ['value' => $value]);
-        }
-        // Fallback (rare cases).
-        else {
-          $paragraph->set($field_name, $value);
-        }
-      }
-
-      $paragraph->save();
-
-      // 6️⃣ Create Line Item node (type: quatation_line_items).
-      $line_item = $this->entityTypeManager->getStorage('node')->create([
-        'type' => 'quatation_line_items',
-        'title' => $product_node->label(),
-        'field_product' => ['target_id' => $product_id],
-        'field_quantity' => $quantity,
-        'field_attributes' => [
-          'target_id' => $paragraph->id(),
-          'target_revision_id' => $paragraph->getRevisionId(),
-        ],
-        'field_linked_quotation' => ['target_id' => $quotation_id],
-        'status' => 1,
-      ]);
-      $line_item->save();
-
-      // 7️⃣ Response.
-      return new JsonResponse([
-        'status' => 'success',
-        'message' => 'Item saved successfully.',
-        'paragraph_id' => $paragraph->id(),
-        'line_item_id' => $line_item->id(),
-      ]);
+      $response = ['status' => 'success', 'message' => 'Line item and inventory logs updated successfully.'];
     }
-    catch (\Exception $e) {
-      \Drupal::logger('stitchlyn_quotation')->error($e->getMessage());
-      return new JsonResponse([
-        'status' => 'error',
-        'message' => 'Exception: ' . $e->getMessage(),
-      ]);
+    catch (\Throwable $e) {
+      \Drupal::logger('stitchlyn_quotation')->error('saveAttributeItem error: @msg', ['@msg' => $e->getMessage()]);
+      $response = ['status' => 'failed', 'message' => $e->getMessage()];
     }
+
+    return new JsonResponse($response);
   }
 
   /**

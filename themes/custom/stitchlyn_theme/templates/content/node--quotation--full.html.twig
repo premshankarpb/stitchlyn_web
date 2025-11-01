@@ -1,5 +1,7 @@
+{{ attach_library('stitchlyn_theme/bootstrap_js') }}
 {{ attach_library('stitchlyn_theme/inventory_log') }}
 {{ attach_library('stitchlyn_theme/work_order') }}
+{{ attach_library('stitchlyn_theme/payment_record') }}
 <article class="quotation-detail">
 
   {# Payment badge #}
@@ -31,6 +33,13 @@
                 data-bs-target="#workOrdersTabContent" type="button" role="tab"
                 aria-controls="workOrdersTabContent" aria-selected="false">
           Work Orders
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="payment-tab" data-bs-toggle="tab"
+                data-bs-target="#paymentTabContent" type="button" role="tab"
+                aria-controls="paymentTabContent" aria-selected="false">
+          Payment Records
         </button>
       </li>
     </ul>
@@ -277,6 +286,51 @@
         </div>
       </div>
 
+
+      {# ================= TAB 4 : PAYMENT RECORDS ================= #}
+      <div class="tab-pane fade" id="paymentTabContent" role="tabpanel" aria-labelledby="payment-tab">
+        <div class="payment-section mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Payment Records</h4>
+            <!-- <button id="add-payment" class="btn btn-success btn-sm" data-once="payAdd">+ Add Payment</button> -->
+          </div>
+
+          <div id="payment-wrapper">
+            {% if payments %}
+              <table class="table table-bordered table-striped align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount Paid</th>
+                    <th>Mode</th>
+                    <th>Payment ID</th>
+                    <th>Remarks</th>
+                    <!-- <th>Action</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for pay in payments %}
+                    <tr>
+                      <td>{{ pay.date }}</td>
+                      <td>₹{{ pay.amount_paid }}</td>
+                      <td>{{ pay.mode }}</td>
+                      <td>{{ pay.serial }}</td>
+                      <td>{{ pay.remarks }}</td>
+                      <!-- <td><button class="btn btn-outline-danger btn-sm remove-payment" data-id="{{ pay.id }}">Remove</button></td> -->
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="text-end fw-bold fs-5 mt-2">
+                Total Paid: ₹<span id="payment-total">{{ total_paid }}</span>
+              </div>
+            {% else %}
+              <p class="text-muted">No payments recorded.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
       {# ================= Add Work Order Modal ================= #}
       <div class="modal fade" id="workOrderModal" tabindex="-1" aria-labelledby="workOrderModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-md">
@@ -471,13 +525,59 @@
   </div>
 </div>
 
+{# ================= Payment Records Modal ================= #}
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title fw-bold" id="paymentModalLabel">Add Payment Record</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="pay-date" class="form-label fw-bold">Payment Date</label>
+          <input type="date" id="pay-date" class="form-control">
+        </div>
+
+        <div class="mb-3">
+          <label for="pay-amount" class="form-label fw-bold">Amount Paid</label>
+          <input type="number" id="pay-amount" class="form-control" min="0" step="0.01">
+        </div>
+
+        <div class="mb-3">
+          <label for="pay-mode" class="form-label fw-bold">Payment Mode</label>
+          <input type="text" id="pay-mode" class="form-control"
+                 placeholder="Start typing payment mode..."
+                 data-autocomplete-path="/taxonomy/payment-mode/autocomplete">
+        </div>
+
+        <div class="mb-3">
+          <label for="pay-ref" class="form-label fw-bold">Payment ID (auto)</label>
+          <input type="text" id="pay-ref" class="form-control" disabled placeholder="Auto-generated">
+        </div>
+
+        <div class="mb-3">
+          <label for="pay-remarks" class="form-label fw-bold">Remarks</label>
+          <textarea id="pay-remarks" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="text-end">
+          <button type="button" id="save-payment" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {# ---- small styles & helpers ---- #}
 <style>
   .card .card-body[style*="overflow-y"]::-webkit-scrollbar { width:6px; }
   .card .card-body[style*="overflow-y"]::-webkit-scrollbar-thumb { background:rgba(0,0,0,.25); border-radius:3px; }
   .card .card-body[style*="overflow-y"]::-webkit-scrollbar-thumb:hover { background:rgba(0,0,0,.4); }
+  .modal-backdrop.show { z-index: 1050 !important; }
+  .modal.show { z-index: 1060 !important; }
 </style>
-
 <script>
   function showPhone() {
     const el = document.getElementById('vendor-phone');
