@@ -396,6 +396,47 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
     }
 
     $variables['work_orders'] = $work_orders_data;
+
+    // Fetch linked Payment Records.
+    $query = \Drupal::entityQuery('node')
+      ->accessCheck(TRUE)
+      ->condition('type', 'payment_record')
+      ->condition('field_reference_order', $node->id())
+      ->condition('status', 1);
+    $pids = $query->execute();
+
+    $payments = [];
+    $total_paid = 0;
+
+    if (!empty($pids)) {
+      $payment_nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($pids);
+
+      foreach ($payment_nodes as $pay_node) {
+        $amount = (float) $pay_node->get('field_amount_paid')->value ?? 0;
+        $total_paid += $amount;
+
+        $payments[] = [
+          'id' => $pay_node->id(),
+          'date' => $pay_node->get('field_payment_date')->value ? date('d M Y', strtotime($pay_node->get('field_payment_date')->value)) : '-',
+          'amount_paid' => number_format($amount, 2),
+          'mode' => $pay_node->get('field_payment_mode')->entity->label() ?? '-',
+          'serial' => $pay_node->get('field_payment_id')->value ?? '-',
+          'remarks' => $pay_node->get('body')->value ?? '',
+        ];
+      }
+    }
+
+    // Get totals from the quotation node.
+    $total_amount = (float) $node->get('field_total_amount')->value ?? 0;
+    $amount_due = max(0, $total_amount - $total_paid);
+
+    // Pass to Twig.
+    $variables['payments'] = $payments;
+    $variables['total_paid'] = number_format($total_paid, 2);
+    $variables['total_amount'] = number_format($total_amount, 2);
+    $variables['amount_due'] = number_format($amount_due, 2);
+
+
     // Attach JS
     $variables['#attached']['library'][] = 'stitchlyn_theme/inventory_log';
     $variables['#attached']['drupalSettings']['quotationId'] = $node->id();

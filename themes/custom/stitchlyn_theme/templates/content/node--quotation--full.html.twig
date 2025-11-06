@@ -297,6 +297,25 @@
 
           <div id="payment-wrapper">
             {% if payments %}
+              {# --- Payment Summary Table --- #}
+              <table class="table table-bordered table-sm mb-4">
+                <thead class="table-light">
+                  <tr class="text-center fw-bold">
+                    <th>Total Amount</th>
+                    <th>Amount Paid</th>
+                    <th>Amount Due</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="text-center fs-5">
+                    <td class="fw-bold text-primary">₹{{ total_amount }}</td>
+                    <td class="fw-bold text-success">₹{{ total_paid }}</td>
+                    <td class="fw-bold text-danger">₹{{ amount_due }}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              {# --- Payment List Table --- #}
               <table class="table table-bordered table-striped align-middle">
                 <thead class="table-light">
                   <tr>
@@ -305,7 +324,6 @@
                     <th>Mode</th>
                     <th>Payment ID</th>
                     <th>Remarks</th>
-                    <!-- <th>Action</th> -->
                   </tr>
                 </thead>
                 <tbody>
@@ -315,12 +333,12 @@
                       <td>₹{{ pay.amount_paid }}</td>
                       <td>{{ pay.mode }}</td>
                       <td>{{ pay.serial }}</td>
-                      <td>{{ pay.remarks }}</td>
-                      <!-- <td><button class="btn btn-outline-danger btn-sm remove-payment" data-id="{{ pay.id }}">Remove</button></td> -->
+                      <td>{{ pay.remarks|raw }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
               </table>
+
               <div class="text-end fw-bold fs-5 mt-2">
                 Total Paid: ₹<span id="payment-total">{{ total_paid }}</span>
               </div>
@@ -328,6 +346,7 @@
               <p class="text-muted">No payments recorded.</p>
             {% endif %}
           </div>
+
         </div>
       </div>
 
