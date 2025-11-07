@@ -10,6 +10,7 @@ dependencies:
     - field.field.profile.vendor.field_remarks
     - field.field.profile.vendor.field_status
     - field.field.profile.vendor.field_vendor_name
+    - field.field.profile.vendor.field_vendor_type
     - profile.type.vendor
   module:
     - phonenumber
@@ -65,6 +66,14 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_vendor_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 13
     region: content
 hidden:
   field_status: true

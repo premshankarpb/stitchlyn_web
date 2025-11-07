@@ -1,0 +1,9 @@
+uuid: e5a47bca-0829-44ac-b975-4d065311a21d
+langcode: en
+status: true
+dependencies: {  }
+name: 'Vendor Type'
+vid: vendor_type
+description: null
+weight: 0
+new_revision: false

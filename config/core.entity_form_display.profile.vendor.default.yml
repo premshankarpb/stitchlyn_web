@@ -10,6 +10,7 @@ dependencies:
     - field.field.profile.vendor.field_remarks
     - field.field.profile.vendor.field_status
     - field.field.profile.vendor.field_vendor_name
+    - field.field.profile.vendor.field_vendor_type
     - profile.type.vendor
   module:
     - phonenumber
@@ -66,11 +67,17 @@ content:
     third_party_settings: {  }
   field_remarks:
     type: text_textarea
-    weight: 38
+    weight: 5
     region: content
     settings:
       rows: 5
       placeholder: ''
+    third_party_settings: {  }
+  field_status:
+    type: options_select
+    weight: 7
+    region: content
+    settings: {  }
     third_party_settings: {  }
   field_vendor_name:
     type: string_textfield
@@ -80,6 +87,11 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_vendor_type:
+    type: options_select
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
-  field_status: true
   is_default: true
