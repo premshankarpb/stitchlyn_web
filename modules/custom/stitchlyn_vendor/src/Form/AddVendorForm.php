@@ -63,7 +63,8 @@ class AddVendorForm extends FormBase {
 
     $form['field_gst_number'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('GST Number'),
+      '#title' => $this->t('Enter a valid GSTIN (e.g., 22AAAAA0000A1Z5).'),
+      '#element_validate' => ['::validateGstNumber'],
     ];
 
     $form['field_about'] = [
@@ -74,9 +75,13 @@ class AddVendorForm extends FormBase {
     $vocabulary = 'status';
     $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocabulary);
     $options = [];
+    $default_status_value = NULL;
 
     foreach ($terms as $term) {
       $options[$term->tid] = $term->name;
+      if (strtolower($term->name) === 'active') {
+        $default_status_value = $term->tid;
+      }
     }
 
     $form['field_status'] = [
@@ -84,6 +89,7 @@ class AddVendorForm extends FormBase {
       '#title' => $this->t('Status'),
       '#options' => $options,
       '#empty_option' => $this->t('- Select a status -'),
+      '#default_value' => $default_status_value,
       '#required' => TRUE,
     ];
 
@@ -112,6 +118,19 @@ class AddVendorForm extends FormBase {
 
     return $form;
   }
+
+  /**
+   * Custom validation for GST Number field.
+   */
+  public function validateGstNumber(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    $value = trim($element['#value']);
+    $pattern = '/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/';
+
+    if (!preg_match($pattern, $value)) {
+      $form_state->setError($element, $this->t('The GST Number %gst is invalid. Please enter a valid GSTIN.', ['%gst' => $value]));
+    }
+  }
+
 
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $user = User::create([
