@@ -5,6 +5,8 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.quotation.body
+    - field.field.node.quotation.field_amount_collected
+    - field.field.node.quotation.field_amount_pending
     - field.field.node.quotation.field_customer_reference
     - field.field.node.quotation.field_discount
     - field.field.node.quotation.field_expected_due_date
@@ -42,6 +44,8 @@ content:
     weight: 100
     region: content
 hidden:
+  field_amount_collected: true
+  field_amount_pending: true
   field_customer_reference: true
   field_discount: true
   field_expected_due_date: true

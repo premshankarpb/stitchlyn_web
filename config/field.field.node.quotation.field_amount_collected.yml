@@ -1,0 +1,23 @@
+uuid: 4d9adf9f-123d-4df6-85d5-d763c192c311
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_amount_collected
+    - node.type.quotation
+id: node.quotation.field_amount_collected
+field_name: field_amount_collected
+entity_type: node
+bundle: quotation
+label: 'Amount Collected'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

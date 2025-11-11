@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.quotation.body
+    - field.field.node.quotation.field_amount_collected
+    - field.field.node.quotation.field_amount_pending
     - field.field.node.quotation.field_customer_reference
     - field.field.node.quotation.field_discount
     - field.field.node.quotation.field_expected_due_date
@@ -41,6 +43,20 @@ content:
     weight: 10
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_amount_collected:
+    type: number
+    weight: 130
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_amount_pending:
+    type: number
+    weight: 131
+    region: content
+    settings:
+      placeholder: ''
     third_party_settings: {  }
   field_customer_reference:
     type: entity_reference_autocomplete

@@ -5,6 +5,8 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.purchase_order.body
+    - field.field.node.purchase_order.field_amount_collected
+    - field.field.node.purchase_order.field_amount_pending
     - field.field.node.purchase_order.field_date_of_purchase
     - field.field.node.purchase_order.field_payment_status
     - field.field.node.purchase_order.field_po_number
@@ -36,6 +38,8 @@ content:
     weight: 100
     region: content
 hidden:
+  field_amount_collected: true
+  field_amount_pending: true
   field_date_of_purchase: true
   field_payment_status: true
   field_po_number: true

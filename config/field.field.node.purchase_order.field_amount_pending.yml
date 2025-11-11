@@ -1,0 +1,23 @@
+uuid: 406cb2d6-733e-4cee-bb17-349c91f5bfcc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_amount_pending
+    - node.type.purchase_order
+id: node.purchase_order.field_amount_pending
+field_name: field_amount_pending
+entity_type: node
+bundle: purchase_order
+label: 'Amount Pending'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

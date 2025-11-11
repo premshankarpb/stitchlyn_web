@@ -1,0 +1,20 @@
+uuid: a370eeb3-e954-470c-80f5-ae98d92ff7a7
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_amount_pending
+field_name: field_amount_pending
+entity_type: node
+type: decimal
+settings:
+  precision: 10
+  scale: 2
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

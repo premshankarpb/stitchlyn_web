@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.purchase_order.body
+    - field.field.node.purchase_order.field_amount_collected
+    - field.field.node.purchase_order.field_amount_pending
     - field.field.node.purchase_order.field_date_of_purchase
     - field.field.node.purchase_order.field_payment_status
     - field.field.node.purchase_order.field_po_number
@@ -39,6 +41,20 @@ content:
     weight: 10
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_amount_collected:
+    type: number
+    weight: 130
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_amount_pending:
+    type: number
+    weight: 131
+    region: content
+    settings:
+      placeholder: ''
     third_party_settings: {  }
   field_date_of_purchase:
     type: datetime_default

@@ -1,0 +1,23 @@
+uuid: a74e8418-c3db-4f6f-af38-7c09cb08b19f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_amount_pending
+    - node.type.quotation
+id: node.quotation.field_amount_pending
+field_name: field_amount_pending
+entity_type: node
+bundle: quotation
+label: 'Amount Pending'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal
