@@ -63,15 +63,6 @@
 
 {% set layout = layout ? 'layout--' ~ layout|clean_class %}
 
-  {# Payment badge #}
-  {% if node.field_amount_due.value > 0 %}
-    {% set pay_class = 'bg-danger' %}
-    {% set pay_label = 'Balance Owed' %}
-  {% else %}
-    {% set pay_class = 'bg-success' %}
-    {% set pay_label = 'Payment Complete' %}
-  {% endif %}
-
 {%
   set classes = [
     'node',
@@ -113,7 +104,7 @@
       <main class="admin-main">
         <div class="mb-4">
             <h1 class="display-5 fw-bold text-primary mb-3">{{ node.field_payment_id.value }} - {{ label }}</h1>
-            <span class="badge {{ pay_class }} mb-3">{{ pay_label }} </span>
+            <span class="badge mb-3"> Payment Record for {{ node.field_reference_order.entity.label }} </span>
         </div>
         <div class="row g-4 mb-5">
             <div class="col-md-6 col-lg-5">
@@ -126,7 +117,6 @@
                             <li class="list-group-item"><i class="fas fa-tag text-primary me-2"></i> <strong>Reference Order:</strong> {{ node.field_reference_order.entity.label }}</li>
                             <li class="list-group-item"><i class="fas fa-inr text-primary me-2"></i> <strong>Amount Paid:</strong> ₹ {{ node.field_amount_paid.value }}</li>
                             <li class="list-group-item"><i class="fas fa-globe text-primary me-2"></i> <strong>Payment Mode:</strong> {{ node.field_payment_mode.entity.label }}</li>
-                            <li class="list-group-item"><i class="fas fa-inr text-warning me-2"></i> <strong>Amount Due:</strong>₹ {{ node.field_amount_due.value }}</li>
                         </ul>
                     </div>
                 </div>

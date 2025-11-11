@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - field.field.node.payment_record.body
-    - field.field.node.payment_record.field_amount_due
     - field.field.node.payment_record.field_amount_paid
     - field.field.node.payment_record.field_order_type
     - field.field.node.payment_record.field_payment_date
@@ -38,13 +37,6 @@ content:
     weight: 10
     region: content
     settings: {  }
-    third_party_settings: {  }
-  field_amount_due:
-    type: number
-    weight: 8
-    region: content
-    settings:
-      placeholder: ''
     third_party_settings: {  }
   field_amount_paid:
     type: number
