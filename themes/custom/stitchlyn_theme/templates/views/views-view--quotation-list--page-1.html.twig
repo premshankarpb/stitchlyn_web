@@ -48,6 +48,9 @@
   {% if header %}
     <div class="view-header">
       {{ header }}
+      <a href="/export/quotation{% if export_query %}?{{ export_query }}{% endif %}" class="btn btn-primary">
+        Export CSV
+      </a>
     </div>
   {% endif %}
   {% if exposed %}
@@ -82,12 +85,6 @@
   {% if more %}
     {{ more }}
   {% endif %}
-
-<div class="view-footer">
-  <a href="/export/quotation{% if export_query %}?{{ export_query }}{% endif %}" class="btn btn-primary">
-    Export CSV
-  </a>
-</div>
 
   {% if footer %}
     <div class="view-footer">

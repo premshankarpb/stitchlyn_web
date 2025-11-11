@@ -1,0 +1,29 @@
+uuid: 375f7e05-db37-43e9-8073-1c027372afb3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_vendor_type
+    - profile.type.vendor
+    - taxonomy.vocabulary.vendor_type
+id: profile.vendor.field_vendor_type
+field_name: field_vendor_type
+entity_type: profile
+bundle: vendor
+label: 'Vendor Type'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      vendor_type: vendor_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

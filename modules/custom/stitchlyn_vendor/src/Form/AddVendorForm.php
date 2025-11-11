@@ -6,6 +6,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
 
 class AddVendorForm extends FormBase {
 
@@ -61,7 +63,8 @@ class AddVendorForm extends FormBase {
 
     $form['field_gst_number'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('GST Number'),
+      '#title' => $this->t('Enter a valid GSTIN (e.g., 22AAAAA0000A1Z5).'),
+      '#element_validate' => ['::validateGstNumber'],
     ];
 
     $form['field_about'] = [
@@ -69,12 +72,42 @@ class AddVendorForm extends FormBase {
       '#title' => $this->t('About'),
     ];
 
+    $vocabulary = 'status';
+    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocabulary);
+    $options = [];
+    $default_status_value = NULL;
+
+    foreach ($terms as $term) {
+      $options[$term->tid] = $term->name;
+      if (strtolower($term->name) === 'active') {
+        $default_status_value = $term->tid;
+      }
+    }
+
     $form['field_status'] = [
-      '#type' => 'entity_autocomplete',
+      '#type' => 'select',
       '#title' => $this->t('Status'),
-      '#target_type' => 'taxonomy_term',
-      '#selection_settings' => ['target_bundles' => ['status']],
+      '#options' => $options,
+      '#empty_option' => $this->t('- Select a status -'),
+      '#default_value' => $default_status_value,
+      '#required' => TRUE,
     ];
+
+    $vocabulary_2 = 'vendor_type';
+    $vendor_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocabulary_2);
+    $options_vendor_type = [];
+
+    foreach ($vendor_terms as $term) {
+      $options_vendor_type[$term->tid] = $term->name;
+    }
+
+    $form['field_vendor_type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Vendor Type'),
+      '#options' => $options_vendor_type,
+      '#empty_option' => $this->t('- Select a Type -'),
+      '#required' => TRUE,
+    ];    
 
     $form['submit'] = [
       '#type' => 'submit',
@@ -85,6 +118,19 @@ class AddVendorForm extends FormBase {
 
     return $form;
   }
+
+  /**
+   * Custom validation for GST Number field.
+   */
+  public function validateGstNumber(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    $value = trim($element['#value']);
+    $pattern = '/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/';
+
+    if (!preg_match($pattern, $value)) {
+      $form_state->setError($element, $this->t('The GST Number %gst is invalid. Please enter a valid GSTIN.', ['%gst' => $value]));
+    }
+  }
+
 
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $user = User::create([
@@ -104,11 +150,12 @@ class AddVendorForm extends FormBase {
     $profile->set('field_vendor_name', $form_state->getValue('field_vendor_name'));
     $profile->set('field_contact_person', $form_state->getValue('field_contact_person'));
     $profile->set('field_phone_number', $form_state->getValue('field_phone_number'));
-    $profile->set('field_vendor_location', $form_state->getValue('field_vendor_location'));
+    //$profile->set('field_vendor_location', $form_state->getValue('field_vendor_location'));
     $profile->set('field_billing_address', $form_state->getValue('field_billing_address'));
     $profile->set('field_gst_number', $form_state->getValue('field_gst_number'));
-    $profile->set('field_about', $form_state->getValue('field_about'));
+    $profile->set('field_remarks', $form_state->getValue('field_about'));
     $profile->set('field_status', $form_state->getValue('field_status'));
+    $profile->set('field_vendor_type', $form_state->getValue('field_vendor_type'));
 
     $profile->save();
 
