@@ -1,6 +1,7 @@
 <?php
 
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_theme().
@@ -36,6 +37,10 @@ function stitchlyn_vendor_theme($existing, $type, $theme, $path) {
         'node' => NULL,
         'vendor_user' => [],
         'vendor_profile' => [],
+        'payments' => [],
+        'total_paid' => '',
+        'total_amount' => '',
+        'amount_due' => '',
         'referencing_nodes' => [],
       ],
       'template' => 'po-detail',
@@ -86,4 +91,97 @@ function stitchlyn_vendor_page_attachments(array &$attachments) {
 
   $attachments['#attached']['drupalSettings']['stitchlyn_vendor']['itemInfoUrl'] =
     Url::fromRoute('stitchlyn_vendor.item_info')->toString();
+}
+
+/**
+ * Helper function to recalculate payment totals for a referenced order.
+ */
+function stitchlyn_vendor_recalculate_payment_totals(Node $payment_node) {
+  // Ensure it's a Payment Record node.
+  if ($payment_node->bundle() !== 'payment_record') {
+    return;
+  }
+
+  // Get referenced order node.
+  $ref_target = $payment_node->get('field_reference_order')->target_id ?? NULL;
+  if (!$ref_target) {
+    return;
+  }
+
+  $order = Node::load($ref_target);
+  if (!$order || !in_array($order->bundle(), ['purchase_order', 'quotation'])) {
+    return;
+  }
+
+  // Get all payment records for this order.
+  $query = \Drupal::entityQuery('node')
+    ->accessCheck(FALSE)
+    ->condition('type', 'payment_record')
+    ->condition('status', 1)
+    ->condition('field_reference_order', $order->id());
+  $payment_ids = $query->execute();
+
+  $total_collected = 0;
+  if (!empty($payment_ids)) {
+    $payments = Node::loadMultiple($payment_ids);
+    foreach ($payments as $p) {
+      $amount = (float) ($p->get('field_amount_paid')->value ?? 0);
+      $total_collected += $amount;
+    }
+  }
+
+  // Fetch total order amount (field_total_amount).
+  $total_order_amount = (float) ($order->get('field_total_amount')->value ?? 0);
+  $pending_amount = max($total_order_amount - $total_collected, 0);
+
+  // Update order fields.
+  $order->set('field_amount_collected', $total_collected);
+  $order->set('field_amount_pending', $pending_amount);
+
+  // Update payment status automatically if desired.
+  if ($pending_amount == 0) {
+    // Find the "Paid" term if exists.
+    $paid_term = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties(['name' => 'Paid', 'vid' => 'payment_status']);
+    if ($paid_term) {
+      $order->set('field_payment_status', reset($paid_term)->id());
+    }
+  }
+
+  $order->save();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function stitchlyn_vendor_node_insert(Node $node) {
+  if ($node->bundle() === 'payment_record') {
+    stitchlyn_vendor_recalculate_payment_totals($node);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function stitchlyn_vendor_node_update(Node $node) {
+  if ($node->bundle() === 'payment_record') {
+    stitchlyn_vendor_recalculate_payment_totals($node);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function stitchlyn_vendor_node_delete(Node $node) {
+  if ($node->bundle() === 'payment_record') {
+    // On deletion, re-run recalculation for remaining payments.
+    $ref_target = $node->get('field_reference_order')->target_id ?? NULL;
+    if ($ref_target) {
+      $dummy = Node::load($ref_target);
+      if ($dummy) {
+        stitchlyn_vendor_recalculate_payment_totals($node);
+      }
+    }
+  }
 }

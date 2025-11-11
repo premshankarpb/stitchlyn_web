@@ -1,101 +1,187 @@
 <article class="po-detail">
-
-  {% if node.field_payment_status.entity.label == 'Paid' %}
-    {% set pay_class = 'bg-success' %}
-  {% else %}
-    {% set pay_class = 'bg-danger' %}
-  {% endif %}
   <main class="admin-main">
-    <div class="mb-4">
-      <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
-      <span class="badge {{ pay_class }} mb-3">{{ node.field_payment_status.entity.label }}</span>
-    </div>
-    <a href="{{ path('stitchlyn_vendor.purchase_order_pdf', {'node': node.id}) }}" class="btn btn-danger">
-      Export PDF
-    </a>
-    <div class="row g-4 mb-5">
-      <div class="col-md-6 col-lg-5">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title mb-3">{{ node.label }} Details</h5>
-            <span class="badge {{ pay_class }} mb-3">Payment Status : {{ node.field_payment_status.entity.label }}</span>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><i class="fas fa-calendar-alt text-primary me-2"></i>
-                <strong>Date:</strong> {{ node.created.value|date("d M Y") }} </li>
-              <li class="list-group-item"><i class="fas fa-user text-primary me-2"></i>
-                <strong>Vendor:</strong> {{ node.field_vendor.entity.label }} </li>
-              <li class="list-group-item"><i class="fas fa-money-check-alt text-warning me-2"></i>
-                <strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }} </li>
-              <li class="list-group-item"><i class="fas fa-percent text-warning me-2"></i>
-                <strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }} </li>
-              <li class="list-group-item"><i class="fas fa-inr text-warning me-2"></i>
-                <strong>Total Amount:</strong> ₹ {{ node.field_total_amount.value }} </li>
-              <li class="list-group-item"><i class="fas fa-address-book text-primary me-2"></i>
-                <strong>Billing Address:</strong>{{ vendor_profile.field_billing_address.value }} </li>
-              <li class="list-group-item"><i class="fas fa-file-text text-primary me-2" aria-hidden="true"></i>
-                <strong>Vendor GST:</strong> {{ vendor_profile.field_gst_number.value }} </li>
-            </ul>
-          </div>
+
+    <!-- NAV TABS -->
+    <ul class="nav nav-tabs" id="poDetailTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="details-tab" data-bs-toggle="tab"
+                data-bs-target="#details-tab-pane" type="button" role="tab"
+                aria-controls="details-tab-pane" aria-selected="true">
+          <i class="bi bi-file-text"></i> Details
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="payments-tab" data-bs-toggle="tab"
+                data-bs-target="#payments-tab-pane" type="button" role="tab"
+                aria-controls="payments-tab-pane" aria-selected="false">
+          <i class="bi bi-currency-rupee"></i> Payments
+        </button>
+      </li>
+    </ul>
+
+    <!-- TAB CONTENT -->
+    <div class="tab-content mt-4" id="poDetailTabsContent">
+
+      <!-- =======================
+           TAB 1: DETAILS
+      ======================== -->
+      <div class="tab-pane fade show active" id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab">
+
+        {% if node.field_payment_status.entity.label == 'Paid' %}
+          {% set pay_class = 'bg-success' %}
+        {% else %}
+          {% set pay_class = 'bg-danger' %}
+        {% endif %}
+
+        <div class="mb-4">
+          <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
+          <span class="badge {{ pay_class }} mb-3">{{ node.field_payment_status.entity.label }}</span>
         </div>
-      </div>
 
-      <div class="col-md-6 col-lg-7">
-        <div class="card h-100">
-          <div class="card-body">
-            {% if node.body.value is not empty %}
-              <h5 class="card-title mb-3">Remarks</h5>
-              <p>{{ node.body.value|raw }}</p>
-            {% endif %}
-            {% if vendor_profile.field_about.value is not empty %}
-              <h5 class="card-title mb-3">About Vendor</h5>
-              <p>{{ vendor_profile.field_about.value|raw }}</p>
-            {% endif %}
+        <a href="{{ path('stitchlyn_vendor.purchase_order_pdf', {'node': node.id}) }}" class="btn btn-danger mb-4">
+          <i class="bi bi-file-earmark-pdf"></i> Export PDF
+        </a>
 
-            <div class="mt-4">
-              <button class="btn btn-primary me-2" onclick="showPhone()">Contact Vendor</button>
-              <span id="vendor-phone" style="display:none;">
-                {{vendor_profile.field_phone_number.0.phone_number}}
-              </span>
+        <div class="row g-4 mb-5">
+          <div class="col-md-6 col-lg-5">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title mb-3">{{ node.label }} Details</h5>
+                <span class="badge {{ pay_class }} mb-3">Payment Status : {{ node.field_payment_status.entity.label }}</span>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item"><i class="fas fa-calendar-alt text-primary me-2"></i>
+                    <strong>Date:</strong> {{ node.created.value|date("d M Y") }} </li>
+                  <li class="list-group-item"><i class="fas fa-user text-primary me-2"></i>
+                    <strong>Vendor:</strong> {{ node.field_vendor.entity.label }} </li>
+                  <li class="list-group-item"><i class="fas fa-money-check-alt text-warning me-2"></i>
+                    <strong>Subtotal Amount:</strong> ₹ {{ node.field_subtotal_amount.value }} </li>
+                  <li class="list-group-item"><i class="fas fa-percent text-warning me-2"></i>
+                    <strong>Tax Amount:</strong> ₹ {{ node.field_tax_amount.value }} </li>
+                  <li class="list-group-item"><i class="fas fa-inr text-warning me-2"></i>
+                    <strong>Total Amount:</strong> ₹ {{ node.field_total_amount.value }} </li>
+                  <li class="list-group-item"><i class="fas fa-address-book text-primary me-2"></i>
+                    <strong>Billing Address:</strong> {{ vendor_profile.field_billing_address.value }} </li>
+                  <li class="list-group-item"><i class="fas fa-file-text text-primary me-2"></i>
+                    <strong>Vendor GST:</strong> {{ vendor_profile.field_gst_number.value }} </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-7">
+            <div class="card h-100">
+              <div class="card-body">
+                {% if node.body.value is not empty %}
+                  <h5 class="card-title mb-3">Remarks</h5>
+                  <p>{{ node.body.value|raw }}</p>
+                {% endif %}
+                {% if vendor_profile.field_about.value is not empty %}
+                  <h5 class="card-title mb-3">About Vendor</h5>
+                  <p>{{ vendor_profile.field_about.value|raw }}</p>
+                {% endif %}
+
+                <div class="mt-4">
+                  <button class="btn btn-primary me-2" onclick="showPhone()">Contact Vendor</button>
+                  <span id="vendor-phone" style="display:none;">
+                    {{ vendor_profile.field_phone_number.0.phone_number }}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    
-    <hr>
 
-    <h3>Items in this Purchase Order</h3>
-    {% if referencing_nodes|length > 0 %}
+        <hr>
 
-      <table class="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Rate</th>
-            <th>Quantity</th>
-            <th>Total Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in referencing_nodes %}
-          {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
+        <h3>Items in this Purchase Order</h3>
+        {% if referencing_nodes|length > 0 %}
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Rate</th>
+                <th>Quantity</th>
+                <th>Total Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in referencing_nodes %}
+                {% set sub_total = item.field_quantity.value * item.field_item_rate.value %}
+                <tr>
+                  <td>{{ item.field_item_reference.entity.label }}</td>
+                  <td>{{ item.field_item_rate.value }}</td>
+                  <td>{{ item.field_quantity.value }}</td>
+                  <td>₹{{ sub_total }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>No items found in this purchase order.</p>
+        {% endif %}
 
-            <tr>
-              <td>{{ item.field_item_reference.entity.label }}</td>
-              <td>{{ item.field_item_rate.value }}</td>
-              <td>{{ item.field_quantity.value }}</td>
-              <td>₹{{ sub_total }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p>No items found in this purchase order.</p>
-    {% endif %}
-    
+      </div> <!-- End Details Tab -->
+
+      <!-- =======================
+           TAB 2: PAYMENTS
+      ======================== -->
+      <div class="tab-pane fade" id="payments-tab-pane" role="tabpanel" aria-labelledby="payments-tab">
+
+        <h3 class="mb-3">Payment Records</h3>
+
+        {% if payments %}
+          <div class="card mt-3">
+            <div class="card-body">
+              <table class="table table-bordered text-center mb-4">
+                <thead class="table-light">
+                  <tr class="fw-bold">
+                    <th>Total Amount</th>
+                    <th>Amount Paid</th>
+                    <th>Amount Due</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="fs-5">
+                    <td class="fw-bold text-primary">₹{{ total_amount }}</td>
+                    <td class="fw-bold text-success">₹{{ total_paid }}</td>
+                    <td class="fw-bold {% if amount_due > 0 %}text-danger{% else %}text-success{% endif %}">
+                      ₹{{ amount_due }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table class="table table-striped table-bordered align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount Paid</th>
+                    <th>Mode</th>
+                    <th>Remarks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for pay in payments %}
+                    <tr>
+                      <td>{{ pay.date }}</td>
+                      <td>₹{{ pay.amount }}</td>
+                      <td>{{ pay.mode }}</td>
+                      <td>{{ pay.remarks|raw }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {% else %}
+          <p class="text-muted">No payment records found for this purchase order.</p>
+        {% endif %}
+      </div> <!-- End Payments Tab -->
+
+    </div> <!-- End Tab Content -->
+
   </main>
 </article>
-
 
 <script>
   function showPhone() {

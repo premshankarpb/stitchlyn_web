@@ -44,12 +44,46 @@ class PurchaseOrderDetailController extends ControllerBase {
       $profile = reset($profiles);
     }
 
+    // FETCH PAYMENT RECORDS LINKED TO THIS PURCHASE ORDER
+    $payments = [];
+    $total_paid = 0;
+
+    $payment_query = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->condition('type', 'payment_record')
+      ->condition('field_reference_order', $node->id())
+      ->condition('status', 1);
+    $payment_ids = $payment_query->execute();
+
+    if (!empty($payment_ids)) {
+      $payment_nodes = Node::loadMultiple($payment_ids);
+      foreach ($payment_nodes as $payment) {
+        $amount = (float) ($payment->get('field_amount_paid')->value ?? 0);
+        $total_paid += $amount;
+
+        $payments[] = [
+          'nid' => $payment->id(),
+          'date' => $payment->get('field_payment_date')->value ? date('d M Y', strtotime($payment->get('field_payment_date')->value)) : '-',
+          'amount' => number_format($amount, 2),
+          'mode' => $payment->get('field_payment_mode')->entity->label() ?? '-',
+          'remarks' => $payment->get('body')->value ?? '',
+        ];
+      }
+    }
+
+    $total_amount = (float) ($node->get('field_total_amount')->value ?? 0);
+    $amount_due = max(0, $total_amount - $total_paid);
+
     return [
       '#theme' => 'stitchlyn_po_detail',
       '#node' => $node,
       '#vendor_user' => $user,
       '#vendor_profile' => $profile,
       '#referencing_nodes' => $item_nodes,
+      '#payments' => $payments,
+      '#total_paid' => number_format($total_paid, 2),
+      '#total_amount' => number_format($total_amount, 2),
+      '#amount_due' => number_format($amount_due, 2),
       '#title' => $node->label(),
     ];
   }
