@@ -10,6 +10,9 @@ dependencies:
     - contact
     - file
     - filter
+    - node
+    - paragraphs
+    - paragraphs_type_permissions
     - profile
     - search
     - shortcut
@@ -37,3 +40,20 @@ permissions:
   - 'use text format webform_default'
   - 'view own customer profile'
   - 'view own profile'
+  - 'view own unpublished content'
+  - 'view paragraph content banner_item'
+  - 'view paragraph content candle_attribute'
+  - 'view paragraph content cta_banner'
+  - 'view paragraph content feature_item'
+  - 'view paragraph content features'
+  - 'view paragraph content hero_banner'
+  - 'view paragraph content home_banner'
+  - 'view paragraph content product_costings'
+  - 'view paragraph content shirt_attribute'
+  - 'view paragraph content simple_card'
+  - 'view paragraph content simple_card_item'
+  - 'view paragraph content st'
+  - 'view paragraph content stats'
+  - 'view paragraph content type_a_card_cta'
+  - 'view paragraph content umbrella_attributes'
+  - 'view unpublished paragraphs'

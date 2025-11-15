@@ -1790,7 +1790,7 @@ display:
         filters: false
         filter_groups: false
       display_extenders: {  }
-      path: export/quotation
+      path: export/quotations
       filename: ''
       automatic_download: false
       store_in_public_file_directory: null
@@ -2804,7 +2804,7 @@ display:
           content: '<a class="btn btn-primary" href="add/quotation">Add Quotation</a>'
           tokenize: false
       display_extenders: {  }
-      path: dashboard/quotation
+      path: dashboard/quotations
     cache_metadata:
       max-age: -1
       contexts:
