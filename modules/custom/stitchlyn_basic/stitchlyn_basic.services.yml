@@ -4,3 +4,12 @@ services:
     arguments: ['@current_user', '@url_generator']
     tags:
       - { name: event_subscriber }
+  stitchlyn_basic.dashboard_access_subscriber:
+    class: Drupal\stitchlyn_basic\EventSubscriber\DashboardAccessSubscriber
+    arguments:
+      - '@current_user'
+      - '@messenger'
+      - '@path.current'
+      - '@path.matcher'
+    tags:
+      - { name: event_subscriber }
