@@ -10,8 +10,13 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\node\NodeInterface;
+use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\Component\Render\PlainTextOutput;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Database\Database;
+use Drupal\file\Entity\File;
+use Drupal\Component\Utility\Html;
 
 /**
  * Handles AJAX operations for quotation items.
@@ -207,151 +212,136 @@ class QuotationAjaxController extends ControllerBase {
    * and updates corresponding inventory transaction logs.
    */
   public function saveAttributeItem(Request $request, $product_id, $quotation_id) {
-    $response = ['status' => 'failed', 'message' => 'Unknown error'];
-
-    // Retrieve posted values.
-    $orderedQty = (float) ($request->request->get('quantity') ?? 1);
-    $unitPrice  = (float) ($request->request->get('unit_price') ?? 0);
-    $remarks    = (string) ($request->request->get('remarks') ?? '');
-
-    // Load quotation.
-    $quotation = Node::load($quotation_id);
-    if (!$quotation || $quotation->bundle() !== 'quotation') {
-      return new JsonResponse(['status' => 'failed', 'message' => 'Invalid quotation.'], 400);
-    }
-
-    // Load product.
-    $product = Node::load($product_id);
-    if (!$product || $product->bundle() !== 'product') {
-      return new JsonResponse(['status' => 'failed', 'message' => 'Invalid product.'], 400);
-    }
-
-    // Begin transaction for rollback safety.
-    $transaction = Database::getConnection()->startTransaction();
-
     try {
-      /* -----------------------------------------------------------------------
-      * 1. CREATE OR UPDATE QUOTATION LINE ITEM
-      * ---------------------------------------------------------------------*/
-      $existingLineIds = \Drupal::entityQuery('node')
-        ->condition('type', 'quotation_line_item')
-        ->condition('field_quotation', $quotation_id)
-        ->condition('field_product_reference', $product_id)
-        ->range(0, 1)
-        ->execute();
-
-      if ($existingLineIds) {
-        // Update existing line item.
-        $lineNid = reset($existingLineIds);
-        $line = Node::load($lineNid);
-
-        $currentQty  = (float) $line->get('field_quantity')->value;
-        $currentUnit = (float) $line->get('field_unit_price')->value;
-
-        $newQty     = $currentQty + $orderedQty;
-        $finalUnit  = $unitPrice > 0 ? $unitPrice : $currentUnit;
-        $newTotal   = $newQty * $finalUnit;
-
-        $line->set('field_quantity', $newQty);
-        $line->set('field_unit_price', $finalUnit);
-        $line->set('field_total', $newTotal);
-
-        if (!empty($remarks)) {
-          $line->set('body', ['value' => $remarks, 'format' => 'basic_html']);
-        }
-        $line->save();
-      }
-      else {
-        // Create a new line item.
-        $line = Node::create([
-          'type'                   => 'quotation_line_item',
-          'title'                  => $product->label() . ' – ' . $quotation->label(),
-          'field_quotation'        => $quotation_id,
-          'field_product_reference'=> $product_id,
-          'field_quantity'         => $orderedQty,
-          'field_unit_price'       => $unitPrice,
-          'field_total'            => $orderedQty * $unitPrice,
-          'body'                   => ['value' => $remarks, 'format' => 'basic_html'],
-          'status'                 => 1,
-        ]);
-        $line->save();
+      $quotation = Node::load($quotation_id);
+      if (!$quotation || $quotation->bundle() !== 'quotation') {
+        return new JsonResponse(['status' => 'failed', 'message' => 'Invalid quotation'], 400);
       }
 
-      /* -----------------------------------------------------------------------
-      * 2. UPDATE OR CREATE INVENTORY TRANSACTION LOGS
-      * ---------------------------------------------------------------------*/
-      if ($product->hasField('field_product_costings') && !$product->get('field_product_costings')->isEmpty()) {
-        foreach ($product->get('field_product_costings')->referencedEntities() as $costing) {
+      $product = Node::load($product_id);
+      if (!$product || $product->bundle() !== 'product') {
+        return new JsonResponse(['status' => 'failed', 'message' => 'Invalid product'], 400);
+      }
 
-          if (
-            !$costing->hasField('field_inventory_item') || $costing->get('field_inventory_item')->isEmpty() ||
-            !$costing->hasField('field_quantity') || $costing->get('field_quantity')->isEmpty()
-          ) {
+      /** ----------------------------------------------------
+       * 1. READ RAW FORMDATA
+       * ----------------------------------------------------*/
+      $formData = $request->request->all();
+      $files = $request->files->all();
+
+      $quantity = isset($formData['quantity']) ? (float)$formData['quantity'] : 1;
+
+      /** ----------------------------------------------------
+       * 2. CREATE PARAGRAPH (same paragraph type as product)
+       * ----------------------------------------------------*/
+      $paragraphType = $product->get('field_attributes')->referencedEntities()[0]->bundle();
+
+      $paragraph = Paragraph::create(['type' => $paragraphType]);
+
+      foreach ($formData as $key => $value) {
+
+        // Example: field_candle_radius[0][value] => field_candle_radius
+        if (preg_match('/^field_[a-z0-9_]+/i', $key, $match)) {
+          $fieldName = $match[0];
+
+          // Skip if paragraph does not contain the field
+          if (!$paragraph->hasField($fieldName)) {
             continue;
           }
 
-          $inventoryItemId = (int) $costing->get('field_inventory_item')->target_id;
-          $perUnitQty      = (float) $costing->get('field_quantity')->value;
-          if ($inventoryItemId <= 0 || $perUnitQty <= 0) {
-            continue;
-          }
-
-          $totalQty = $perUnitQty * $orderedQty;
-
-          // Check if an inventory log already exists for this quotation + item.
-          $existingLogIds = \Drupal::entityQuery('node')
-            ->condition('type', 'inventory_transaction_log')
-            ->condition('field_inventory_item', $inventoryItemId)
-            ->condition('field_purchase_order', $quotation_id)
-            ->range(0, 1)
-            ->execute();
-
-          if ($existingLogIds) {
-            // Update existing log.
-            $logNid = reset($existingLogIds);
-            $log = Node::load($logNid);
-
-            $prevQty = (float) $log->get('field_quantity')->value;
-            $log->set('field_quantity', $prevQty + $totalQty);
-            $log->save();
+          // Extract actual value
+          if (is_array($value)) {
+            $paragraph->set($fieldName, $value);
           }
           else {
-            // Create a new log.
-            $log = Node::create([
-              'type'                  => 'inventory_transaction_log',
-              'title'                 => 'Inventory Log – Q' . $quotation_id . ' – Item ' . $inventoryItemId,
-              'field_inventory_item'  => $inventoryItemId,
-              'field_purchase_order'  => $quotation_id,
-              'field_quantity'        => $totalQty,
-              'body' => [
-                'value'  => 'Auto-created from Quotation line item for ' . $product->label(),
-                'format' => 'basic_html',
-              ],
-              'status' => 1,
-            ]);
-            $log->save();
+            $paragraph->set($fieldName, [['value' => $value]]);
           }
-
-          // Optional: update available stock in inventory item.
-          /*
-          $inventoryNode = Node::load($inventoryItemId);
-          if ($inventoryNode && $inventoryNode->hasField('field_opening_stock')) {
-            $currentStock = (float) $inventoryNode->get('field_opening_stock')->value;
-            $inventoryNode->set('field_opening_stock', max(0, $currentStock - $totalQty));
-            $inventoryNode->save();
-          }
-          */
         }
       }
 
-      $response = ['status' => 'success', 'message' => 'Line item and inventory logs updated successfully.'];
+      /* ============================================================
+      *  HANDLE FILE UPLOADS FROM POPUP (FAPI OVERRIDE)
+      * ============================================================ */
+      $allFiles = $request->files->all();
+
+      if (!empty($allFiles['files'])) {
+        foreach ($allFiles['files'] as $rawFieldName => $uploadedFile) {
+
+          // rawFieldName example: field_candle_images_0
+          $fieldName = preg_replace('/_\d+$/', '', $rawFieldName);
+
+          if (!$paragraph->hasField($fieldName)) {
+            continue;
+          }
+
+          if ($uploadedFile instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
+
+            // Ensure directory exists
+            $directory = 'public://product_attributes/';
+            \Drupal::service('file_system')->prepareDirectory(
+              $directory,
+              \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY
+            );
+
+            // Read binary file content
+            $data = file_get_contents($uploadedFile->getRealPath());
+
+            // Generate destination path
+            $filename = $uploadedFile->getClientOriginalName();
+            $destination = $directory . $filename;
+
+            // Save file to managed file system
+            $file = \Drupal::service('file.repository')->writeData(
+              $data,
+              $destination,
+              \Drupal\Core\File\FileSystemInterface::EXISTS_RENAME
+            );
+
+            if ($file) {
+              $file->setPermanent();
+              $file->save();
+
+              // Attach the saved file to paragraph field
+              $paragraph->set($fieldName, [
+                ['target_id' => $file->id()]
+              ]);
+            }
+          }
+        }
+      }
+
+      $paragraph->save();
+
+      /** ----------------------------------------------------
+       * 4. CREATE QUOTATION LINE ITEM
+       * ----------------------------------------------------*/
+      $lineItem = Node::create([
+        'type' => 'quatation_line_items',
+        'title' => $product->label() . " – " . $quotation->label(),
+        'field_product' => $product_id,
+        'field_quantity' => $quantity,
+        'field_linked_quotation' => $quotation_id,
+        'field_attributes' => [
+          ['target_id' => $paragraph->id(), 'target_revision_id' => $paragraph->getRevisionId()]
+        ],
+        'status' => 1,
+      ]);
+
+      $lineItem->save();
+
+      return new JsonResponse([
+        'status' => 'success',
+        'message' => 'Line item created.'
+      ]);
+
     }
     catch (\Throwable $e) {
-      \Drupal::logger('stitchlyn_quotation')->error('saveAttributeItem error: @msg', ['@msg' => $e->getMessage()]);
-      $response = ['status' => 'failed', 'message' => $e->getMessage()];
+      \Drupal::logger('stitchlyn_quotation')->error($e->getMessage());
+      return new JsonResponse([
+        'status' => 'failed',
+        'message' => $e->getMessage()
+      ]);
     }
-
-    return new JsonResponse($response);
   }
 
   /**
@@ -513,28 +503,63 @@ class QuotationAjaxController extends ControllerBase {
       // Attributes paragraph.
       if ($node->hasField('field_attributes') && !$node->get('field_attributes')->isEmpty()) {
         $para = $node->get('field_attributes')->entity;
+
         if ($para) {
           $rows[] = [
             ['data' => ['#markup' => '<strong>Attributes</strong>']],
             ['data' => ['#markup' => '']],
           ];
+
           foreach ($para->getFields() as $field_name => $field) {
+
+            // Only process real fields
             if (strpos($field_name, 'field_') !== 0) continue;
             if ($field->isEmpty()) continue;
 
-            // Handle referenced taxonomy terms.
-            $value = '';
-            if ($field->getFieldDefinition()->getType() === 'entity_reference' && $field->entity) {
-              $value = $field->entity->label();
-            }
-            else {
-              $value = $field->value;
+            $label = ucfirst(str_replace('field_', '', $field_name));
+            $items = $field->getValue();
+            $field_type = $field->getFieldDefinition()->getType();
+            $output_items = [];
+
+            foreach ($items as $delta => $item) {
+
+              /* -------------------------------
+              * FILE / IMAGE FIELDS (multi OK)
+              * ------------------------------- */
+              if (isset($item['target_id']) && in_array($field_type, ['image', 'file'])) {
+                if ($file = \Drupal\file\Entity\File::load($item['target_id'])) {
+                  $url = \Drupal::service('file_url_generator')
+                    ->generateAbsoluteString($file->getFileUri());
+
+                  $filename = $file->getFilename();
+
+                  $output_items[] = '<a href="' . $url . '" download target="_blank">'
+                    . htmlspecialchars($filename) .
+                    '</a>';
+                }
+              }
+
+              /* -------------------------------
+              * ENTITY REFERENCE FIELDS
+              * ------------------------------- */
+              elseif ($field_type === 'entity_reference' && isset($field->entity)) {
+                $output_items[] = htmlspecialchars($field->entity->label());
+              }
+
+              /* -------------------------------
+              * NORMAL TEXT / NUMBER FIELDS
+              * ------------------------------- */
+              elseif (isset($item['value'])) {
+                $output_items[] = htmlspecialchars($item['value']);
+              }
             }
 
-            $label = ucfirst(str_replace('field_', '', $field_name));
+            // Combine multi-values using line breaks
+            $value_markup = implode('<br>', $output_items);
+
             $rows[] = [
               ['data' => ['#markup' => $label]],
-              ['data' => ['#markup' => $value]],
+              ['data' => ['#markup' => $value_markup]],
             ];
           }
         }

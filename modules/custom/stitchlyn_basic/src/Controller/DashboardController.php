@@ -14,6 +14,41 @@ class DashboardController extends ControllerBase {
    * Dashboard page callback.
    */
   public function view() {
+
+    // --- PURCHASE ORDERS ---
+    $purchase_orders = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'purchase_order']);
+    $total_po_amount = 0;
+    $collected_po_amount = 0;
+    $pending_po_amount = 0;
+
+    foreach ($purchase_orders as $po) {
+      $total_po_amount += (float) $po->get('field_total_amount')->value ?? 0;
+      $collected_po_amount += (float) $po->get('field_amount_collected')->value ?? 0;
+      $pending_po_amount += (float) $po->get('field_amount_pending')->value ?? 0;
+    }
+
+    // --- QUOTATIONS ---
+    $quotations = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'quotation']);
+    $total_qt_amount = 0;
+    $collected_qt_amount = 0;
+    $pending_qt_amount = 0;
+
+    foreach ($quotations as $qt) {
+      $total_qt_amount += (float) $qt->get('field_total_amount')->value ?? 0;
+      $collected_qt_amount += (float) $qt->get('field_amount_collected')->value ?? 0;
+      $pending_qt_amount += (float) $qt->get('field_amount_pending')->value ?? 0;
+    }
+
+    // Add to counts array
+    $counts['purchase_orders']['total_amount'] = $total_po_amount;
+    $counts['purchase_orders']['collected'] = $collected_po_amount;
+    $counts['purchase_orders']['pending'] = $pending_po_amount;
+
+    $counts['quotations']['total_amount'] = $total_qt_amount;
+    $counts['quotations']['collected'] = $collected_qt_amount;
+    $counts['quotations']['pending'] = $pending_qt_amount;
+
+
     $counts = [
       'product' => $this->getInventoryCount('Product'),
       'raw_material' => $this->getInventoryCount('Raw Material'),

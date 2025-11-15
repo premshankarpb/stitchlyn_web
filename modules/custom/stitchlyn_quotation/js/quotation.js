@@ -48,31 +48,35 @@
             $dlg.off('click.saveAttr').on('click.saveAttr', '#save-attr', function (e) {
               e.preventDefault();
 
-              const payload = { attributes: {}, quantity: 1 };
+              const formData = new FormData();
               const qty = parseFloat($dlg.find('#sq-quantity').val()) || 1;
-              payload.quantity = qty;
+              formData.append('quantity', qty);
 
+              // Include all field values (except files, handled separately)
               $dlg.find('input, select, textarea').each(function () {
                 const name = $(this).attr('name');
-                const val = $(this).val();
-                if (!name || val === '' || val === null) return;
-                if (name === 'sq_quantity') return;
+                if (!name || name === 'sq_quantity') return;
 
-                const m = name.match(/^(field_[a-z0-9_]+)/i);
-                if (!m) return;
-                const base = m[1];
-
-                let cleanVal = val;
-                const match = String(val).match(/\((\d+)\)$/);
-                if (match) cleanVal = match[1];
-                payload.attributes[base] = cleanVal;
+                const type = $(this).attr('type');
+                if (type === 'file') {
+                  const file = this.files[0];
+                  if (file) formData.append(name, file);
+                } else {
+                  const val = $(this).val();
+                  if (val !== '' && val !== null) {
+                    const match = String(val).match(/\((\d+)\)$/);
+                    const cleanVal = match ? match[1] : val;
+                    formData.append(name, cleanVal);
+                  }
+                }
               });
 
               $.ajax({
                 url: Drupal.url(`quotation/ajax/save-item/${product}/${quotation}`),
-                method: 'POST',
-                data: JSON.stringify(payload),
-                contentType: 'application/json',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
                 success(resp) {
                   if (resp.status === 'success') {
                     $dlg.dialog('close');
@@ -88,6 +92,7 @@
                 },
               });
             });
+
           });
         });
       });

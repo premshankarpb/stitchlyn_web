@@ -4,6 +4,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\file\Entity\File;
 use Drupal\profile\Entity\Profile;
 use Drupal\Core\Url;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Site\Settings;
 
 /**
@@ -476,3 +477,28 @@ function stitchlyn_theme_preprocess_views_view(&$variables) {
   }
 }
 
+/**
+ * Implements hook_page_attachments().
+ */
+function stitchlyn_theme_page_attachments(array &$attachments) {
+  $current_path = \Drupal::service('path.current')->getPath();
+  $route_match = \Drupal::routeMatch();
+  $current_user = \Drupal::currentUser();
+
+  // Check if path starts with /dashboard.
+  if (preg_match('#^/dashboard#', $current_path)) {
+
+    // If user does NOT have administrator role.
+    if (!$current_user->hasRole('administrator')) {
+
+      // Add message.
+      \Drupal::messenger()->addError('You are not authorised to access the backend pages.');
+
+      // Redirect to home page.
+      $url = Url::fromRoute('<front>')->toString();
+      $response = new TrustedRedirectResponse($url);
+      $response->send();
+      exit();
+    }
+  }
+}

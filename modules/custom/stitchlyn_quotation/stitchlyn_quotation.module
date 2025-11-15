@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
@@ -41,4 +43,148 @@ function stitchlyn_quotation_page_attachments(array &$attachments) {
 
   // Pass to JS.
   $attachments['#attached']['drupalSettings']['stitchlynTax'] = $tax_percentage;
+}
+
+/**
+ * Create inventory logs when a quotation line item is created.
+ */
+function stitchlyn_quotation_node_insert(EntityInterface $node) {
+  if ($node->bundle() !== 'quatation_line_items') {
+    return;
+  }
+
+  _stitchlyn_quotation_sync_inventory_logs($node);
+}
+
+/**
+ * Update inventory logs when a quotation line item is updated.
+ */
+function stitchlyn_quotation_node_update(EntityInterface $node) {
+  if ($node->bundle() !== 'quatation_line_items') {
+    return;
+  }
+
+  _stitchlyn_quotation_sync_inventory_logs($node);
+}
+
+/**
+ * Delete inventory logs when a quotation line item is deleted.
+ */
+function stitchlyn_quotation_node_delete(EntityInterface $node) {
+  if ($node->bundle() !== 'quatation_line_items') {
+    return;
+  }
+
+  $quotation_id = $node->get('field_linked_quotation')->target_id;
+
+  $log_ids = \Drupal::entityQuery('node')
+    ->accessCheck(FALSE)
+    ->condition('type', 'inventory_transaction_log')
+    ->condition('field_purchase_order', $quotation_id)
+    ->condition('field_line_item_reference', $node->id())
+    ->execute();
+
+  if (!empty($log_ids)) {
+    $storage = \Drupal::entityTypeManager()->getStorage('node');
+    $logs = $storage->loadMultiple($log_ids);
+    $storage->delete($logs);
+  }
+}
+
+/**
+ * Shared function to create/update inventory logs when a quotation line is added/updated.
+ */
+function _stitchlyn_quotation_sync_inventory_logs(Node $node) {
+
+  $product_id   = $node->get('field_product')->target_id;
+  $quotation_id = $node->get('field_linked_quotation')->target_id;
+  $ordered_qty  = (float) $node->get('field_quantity')->value;
+
+  if (!$product_id || !$quotation_id || $ordered_qty <= 0) {
+    return;
+  }
+
+  $product = Node::load($product_id);
+  if (!$product || $product->get('field_product_costings')->isEmpty()) {
+    return;
+  }
+
+  // Loop product costing paragraph rows.
+  foreach ($product->get('field_product_costings')->referencedEntities() as $costing) {
+
+    if ($costing->get('field_inventory_item')->isEmpty() ||
+        $costing->get('field_quantity')->isEmpty()) {
+      continue;
+    }
+
+    $inventory_item_id = $costing->get('field_inventory_item')->target_id;
+    $per_unit_qty      = (float) $costing->get('field_quantity')->value;
+
+    if ($inventory_item_id <= 0 || $per_unit_qty <= 0) {
+      continue;
+    }
+
+    $total_qty = $ordered_qty * $per_unit_qty;
+
+    // Check if inventory log exists.
+    $existing_ids = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->condition('type', 'inventory_transaction_log')
+      ->condition('field_purchase_order', $quotation_id)
+      ->condition('field_inventory_item', $inventory_item_id)
+      ->execute();
+
+    if (!empty($existing_ids)) {
+
+      // UPDATE existing log.
+      $log_id = reset($existing_ids);
+      $log = Node::load($log_id);
+
+      $log->set('field_quantity', $total_qty);
+      $log->set('field_line_item_reference', $node->id());
+      $log->save();
+    }
+    else {
+
+      // CREATE new log (matches PO format exactly).
+      $log_node = Node::create([
+        'type' => 'inventory_transaction_log',
+        'title' => 'log-q-' . $quotation_id . '-' . $inventory_item_id,
+        'field_inventory_item' => $inventory_item_id,
+        'field_purchase_order' => $quotation_id,
+
+        // Order Type → Quotation
+        'field_order_type' =>
+          _stitchlyn_quotation_get_term_id('order_type', 'Quotation'),
+
+        // Transaction Type → Out (because quotation reduces stock)
+        'field_transaction_type' =>
+          _stitchlyn_quotation_get_term_id('transaction_type', 'Out'),
+
+        'field_quantity' => $total_qty,
+        'field_line_item_reference' => $node->id(),
+
+        'body' => [
+          'value' => 'Stock auto-updated from Quotation #' . $quotation_id,
+          'format' => 'basic_html',
+        ],
+
+        'status' => 1,
+      ]);
+
+      $log_node->save();
+    }
+  }
+}
+
+/**
+ * Helper: Get taxonomy term ID by vocabulary + name.
+ */
+function _stitchlyn_quotation_get_term_id($vocab, $name) {
+  $terms = \Drupal::entityQuery('taxonomy_term')
+    ->condition('vid', $vocab)
+    ->condition('name', $name)
+    ->execute();
+
+  return !empty($terms) ? reset($terms) : NULL;
 }
