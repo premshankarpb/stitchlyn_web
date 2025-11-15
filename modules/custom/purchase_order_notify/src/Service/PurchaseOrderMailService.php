@@ -86,4 +86,34 @@ class PurchaseOrderMailService {
     }
   }
 
+  /**
+   * Send an email when a Inventory is running low.
+   */
+  public function sendRestockInventory(NodeInterface $node): void {
+    $to = 'admin@example.com'; // Make configurable later
+    $langcode = $node->language()->getId();
+
+    $params['subject'] = 'Restock Inventory';
+    $params['message'] = sprintf(
+      "Restock the Inventory Raw material.\n\nTitle: %s\nURL: %s",
+      $node->label(),
+      $node->toUrl('canonical', ['absolute' => TRUE])->toString()
+    );
+
+    $result = $this->mailManager->mail(
+      'restock_inventory',
+      'restock_raw_material', // <-- Correct mail key
+      $to,
+      $langcode,
+      $params
+    );
+
+    if (empty($result['result'])) {
+      $this->logger->error('Failed to send Inventory restock email for @title.', ['@title' => $node->label()]);
+    }
+    else {
+      $this->logger->info('Inventory restock email sent successfully for @title.', ['@title' => $node->label()]);
+    }
+  }
+
 }
