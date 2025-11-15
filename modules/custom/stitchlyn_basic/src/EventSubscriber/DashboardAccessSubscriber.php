@@ -13,9 +13,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-/**
- * Restricts /dashboard* pages for non-admin users, with whitelist support.
- */
 class DashboardAccessSubscriber implements EventSubscriberInterface {
 
   use StringTranslationTrait;
@@ -26,21 +23,11 @@ class DashboardAccessSubscriber implements EventSubscriberInterface {
   protected $pathMatcher;
 
   /**
-   * Paths that will NOT be blocked (safe allow list).
-   *
-   * Add any URL path exactly as in URL.
-   *
-   * Example:
-   *   '/dashboard/profile'
-   *   '/dashboard/vendor-list'
-   *   '/dashboard/api/*'
-   *
-   * You can add wildcard using '*' as suffix.
+   * Add any path or wildcard pattern here.
    */
   protected $whitelist = [
-    // '/dashboard',
-    // '/dashboard/vendor-list',
-    // '/dashboard/open-access/*',
+    '/dashboard/po/*/pdf',
+    '/dashboard/quotation/*/pdf',
   ];
 
   public function __construct(
@@ -65,24 +52,22 @@ class DashboardAccessSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    // Allow admins fully.
+    // Admins bypass everything.
     if ($this->currentUser->hasRole('administrator')) {
       return;
     }
 
     $path = $this->currentPath->getPath();
-
-    // Allow front page redirect loop prevention.
     $front_url = Url::fromRoute('<front>')->toString();
 
-    // 🔥 Step 1: Check whitelist
-    foreach ($this->whitelist as $allowed_path) {
-      if ($this->pathMatcher->matchPath($path, $allowed_path)) {
-        return;  // allowed
+    // STEP 1 — Whitelist check
+    foreach ($this->whitelist as $allowed) {
+      if ($this->pathMatcher->matchPath($path, $allowed)) {
+        return; // allowed
       }
     }
 
-    // 🔥 Step 2: Block all /dashboard and /dashboard/* pages
+    // STEP 2 — Block all dashboard paths unless whitelisted
     if ($this->pathMatcher->matchPath($path, '/dashboard*')) {
 
       if ($path !== $front_url) {
