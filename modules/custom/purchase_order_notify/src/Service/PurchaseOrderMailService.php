@@ -30,7 +30,16 @@ class PurchaseOrderMailService {
    * Send an email when a Purchase Order is marked as "Fulfilled".
    */
   public function sendPurchaseOrderFulfilledMail(NodeInterface $node): void {
-    $to = 'admin@example.com'; // Make configurable later
+    $customer = $node->get('field_vendor')->entity;
+
+    if ($customer instanceof \Drupal\user\UserInterface) {
+      $email = $customer->get('mail')->value;
+      if (empty($email)) {
+        return;
+      }
+    }
+
+    $to = $email;
     $langcode = $node->language()->getId();
 
     $params['subject'] = 'Purchase Order Fulfilled';
@@ -60,7 +69,17 @@ class PurchaseOrderMailService {
    * Send an email when a Quotation node is created (accepted).
    */
   public function sendQuotationAcceptedMail(NodeInterface $node): void {
-    $to = 'admin@example.com'; // Make configurable later
+
+    $customer = $node->get('field_customer_reference')->entity;
+
+    if ($customer instanceof \Drupal\user\UserInterface) {
+      $email = $customer->get('mail')->value;
+      if (empty($email)) {
+        return;
+      }
+    }
+
+    $to = $email;
     $langcode = $node->language()->getId();
 
     $params['subject'] = 'Quotation Accepted';
@@ -90,7 +109,10 @@ class PurchaseOrderMailService {
    * Send an email when a Inventory is running low.
    */
   public function sendRestockInventory(NodeInterface $node): void {
-    $to = 'admin@example.com'; // Make configurable later
+    $config = \Drupal::config('stitchlyn_basic.erp_settings');
+    $mail_to = $config->get('client_email');
+
+    $to = $mail_to;
     $langcode = $node->language()->getId();
 
     $params['subject'] = 'Restock Inventory';
