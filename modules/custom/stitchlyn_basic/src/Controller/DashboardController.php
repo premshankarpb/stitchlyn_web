@@ -76,7 +76,7 @@ class DashboardController extends ControllerBase {
     $counts['quotations']['collected'] = $collected_qt_amount;
     $counts['quotations']['pending'] = $pending_qt_amount;
 
-      \Drupal::logger('counts')->warning('<pre><code>' . print_r($counts, TRUE) . '</code></pre>');
+    \Drupal::logger('counts')->warning('<pre><code>' . print_r($counts, TRUE) . '</code></pre>');
 
     return [
       '#theme' => 'stitchlyn_dashboard',

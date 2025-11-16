@@ -308,8 +308,11 @@ class MyQuotationEditForm extends FormBase {
     $pending_amount = max($total - $total_collected, 0);
 
     // Update order fields.
-    $node->set('field_amount_collected', $total);
+    $node->set('field_amount_collected', $total_collected);
     $node->set('field_amount_pending', $pending_amount);
+
+    \Drupal::logger('total_collected')->warning('<pre><code>' . print_r($total_collected, TRUE) . '</code></pre>');
+    \Drupal::logger('pending_amount')->warning('<pre><code>' . print_r($pending_amount, TRUE) . '</code></pre>');
 
     $node->save();
 
