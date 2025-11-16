@@ -76,6 +76,8 @@ class DashboardController extends ControllerBase {
       ],
     ];
 
+      \Drupal::logger('counts')->warning('<pre><code>' . print_r($counts, TRUE) . '</code></pre>');
+
     return [
       '#theme' => 'stitchlyn_dashboard',
       '#counts' => $counts,
