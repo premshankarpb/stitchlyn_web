@@ -8,6 +8,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
+use Drupal\node\Entity\Node;
 
 /**
  * Custom quotation edit form.
@@ -286,6 +287,29 @@ class MyQuotationEditForm extends FormBase {
       $node->set('moderation_state', $values['moderation_state']);
     }
 
+    // Get all payment records for this order.
+    $pay_query = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->condition('type', 'payment_record')
+      ->condition('status', 1)
+      ->condition('field_reference_order', $node->id());
+    $payment_ids = $pay_query->execute();
+
+    $total_collected = 0;
+    if (!empty($payment_ids)) {
+      $payments = Node::loadMultiple($payment_ids);
+      foreach ($payments as $p) {
+        $amount = (float) ($p->get('field_amount_paid')->value ?? 0);
+        $total_collected += $amount;
+      }
+    }
+
+    // Fetch total order amount (field_total_amount).
+    $pending_amount = max($total - $total_collected, 0);
+
+    // Update order fields.
+    $node->set('field_amount_collected', $total);
+    $node->set('field_amount_pending', $pending_amount);
 
     $node->save();
 
