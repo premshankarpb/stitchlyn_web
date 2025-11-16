@@ -6,6 +6,8 @@ use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Service to send email notifications for Purchase Orders and Quotations.
@@ -79,10 +81,28 @@ class PurchaseOrderMailService {
       }
     }
 
+    $pdf_url = \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/quotation/" . $node->id() . "/pdf";
+
+    // 2. Download the PDF content.
+    $client = \Drupal::httpClient();
+    $response = $client->get($pdf_url);
+
+    if ($response->getStatusCode() !== 200) {
+      $this->messenger()->addError('Could not download PDF.');
+      return;
+    }
+
+    $pdf_data = $response->getBody()->getContents();
+
     $to = $email;
     $langcode = $node->language()->getId();
 
     $params['subject'] = 'Quotation Accepted';
+    $params['attachment'] = [
+        'filecontent' => $pdf_data,
+        'filename' => 'quotation-' . $node->id() . '.pdf',
+        'filemime' => 'application/pdf',
+    ];
     $params['message'] = sprintf(
       "A quotation has been accepted.\n\nTitle: %s\nURL: %s",
       $node->label(),
