@@ -39,15 +39,6 @@ class DashboardController extends ControllerBase {
       $pending_qt_amount += (float) $qt->get('field_amount_pending')->value ?? 0;
     }
 
-    // Add to counts array
-    $counts['purchase_orders']['total_amount'] = $total_po_amount;
-    $counts['purchase_orders']['collected'] = $collected_po_amount;
-    $counts['purchase_orders']['pending'] = $pending_po_amount;
-
-    $counts['quotations']['total_amount'] = $total_qt_amount;
-    $counts['quotations']['collected'] = $collected_qt_amount;
-    $counts['quotations']['pending'] = $pending_qt_amount;
-
 
     $counts = [
       'product' => $this->getInventoryCount('Finished Product'),
@@ -75,6 +66,15 @@ class DashboardController extends ControllerBase {
         'unpaid' => $this->getNodeCountByTaxonomy('purchase_order', 'field_payment_status', 'Unpaid'),
       ],
     ];
+
+     // Add to counts array
+    $counts['purchase_orders']['total_amount'] = $total_po_amount;
+    $counts['purchase_orders']['collected'] = $collected_po_amount;
+    $counts['purchase_orders']['pending'] = $pending_po_amount;
+
+    $counts['quotations']['total_amount'] = $total_qt_amount;
+    $counts['quotations']['collected'] = $collected_qt_amount;
+    $counts['quotations']['pending'] = $pending_qt_amount;
 
       \Drupal::logger('counts')->warning('<pre><code>' . print_r($counts, TRUE) . '</code></pre>');
 
