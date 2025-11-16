@@ -113,20 +113,20 @@
   <h2>Inventory</h2>
   <div class="dashboard-grid">
     <div class="dashboard-box box-inventory">
-      <div class="box-title">Product Inventory</div>
-      <div class="box-count">{{ counts.product }}</div>
+      <div class="box-title">Finished Products</div>
+      <a href="/dashboard/inventory_list?field_inventory_type_target_id=7" ><div class="box-count">{{ counts.product }}</div></a>
     </div>
     <div class="dashboard-box box-inventory">
       <div class="box-title">Raw Materials</div>
-      <div class="box-count">{{ counts.raw_material }}</div>
+      <a href="/dashboard/inventory_list?field_inventory_type_target_id=5" ><div class="box-count">{{ counts.raw_material }}</div></a>
     </div>
     <div class="dashboard-box box-inventory">
       <div class="box-title">Tools</div>
-      <div class="box-count">{{ counts.tool }}</div>
+      <a href="/dashboard/inventory_list?field_inventory_type_target_id=6" ><div class="box-count">{{ counts.tool }}</div></a>
     </div>
   </div>
   <div class="section-footer">
-    <a href="/dashboard/inventory" class="view-link">View Details →</a>
+    <a href="/dashboard/inventory_list" class="view-link">View Details →</a>
   </div>
 
 </div>

@@ -50,7 +50,7 @@ class DashboardController extends ControllerBase {
 
 
     $counts = [
-      'product' => $this->getInventoryCount('Product'),
+      'product' => $this->getInventoryCount('Finished Product'),
       'raw_material' => $this->getInventoryCount('Raw Material'),
       'tool' => $this->getInventoryCount('Tool'),
 
