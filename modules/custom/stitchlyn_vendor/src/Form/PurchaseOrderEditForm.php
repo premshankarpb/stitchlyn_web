@@ -184,18 +184,30 @@ class PurchaseOrderEditForm extends FormBase {
       '#title' => $this->t('Subtotal'),
       '#step' => '0.01',
       '#default_value' => $po->get('field_subtotal_amount')->value ?? 0,
+      '#attributes' => [
+        'readonly' => 'readonly',
+        'style' => 'background:#f3f3f3; cursor:not-allowed;',
+      ],
     ];
     $form['po_summary']['field_tax_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Tax'),
       '#step' => '0.01',
       '#default_value' => $po->get('field_tax_amount')->value ?? 0,
+      '#attributes' => [
+        'readonly' => 'readonly',
+        'style' => 'background:#f3f3f3; cursor:not-allowed;',
+      ],
     ];
     $form['po_summary']['field_total_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Total Amount'),
       '#step' => '0.01',
       '#default_value' => $po->get('field_total_amount')->value ?? 0,
+      '#attributes' => [
+        'readonly' => 'readonly',
+        'style' => 'background:#f3f3f3; cursor:not-allowed;',
+      ],
     ];
 
     $form['actions']['submit'] = [
