@@ -360,6 +360,7 @@ class PurchaseOrderEditForm extends FormBase {
     $query = \Drupal::entityQuery('taxonomy_term')
       ->condition('vid', strtolower($vocabulary_machine_name))
       ->condition('name', $term_name)
+      ->accessCheck(FALSE)
       ->range(0, 1);
     $ids = $query->execute();
     return $ids ? reset($ids) : NULL;
