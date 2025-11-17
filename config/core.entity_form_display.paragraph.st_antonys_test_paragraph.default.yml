@@ -1,0 +1,42 @@
+uuid: b856e750-22fc-44c8-b7f8-12cd468f34c4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.st_antonys_test_paragraph.field_colour
+    - field.field.paragraph.st_antonys_test_paragraph.field_length
+    - field.field.paragraph.st_antonys_test_paragraph.field_length1
+    - paragraphs.paragraphs_type.st_antonys_test_paragraph
+id: paragraph.st_antonys_test_paragraph.default
+targetEntityType: paragraph
+bundle: st_antonys_test_paragraph
+mode: default
+content:
+  field_colour:
+    type: entity_reference_autocomplete
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_length:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_length1:
+    type: number
+    weight: 4
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

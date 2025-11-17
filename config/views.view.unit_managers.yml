@@ -718,11 +718,23 @@ display:
           row_class: ''
           default_row_class: true
           columns:
-            name: name
+            uid: uid
+            field_name: field_name
             mail: mail
+            field_phone_number: field_phone_number
+            field_unit: field_unit
+            edit_profile: edit_profile
+            nothing: nothing
           default: '-1'
           info:
-            name:
+            uid:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_name:
               sortable: false
               default_sort_order: asc
               align: ''
@@ -736,8 +748,32 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
+            field_phone_number:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_unit:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            edit_profile:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            nothing:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
           override: true
-          sticky: false
+          sticky: true
           summary: ''
           empty_table: false
           caption: ''

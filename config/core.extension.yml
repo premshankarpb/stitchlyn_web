@@ -49,6 +49,7 @@ module:
   serial: 0
   serialization: 0
   shortcut: 0
+  smtp: 0
   stitchlyn_basic: 0
   stitchlyn_product: 0
   stitchlyn_quotation: 0

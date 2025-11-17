@@ -1,0 +1,33 @@
+uuid: 22f9befd-f44b-47ec-8771-a39f7b311744
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_colour
+    - paragraphs.paragraphs_type.st_antonys_test_paragraph
+    - taxonomy.vocabulary.color
+  content:
+    - 'taxonomy_term:color:df2fcd82-b148-4fa7-ae55-98556290bfb7'
+id: paragraph.st_antonys_test_paragraph.field_colour
+field_name: field_colour
+entity_type: paragraph
+bundle: st_antonys_test_paragraph
+label: Colour
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    target_uuid: df2fcd82-b148-4fa7-ae55-98556290bfb7
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      color: color
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

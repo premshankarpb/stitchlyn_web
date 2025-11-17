@@ -7,6 +7,7 @@ dependencies:
     - node.type.product
     - paragraphs.paragraphs_type.candle_attribute
     - paragraphs.paragraphs_type.shirt_attribute
+    - paragraphs.paragraphs_type.st_antonys_test_paragraph
     - paragraphs.paragraphs_type.umbrella_attributes
   module:
     - entity_reference_revisions
@@ -27,6 +28,7 @@ settings:
       candle_attribute: candle_attribute
       shirt_attribute: shirt_attribute
       umbrella_attributes: umbrella_attributes
+      st_antonys_test_paragraph: st_antonys_test_paragraph
     negate: 0
     target_bundles_drag_drop:
       banner_item:
@@ -50,6 +52,9 @@ settings:
       home_banner:
         weight: 18
         enabled: false
+      product_costings:
+        weight: 24
+        enabled: false
       shirt_attribute:
         weight: 20
         enabled: true
@@ -62,6 +67,9 @@ settings:
       st:
         weight: 21
         enabled: false
+      st_antonys_test_paragraph:
+        weight: 30
+        enabled: true
       stats:
         weight: 22
         enabled: false

@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.quotation.field_discount
     - field.field.node.quotation.field_expected_due_date
     - field.field.node.quotation.field_payment_status
+    - field.field.node.quotation.field_processed
     - field.field.node.quotation.field_quotation_date
     - field.field.node.quotation.field_quotation_number
     - field.field.node.quotation.field_subtotal_amount
@@ -80,6 +81,13 @@ content:
     weight: 7
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_processed:
+    type: boolean_checkbox
+    weight: 19
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_quotation_date:
     type: datetime_default

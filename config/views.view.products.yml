@@ -1377,7 +1377,7 @@ display:
             group_items: {  }
           reduce_duplicates: false
           vid: item_category
-          type: textfield
+          type: select
           hierarchy: false
           limit: true
           error_message: true
