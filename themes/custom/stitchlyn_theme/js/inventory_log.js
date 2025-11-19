@@ -176,37 +176,56 @@
       });
 
       // ================== DELETE INVENTORY LOG (AJAX) ==================
+      let deleteLogId = null;
+      let deleteRow = null;
+
       $(document).off('click.removeLog').on('click.removeLog', '.remove-log', function (e) {
         e.preventDefault();
-        const btn = $(this);
-        const id = btn.data('id');
-        const row = btn.closest('tr');
 
-        if (!confirm('Are you sure you want to delete this log?')) return;
+        deleteLogId = $(this).data('id');
+        deleteRow = $(this).closest('tr');
+
+        // Reset checkbox
+        $('#restock-checkbox').prop('checked', false);
+
+        // Open modal
+        const modal = new bootstrap.Modal(document.getElementById('deleteInventoryModal'));
+        modal.show();
+      });
+
+
+      // Handle confirm delete
+      $(document).off('click.confirmDelete').on('click.confirmDelete', '#confirm-delete-log', function () {
+
+        const restock = $('#restock-checkbox').is(':checked') ? 1 : 0;
 
         $.ajax({
           type: 'POST',
-          url: '/inventory-log/' + id + '/delete',
+          url: `/inventory-log/${deleteLogId}/delete/${restock}`,
           success: function (res) {
             if (res.status === 'success') {
-              // ✅ Smoothly remove the row
+
               const rowTotal = parseFloat(
-                row.find('td:nth-child(6)').text().replace(/[₹,]/g, '')
+                deleteRow.find('td:nth-child(6)').text().replace(/[₹,]/g, '')
               ) || 0;
-              row.fadeOut(300, function () {
+
+              deleteRow.fadeOut(300, function () {
                 $(this).remove();
 
-                // ✅ Update total dynamically
                 const currentTotal = parseFloat($('#inventory-total-sum').text() || 0);
                 const newTotal = (currentTotal - rowTotal).toFixed(2);
                 $('#inventory-total-sum').text(newTotal);
 
-                // ✅ If table becomes empty → show message
                 if ($('.inventory-section table tbody tr').length === 0) {
                   $('.inventory-section table').replaceWith('<p>No inventory logs found.</p>');
                   $('.text-end.fw-bold').remove();
                 }
               });
+
+              // Close modal
+              const modal = bootstrap.Modal.getInstance(document.getElementById('deleteInventoryModal'));
+              modal.hide();
+
             } else {
               alert(res.message);
             }
@@ -215,6 +234,7 @@
             alert('Error deleting inventory log.');
           },
         });
+
       });
 
 

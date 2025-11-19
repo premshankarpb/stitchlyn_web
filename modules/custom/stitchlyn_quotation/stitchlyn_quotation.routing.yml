@@ -187,7 +187,7 @@ stitchlyn_quotation.save_inventory_log:
     _permission: 'access content'
 
 stitchlyn_quotation.delete_inventory_log:
-  path: '/inventory-log/{id}/delete'
+  path: '/inventory-log/{id}/delete/{restock}'
   defaults:
     _controller: '\Drupal\stitchlyn_quotation\Controller\InventoryController::deleteLog'
     _format: 'json'

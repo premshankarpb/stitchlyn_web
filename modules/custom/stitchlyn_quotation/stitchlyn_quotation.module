@@ -68,26 +68,76 @@ function stitchlyn_quotation_node_update(EntityInterface $node) {
 }
 
 /**
- * Delete inventory logs when a quotation line item is deleted.
+ * Update inventory logs when a quotation line item is deleted.
  */
 function stitchlyn_quotation_node_delete(EntityInterface $node) {
   if ($node->bundle() !== 'quatation_line_items') {
     return;
   }
 
+  // 1. Load linked quotation.
   $quotation_id = $node->get('field_linked_quotation')->target_id;
+  if (!$quotation_id) {
+    return;
+  }
 
-  $log_ids = \Drupal::entityQuery('node')
-    ->accessCheck(FALSE)
-    ->condition('type', 'inventory_transaction_log')
-    ->condition('field_purchase_order', $quotation_id)
-    ->condition('field_line_item_reference', $node->id())
-    ->execute();
+  // 2. Load product.
+  $product_id = $node->get('field_product')->target_id;
+  $product = Node::load($product_id);
+  if (!$product) {
+    return;
+  }
 
-  if (!empty($log_ids)) {
-    $storage = \Drupal::entityTypeManager()->getStorage('node');
-    $logs = $storage->loadMultiple($log_ids);
-    $storage->delete($logs);
+  // 3. Get quantity user ordered.
+  $line_item_qty = (float) $node->get('field_quantity')->value;
+
+  // 4. Loop through product costings paragraph.
+  if ($product->hasField('field_product_costings') && !$product->get('field_product_costings')->isEmpty()) {
+
+    foreach ($product->get('field_product_costings')->referencedEntities() as $cost_para) {
+
+      $inventory_item_id = $cost_para->get('field_inventory_item')->target_id;
+      $per_unit_qty = (float) $cost_para->get('field_quantity')->value;
+
+      if (!$inventory_item_id || !$per_unit_qty) {
+        continue;
+      }
+
+      // Total stock to subtract.
+      $total_deduct_qty = $per_unit_qty * $line_item_qty;
+
+      // 5. Load existing inventory log for this item + quotation.
+      $log_ids = \Drupal::entityQuery('node')
+        ->accessCheck(FALSE)
+        ->condition('type', 'inventory_transaction_log')
+        ->condition('field_purchase_order', $quotation_id)
+        ->condition('field_inventory_item', $inventory_item_id)
+        ->execute();
+
+      if (empty($log_ids)) {
+        continue;
+      }
+
+      $storage = \Drupal::entityTypeManager()->getStorage('node');
+      $logs = $storage->loadMultiple($log_ids);
+
+      foreach ($logs as $log) {
+
+        $current_qty = (float) $log->get('field_quantity')->value;
+        $new_qty = $current_qty - $total_deduct_qty;
+
+        if ($new_qty <= 0) {
+          // Quantity becomes zero → delete the log
+          $log->delete();
+        }
+        else {
+          // Update with reduced stock
+          $log->set('field_quantity', $new_qty);
+          $log->save();
+        }
+
+      }
+    }
   }
 }
 
@@ -139,9 +189,9 @@ function _stitchlyn_quotation_sync_inventory_logs(Node $node) {
       // UPDATE existing log.
       $log_id = reset($existing_ids);
       $log = Node::load($log_id);
-
-      $log->set('field_quantity', $total_qty);
-      $log->set('field_line_item_reference', $node->id());
+      $existing_qty = (float) ($log->get('field_quantity')->value ?? 0);
+      $new_qty = $existing_qty + $total_qty;
+      $log->set('field_quantity', $new_qty);
       $log->save();
     }
     else {
@@ -162,7 +212,6 @@ function _stitchlyn_quotation_sync_inventory_logs(Node $node) {
           _stitchlyn_quotation_get_term_id('transaction_type', 'Out'),
 
         'field_quantity' => $total_qty,
-        'field_line_item_reference' => $node->id(),
 
         'body' => [
           'value' => 'Stock auto-updated from Quotation #' . $quotation_id,
@@ -184,6 +233,7 @@ function _stitchlyn_quotation_get_term_id($vocab, $name) {
   $terms = \Drupal::entityQuery('taxonomy_term')
     ->condition('vid', $vocab)
     ->condition('name', $name)
+    ->accessCheck(FALSE)
     ->execute();
 
   return !empty($terms) ? reset($terms) : NULL;

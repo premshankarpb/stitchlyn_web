@@ -187,21 +187,23 @@ class InventoryController extends ControllerBase {
   /**
    * Delete inventory log entry and restore stock.
    */
-  public function deleteLog($id) {
+  public function deleteLog($id, $restock = 0) {
     try {
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($id);
       if ($node && $node->bundle() === 'inventory_transaction_log') {
 
-        // ✅ Restore stock to inventory item before deletion
-        if ($node->hasField('field_inventory_item') && !$node->get('field_inventory_item')->isEmpty()) {
-          $item = $node->get('field_inventory_item')->entity;
-          if ($item && $item->hasField('field_opening_stock')) {
-            $qty = (float) ($node->get('field_quantity')->value ?? 0);
-            $current_stock = (float) ($item->get('field_opening_stock')->value ?? 0);
-            $item->set('field_opening_stock', $current_stock + $qty);
-            $item->setNewRevision(TRUE);
-            $item->setRevisionLogMessage('Stock restored by ' . $qty . ' after log deletion (Log ID ' . $id . ')');
-            $item->save();
+        if($restock == 1) {
+          // ✅ Restore stock to inventory item before deletion
+          if ($node->hasField('field_inventory_item') && !$node->get('field_inventory_item')->isEmpty()) {
+            $item = $node->get('field_inventory_item')->entity;
+            if ($item && $item->hasField('field_opening_stock')) {
+              $qty = (float) ($node->get('field_quantity')->value ?? 0);
+              $current_stock = (float) ($item->get('field_opening_stock')->value ?? 0);
+              $item->set('field_opening_stock', $current_stock + $qty);
+              $item->setNewRevision(TRUE);
+              $item->setRevisionLogMessage('Stock restored by ' . $qty . ' after log deletion (Log ID ' . $id . ')');
+              $item->save();
+            }
           }
         }
 

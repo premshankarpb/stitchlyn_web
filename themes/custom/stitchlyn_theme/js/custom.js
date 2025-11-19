@@ -37,3 +37,12 @@
   };
 
 })(jQuery, Drupal, once);
+
+/**
+ * GLOBAL FIX → Allow jQuery UI Autocomplete to work inside Bootstrap Modals.
+ */
+jQuery(document).on('focusin', function (e) {
+  if (jQuery(e.target).closest(".ui-autocomplete").length) {
+    e.stopImmediatePropagation();
+  }
+});
