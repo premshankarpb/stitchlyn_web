@@ -128,7 +128,7 @@
                 // ✅ Append the new row without reloading
                 const table = $('.inventory-section table tbody');
                 if (table.length) {
-                  table.append(res.html);
+                  table.html(res.html);
 
                   // ✅ Update total summary if available
                   const currentTotal = parseFloat($('#inventory-total-sum').text() || 0);
