@@ -8,6 +8,8 @@ use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\file\Entity\File;
 
 class AddVendorForm extends FormBase {
 
@@ -33,6 +35,17 @@ class AddVendorForm extends FormBase {
       '#type' => 'password',
       '#title' => $this->t('Password'),
       '#required' => TRUE,
+    ];
+
+    $form['field_image'] = [
+      '#type' => 'managed_file',
+      '#title' => $this->t('Profile Image'),
+      '#upload_location' => 'public://vendor_images/',
+      '#upload_validators' => [
+        'file_validate_extensions' => ['png jpg jpeg gif'],
+        'file_validate_size' => [5 * 1024 * 1024], // 5 MB
+      ],
+      '#required' => FALSE,
     ];
 
     $form['field_vendor_name'] = [
@@ -140,6 +153,21 @@ class AddVendorForm extends FormBase {
       'status' => 1,
       'roles' => ['vendor'],
     ]);
+
+    $image_fid = $form_state->getValue('field_image');
+
+    if (!empty($image_fid)) {
+      $file = File::load($image_fid[0]);
+      $file->setPermanent();
+      $file->save();
+
+      // Attach file to user image field.
+      $user->set('user_picture', [
+        'target_id' => $file->id(),
+        'alt' => $form_state->getValue('field_vendor_name'),
+      ]);
+    }
+
     $user->save();
 
     $profile = Profile::create([

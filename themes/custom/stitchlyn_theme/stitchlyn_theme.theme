@@ -451,8 +451,6 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
 function stitchlyn_theme_preprocess_views_view(&$variables) {
   if ($variables['view']->id() === 'vendors' && $variables['view']->current_display === 'page_1') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
-    // $a = \Drupal::request()->getQueryString();
-    // \Drupal::logger('aaa')->warning('<pre><code>' . print_r($a, TRUE) . '</code></pre>');
   }
   if ($variables['view']->id() === 'products' && $variables['view']->current_display === 'page_2') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
@@ -500,5 +498,31 @@ function stitchlyn_theme_page_attachments(array &$attachments) {
       $response->send();
       exit();
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for header.html.twig.
+ */
+function stitchlyn_theme_preprocess_header(&$variables) {
+  \Drupal::logger('custom')->notice('Preprocess header called.');
+  $account = \Drupal::currentUser();
+
+  if ($account->isAuthenticated()) {
+    $user = \Drupal\user\Entity\User::load($account->id());
+
+    if ($user->hasField('user_picture') && !$user->get('user_picture')->isEmpty()) {
+      $image = $user->get('user_picture')->entity;
+
+      if ($image instanceof File) {
+        $uri = $image->getFileUri();
+        $file_url_generator = \Drupal::service('file_url_generator');
+
+        $variables['user_picture_url'] = $file_url_generator->generateAbsoluteString($uri);
+      }
+    }
+  }
+  else {
+    $variables['user_picture_url'] = '';
   }
 }

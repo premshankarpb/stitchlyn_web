@@ -22,15 +22,22 @@
           <div class="profile-dropdown dropdown ms-lg-3">
             <a
               class="profile-avatar d-flex align-items-center justify-content-center rounded-circle"
-              href="#"
+              href="{{ user_id }}"
               id="profileDropdown"
               role="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <i class="fas fa-user"></i>
+              {% if current_user_entity.user_picture.value %}
+                {% set user_picture_file = file_url(current_user_entity.user_picture.entity.uri.value) %}
+                <img src="{{ user_picture_file }}" alt="{{ current_user_entity.getDisplayName() }}">
+              {% else %}
+                <i class="fas fa-user"></i>
+              {% endif %}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li>
+              <p class="dropdown-item"> <strong> Hi {{ current_user_entity.getDisplayName() }} </strong></p> </li>
               {{ menus.user_account }}
             </ul>
           </div>
