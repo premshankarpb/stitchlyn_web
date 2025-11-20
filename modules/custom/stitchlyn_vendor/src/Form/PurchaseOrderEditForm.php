@@ -184,18 +184,30 @@ class PurchaseOrderEditForm extends FormBase {
       '#title' => $this->t('Subtotal'),
       '#step' => '0.01',
       '#default_value' => $po->get('field_subtotal_amount')->value ?? 0,
+      '#attributes' => [
+        'readonly' => 'readonly',
+        'style' => 'background:#f3f3f3; cursor:not-allowed;',
+      ],
     ];
     $form['po_summary']['field_tax_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Tax'),
       '#step' => '0.01',
       '#default_value' => $po->get('field_tax_amount')->value ?? 0,
+      '#attributes' => [
+        'readonly' => 'readonly',
+        'style' => 'background:#f3f3f3; cursor:not-allowed;',
+      ],
     ];
     $form['po_summary']['field_total_amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Total Amount'),
       '#step' => '0.01',
       '#default_value' => $po->get('field_total_amount')->value ?? 0,
+      '#attributes' => [
+        'readonly' => 'readonly',
+        'style' => 'background:#f3f3f3; cursor:not-allowed;',
+      ],
     ];
 
     $form['actions']['submit'] = [
@@ -257,7 +269,7 @@ class PurchaseOrderEditForm extends FormBase {
       $po->set('field_tax_amount', $tax);
       $po->set('field_total_amount', $total);
 
-      $po->save();
+      // $po->save();
 
       $this->messenger()->addMessage($this->t('Purchase Order updated successfully.'));
 
@@ -293,44 +305,97 @@ class PurchaseOrderEditForm extends FormBase {
 
       $status_name = $status_term ? strtolower(trim($status_term->label())) : '';
 
+      // -----------------------------------------------------------------------
+      // 3️⃣ STOCK UPDATE LOGIC — RUN ONLY IF NOT PROCESSED BEFORE
+      // -----------------------------------------------------------------------
+
       if ($status_name === 'stock updated') {
-        foreach ($item_ids as $item_nid) {
-          $item_node = $entity_manager->load($item_nid);
-          if ($item_node) {
-            $inventory_item_nid = $item_node->get('field_item_reference')->target_id ?? NULL;
-            $quantity = (float) $item_node->get('field_quantity')->value ?? 0;
 
-            if ($inventory_item_nid) {
-              // ✅ Create Inventory Transaction Log
-              $log_node = Node::create([
-                'type' => 'inventory_transaction_log',
-                'title' => 'log-po-' . $nid . '-' . $inventory_item_nid,
-                'field_inventory_item' => $inventory_item_nid,
-                'field_purchase_order' => $nid,
-                'field_order_type' => self::getTaxonomyTermId('order_type', 'Purchase Order'),
-                'field_transaction_type' => self::getTaxonomyTermId('transaction_type', 'In'),
-                'field_quantity' => $quantity,
-                'body' => [
-                  'value' => 'Stock auto-updated from Purchase Order #' . $nid,
-                  'format' => 'basic_html',
-                ],
-                'status' => 1,
-              ]);
-              $log_node->save();
-
-              // ✅ Update Inventory Item Stock
-              $inventory_node = Node::load($inventory_item_nid);
-              if ($inventory_node && $inventory_node->bundle() === 'inventory_item') {
-                $current_stock = (float) $inventory_node->get('field_opening_stock')->value ?? 0;
-                $inventory_node->set('field_opening_stock', $current_stock + $quantity);
-                $inventory_node->save();
-              }
-            }
+          // Stop if already processed to prevent duplicate stock updates.
+          $already_processed = (bool) ($po->get('field_processed')->value ?? 0);
+          if ($already_processed) {
+              // Do not run again; this prevents double stock & duplicate logs.
+              goto UPDATE_SUMMARY_ONLY;
           }
-        }
-      }
 
-      $this->messenger()->addStatus($this->t('Purchase Order and related records updated successfully.'));
+          foreach ($item_ids as $item_nid) {
+
+              $item_node = $entity_manager->load($item_nid);
+              if (!$item_node) continue;
+
+              $inventory_item_nid = $item_node->get('field_item_reference')->target_id ?? NULL;
+              $new_qty = (float) ($item_node->get('field_quantity')->value ?? 0);
+
+              if (!$inventory_item_nid) continue;
+
+              // Check if a log already exists
+              $existing_log_ids = \Drupal::entityQuery('node')
+                  ->condition('type', 'inventory_transaction_log')
+                  ->condition('field_purchase_order', $nid)
+                  ->condition('field_inventory_item', $inventory_item_nid)
+                  ->accessCheck(FALSE)
+                  ->range(0, 1)
+                  ->execute();
+
+              // Load inventory item node
+              $inventory_node = Node::load($inventory_item_nid);
+              if (!$inventory_node) continue;
+
+              $current_stock = (float) ($inventory_node->get('field_opening_stock')->value ?? 0);
+
+              // ✔ CASE 1: LOG EXISTS — UPDATE LOG & STOCK
+              if ($existing_log_ids) {
+
+                  $log_nid = reset($existing_log_ids);
+                  $log_node = Node::load($log_nid);
+
+                  if ($log_node) {
+                      $old_qty = (float) ($log_node->get('field_quantity')->value ?? 0);
+                      $difference = $new_qty - $old_qty;
+
+                      // Update log
+                      $log_node->set('field_quantity', $new_qty);
+                      $log_node->save();
+
+                      // Update stock difference
+                      $inventory_node->set('field_opening_stock', $current_stock + $difference);
+                      $inventory_node->save();
+                  }
+              }
+
+              // ✔ CASE 2: NO LOG — CREATE NEW LOG
+              else {
+
+                  // Create Inventory Log
+                  $log_node = Node::create([
+                      'type' => 'inventory_transaction_log',
+                      'title' => 'log-po-' . $nid . '-' . $inventory_item_nid,
+                      'field_inventory_item' => $inventory_item_nid,
+                      'field_purchase_order' => $nid,
+                      'field_order_type' => self::getTaxonomyTermId('order_type', 'Purchase Order'),
+                      'field_transaction_type' => self::getTaxonomyTermId('transaction_type', 'In'),
+                      'field_quantity' => $new_qty,
+                      'body' => [
+                          'value' => 'Stock auto-updated from Purchase Order #' . $nid,
+                          'format' => 'basic_html',
+                      ],
+                      'status' => 1,
+                  ]);
+                  $log_node->save();
+
+                  // Stock Increase
+                  $inventory_node->set('field_opening_stock', $current_stock + $new_qty);
+                  $inventory_node->save();
+              }
+
+          }
+
+          // Mark PO as processed — NEVER run inventory logic again
+          $po->set('field_processed', 1);
+          $po->save();
+          $this->messenger()->addStatus($this->t('Purchase Order related inventory records updated successfully.'));
+      }
+      UPDATE_SUMMARY_ONLY:
     }
     catch (\Exception $e) {
       $transaction->rollBack();
@@ -348,6 +413,7 @@ class PurchaseOrderEditForm extends FormBase {
     $query = \Drupal::entityQuery('taxonomy_term')
       ->condition('vid', strtolower($vocabulary_machine_name))
       ->condition('name', $term_name)
+      ->accessCheck(FALSE)
       ->range(0, 1);
     $ids = $query->execute();
     return $ids ? reset($ids) : NULL;

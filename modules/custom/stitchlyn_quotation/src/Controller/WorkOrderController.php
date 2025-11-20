@@ -96,99 +96,129 @@ class WorkOrderController extends ControllerBase {
    * Save Work Order (with Expected Due Date and Order Status).
    */
   public function saveWorkOrder(Request $request) {
+
     $quotation = $request->get('quotation');
     $line_item_id = trim($request->get('line_item'));
     $unit_id = trim($request->get('unit'));
-    $quantity = trim($request->get('quantity'));
+    $quantity = (float) trim($request->get('quantity'));
     $due_date = trim($request->get('due_date'));
     $status_id = trim($request->get('status'));
     $remarks = trim($request->get('remarks'));
 
     // --- Validation ---
     if (empty($quotation) || empty($line_item_id) || empty($unit_id) || empty($quantity) || empty($status_id)) {
-      return new JsonResponse([
-        'status' => 'error',
-        'message' => 'Missing or invalid input. Ensure all fields are selected properly.',
-      ]);
+        return new JsonResponse([
+            'status' => 'error',
+            'message' => 'Missing or invalid input. Ensure all fields are selected properly.',
+        ]);
     }
 
-    // --- Load related entities ---
-    $entityTypeManager = \Drupal::entityTypeManager();
+    $em = \Drupal::entityTypeManager();
 
-    $line_item = $entityTypeManager->getStorage('node')->load($line_item_id);
-    $unit = $entityTypeManager->getStorage('taxonomy_term')->load($unit_id);
-    $status_term = $entityTypeManager->getStorage('taxonomy_term')->load($status_id);
+    // --- Load related entities ---
+    $line_item = $em->getStorage('node')->load($line_item_id);
+    $unit = $em->getStorage('taxonomy_term')->load($unit_id);
+    $status_term = $em->getStorage('taxonomy_term')->load($status_id);
 
     if (!$line_item || !$unit || !$status_term) {
-      return new JsonResponse([
-        'status' => 'error',
-        'message' => 'One or more related entities could not be loaded (line item, unit, or status).',
-      ]);
+        return new JsonResponse([
+            'status' => 'error',
+            'message' => 'One or more related entities could not be loaded (line item, unit, or status).',
+        ]);
+    }
+
+    // ===========================================================
+    // VALIDATION — Ensure assigned qty does NOT exceed quotation qty
+    // ===========================================================
+
+    // Quotation item full quantity
+    $quotation_qty = (float) ($line_item->get('field_quantity')->value ?? 0);
+
+    // Sum quantities from all existing work orders
+    $existing_ids = \Drupal::entityQuery('node')
+        ->condition('type', 'work_order')
+        ->condition('field_linked_quotation', $quotation)
+        ->condition('field_linked_line_item', $line_item_id)
+        ->accessCheck(FALSE)
+        ->execute();
+
+    $assigned_qty = 0;
+
+    if (!empty($existing_ids)) {
+        $existing_wos = $em->getStorage('node')->loadMultiple($existing_ids);
+        foreach ($existing_wos as $wo) {
+            $assigned_qty += (float) $wo->get('field_quantity')->value;
+        }
+    }
+
+    // Remaining quantity available
+    $remaining_qty = $quotation_qty - $assigned_qty;
+
+    if ($quantity > $remaining_qty) {
+        return new JsonResponse([
+            'status' => 'error',
+            'message' => "Maximum assignable quantity for this item is {$remaining_qty}.",
+        ]);
     }
 
     // --- Format due date ---
     $formatted_due_date = NULL;
     if (!empty($due_date)) {
-      try {
-        $formatted_due_date = (new \DateTime($due_date))->format('Y-m-d');
-      } catch (\Exception $e) {
-        $formatted_due_date = NULL;
-      }
+        try {
+            $formatted_due_date = (new \DateTime($due_date))->format('Y-m-d');
+        } catch (\Exception $e) {
+            $formatted_due_date = NULL;
+        }
     }
 
     // --- Create the Work Order node ---
-    $node_storage = $entityTypeManager->getStorage('node');
+    $node_storage = $em->getStorage('node');
     $work_order = $node_storage->create([
-      'type' => 'work_order',
-      'title' => 'Temporary', // Placeholder to satisfy DB constraints
-      'field_linked_quotation' => ['target_id' => $quotation],
-      'field_linked_line_item' => ['target_id' => $line_item_id],
-      'field_unit_assigned' => ['target_id' => $unit_id],
-      'field_quantity' => $quantity,
-      'field_order_status' => ['target_id' => $status_id],
-      'field_expected_due_date' => $formatted_due_date ?: NULL,
-      'body' => ['value' => $remarks, 'format' => 'basic_html'],
-      'status' => 1,
+        'type' => 'work_order',
+        'title' => 'Temporary',
+        'field_linked_quotation' => ['target_id' => $quotation],
+        'field_linked_line_item' => ['target_id' => $line_item_id],
+        'field_unit_assigned' => ['target_id' => $unit_id],
+        'field_quantity' => $quantity,
+        'field_order_status' => ['target_id' => $status_id],
+        'field_expected_due_date' => $formatted_due_date ?: NULL,
+        'body' => ['value' => $remarks, 'format' => 'basic_html'],
+        'status' => 1,
     ]);
 
     $work_order->save();
 
-    // --- Update title with Serial Number if available ---
+    // --- Update title with Serial Number ---
     if ($work_order->hasField('field_work_order_number')) {
-      $serial = $work_order->get('field_work_order_number')->value ?? $work_order->id();
-      $work_order->setTitle('Work Order - ' . $serial);
-      $work_order->save();
+        $serial = $work_order->get('field_work_order_number')->value ?? $work_order->id();
+        $work_order->setTitle('Work Order - ' . $serial);
+        $work_order->save();
     }
 
     // --- Rebuild Work Orders Table ---
     $work_orders_data = [];
-    $query = $entityTypeManager->getStorage('node')->getQuery()
-      ->condition('type', 'work_order')
-      ->condition('field_linked_quotation', $quotation)
-      ->sort('created', 'DESC')
-      ->accessCheck(FALSE);
-    $nids = $query->execute();
+
+    $nids = $node_storage->getQuery()
+        ->condition('type', 'work_order')
+        ->condition('field_linked_quotation', $quotation)
+        ->sort('created', 'DESC')
+        ->accessCheck(FALSE)
+        ->execute();
 
     if (!empty($nids)) {
-      $nodes = $entityTypeManager->getStorage('node')->loadMultiple($nids);
-      foreach ($nodes as $wo) {
-        $line_item_label = $wo->get('field_linked_line_item')->entity->label() ?? '';
-        $unit_label = $wo->get('field_unit_assigned')->entity->label() ?? '';
-        $qty = $wo->get('field_quantity')->value ?? '';
-        $expected_due = $wo->get('field_expected_due_date')->value ?? '';
-        $order_status = $wo->get('field_order_status')->entity->label() ?? '';
-        $serial = $wo->get('field_work_order_number')->value ?? '';
-        $work_orders_data[] = [
-          'id' => $wo->id(),
-          'title' => $wo->label(),
-          'serial' => $serial,
-          'line_item' => $line_item_label,
-          'unit' => $unit_label,
-          'quantity' => $qty,
-          'expected_due' => $expected_due,
-          'order_status' => $order_status,
-        ];
-      }
+        $nodes = $node_storage->loadMultiple($nids);
+        foreach ($nodes as $wo) {
+            $work_orders_data[] = [
+                'id' => $wo->id(),
+                'title' => $wo->label(),
+                'serial' => $wo->get('field_work_order_number')->value ?? '',
+                'line_item' => $wo->get('field_linked_line_item')->entity->label() ?? '',
+                'unit' => $wo->get('field_unit_assigned')->entity->label() ?? '',
+                'quantity' => $wo->get('field_quantity')->value ?? '',
+                'expected_due' => $wo->get('field_expected_due_date')->value ?? '',
+                'order_status' => $wo->get('field_order_status')->entity->label() ?? '',
+            ];
+        }
     }
 
     // --- Generate updated table HTML ---
@@ -198,33 +228,33 @@ class WorkOrderController extends ControllerBase {
     $html .= '</tr></thead><tbody>';
 
     if (!empty($work_orders_data)) {
-      foreach ($work_orders_data as $wo) {
-        $html .= '<tr>';
-        $html .= '<td>' . $wo['title'] . '</td>';
-        $html .= '<td>' . $wo['line_item'] . '</td>';
-        $html .= '<td>' . $wo['unit'] . '</td>';
-        $html .= '<td>' . $wo['quantity'] . '</td>';
-        $html .= '<td>' . $wo['expected_due'] . '</td>';
-        $html .= '<td>' . $wo['order_status'] . '</td>';
-        $html .= '<td>
-          <button class="btn btn-outline-primary btn-sm view-workorder" data-id="' . $wo['id'] . '">View</button>
-          <button class="btn btn-outline-secondary btn-sm edit-workorder" data-id="' . $wo['id'] . '">Edit</button>
-        </td>';
-        $html .= '</tr>';
-      }
+        foreach ($work_orders_data as $wo) {
+            $html .= '<tr>';
+            $html .= '<td>' . $wo['title'] . '</td>';
+            $html .= '<td>' . $wo['line_item'] . '</td>';
+            $html .= '<td>' . $wo['unit'] . '</td>';
+            $html .= '<td>' . $wo['quantity'] . '</td>';
+            $html .= '<td>' . $wo['expected_due'] . '</td>';
+            $html .= '<td>' . $wo['order_status'] . '</td>';
+            $html .= '<td>
+                <button class="btn btn-outline-primary btn-sm view-workorder" data-id="' . $wo['id'] . '">View</button>
+                <button class="btn btn-outline-secondary btn-sm edit-workorder" data-id="' . $wo['id'] . '">Edit</button>
+            </td>';
+            $html .= '</tr>';
+        }
     } else {
-      $html .= '<tr><td colspan="7" class="text-center text-muted">No work orders found.</td></tr>';
+        $html .= '<tr><td colspan="7" class="text-center text-muted">No work orders found.</td></tr>';
     }
+
     $html .= '</tbody></table>';
 
-    // --- Return JSON Response ---
+    // --- Return Response ---
     $response = new JsonResponse([
-      'status' => 'success',
-      'message' => 'Work order added successfully.',
-      'html' => $html,
+        'status' => 'success',
+        'message' => 'Work order added successfully.',
+        'html' => $html,
     ]);
 
-    // Prevent caching of this AJAX response
     $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
     $response->headers->set('Pragma', 'no-cache');
     $response->headers->set('Expires', '0');
@@ -256,8 +286,8 @@ class WorkOrderController extends ControllerBase {
     $status = trim($request->request->get('status'));
     $remarks = trim($request->request->get('remarks'));
 
+    // --- Update taxonomy status ---
     if ($status) {
-      // Lookup taxonomy term for given label.
       $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
         'name' => $status,
         'vid' => 'order_status',
@@ -268,14 +298,73 @@ class WorkOrderController extends ControllerBase {
       }
     }
 
+    // --- Update remarks ---
     if ($remarks !== '') {
       $node->set('body', ['value' => $remarks, 'format' => 'basic_html']);
     }
 
     $node->save();
 
+    // =========================================================
+    // REBUILD FULL WORKORDER TABLE HTML
+    // =========================================================
+
+    $quotation_id = $node->get('field_linked_quotation')->target_id ?? NULL;
+    if (!$quotation_id) {
+      return new JsonResponse(['status' => 'success', 'html' => '', 'message' => 'Updated.']);
+    }
+
+    // Load ALL work orders under this quotation
+    $workorder_ids = \Drupal::entityQuery('node')
+      ->condition('type', 'work_order')
+      ->condition('field_linked_quotation', $quotation_id)
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $workorders = \Drupal\node\Entity\Node::loadMultiple($workorder_ids);
+
+    $rows_html = '';
+
+    foreach ($workorders as $wo) {
+      $rows_html .= '
+        <tr>
+          <td>' . $wo->label() . '</td>
+          <td>' . ($wo->get('field_linked_line_item')->entity->label() ?? '') . '</td>
+          <td>' . ($wo->get('field_unit_assigned')->entity->label() ?? '') . '</td>
+          <td>' . $wo->get('field_quantity')->value . '</td>
+          <td>' . $wo->get('field_expected_due_date')->value . '</td>
+          <td>' . $wo->get('field_order_status')->entity->label() . '</td>
+          <td>
+            <button class="btn btn-outline-primary btn-sm view-workorder" data-id="' . $wo->id() . '">View</button>
+            <button class="btn btn-outline-secondary btn-sm edit-workorder" data-id="' . $wo->id() . '">Edit</button>
+          </td>
+        </tr>
+      ';
+    }
+
+    // Wrap inside <table> if your JS expects full replacement
+    $table_html = '
+      <table class="table table-bordered table-striped align-middle" id="workorder-table">
+        <thead class="table-light">
+          <tr>
+            <th>Work Order #</th>
+            <th>Linked Line Item</th>
+            <th>Unit Assigned</th>
+            <th>Quantity</th>
+            <th>Expected Due Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ' . $rows_html . '
+        </tbody>
+      </table>
+    ';
+
     return new JsonResponse([
       'status' => 'success',
+      'html' => $table_html,
       'message' => 'Work order updated successfully.',
     ]);
   }

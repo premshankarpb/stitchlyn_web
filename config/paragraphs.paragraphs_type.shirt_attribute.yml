@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies: {  }
 id: shirt_attribute
-label: 'Shirt Attribute'
+label: 'Shirt Attributes'
 icon_uuid: null
 icon_default: null
 description: ''

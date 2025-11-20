@@ -174,3 +174,7 @@ em.placeholder {
 .messages__wrapper .messages__content a {
   color: black;
 }
+
+.admin-layout .aesthetic-sidebar {
+  padding-top: 3rem !important;
+}

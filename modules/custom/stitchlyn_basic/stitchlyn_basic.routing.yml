@@ -4,7 +4,7 @@ stitchlyn_basic.dashboard:
     _controller: '\Drupal\stitchlyn_basic\Controller\DashboardController::view'
     _title: 'Dashboard'
   requirements:
-    _permission: 'access content'
+    _permission: 'administer site configuration'
 stitchlyn_basic.profile_form:
   path: '/user/{user}/profiles/{profile_type}/update'
   defaults:

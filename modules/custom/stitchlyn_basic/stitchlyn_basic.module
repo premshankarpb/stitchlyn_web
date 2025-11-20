@@ -7,6 +7,8 @@ use Drupal\user\UserInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
 
 function stitchlyn_basic_theme($existing, $type, $theme, $path) {
   return [
@@ -265,4 +267,76 @@ function stitchlyn_basic_node_presave(\Drupal\Core\Entity\EntityInterface $entit
     $alias = '/dashboard/payments/' . $entity->id();
     $entity->path = ['alias' => $alias];
   }
+}
+
+/**
+ * Implements hook_views_query_alter().
+ *
+ * Restrict "My Work Orders" view to units assigned to the logged-in Unit Manager.
+ */
+function stitchlyn_basic_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  // Only affect our specific view & display.
+  if ($view->id() !== 'my_work_orders') {
+    return;
+  }
+
+  // Optional: only lock down the page display.
+  if ($view->current_display !== 'page_1') {
+    return;
+  }
+
+  $account = \Drupal::currentUser();
+
+  // Safety: only apply to Unit Manager role.
+  if (!$account->hasRole('unit_manager')) {
+    return;
+  }
+
+  $uid = $account->id();
+
+  // Load the Unit Manager profile for this user.
+  $profiles = \Drupal::entityTypeManager()
+    ->getStorage('profile')
+    ->loadByProperties([
+      'uid' => $uid,
+      'type' => 'unit_manager',
+    ]);
+
+  if (!$profiles) {
+    // User has no profile: return no results.
+    $query->addWhereExpression(0, '1 = 0');
+    return;
+  }
+
+  /** @var \Drupal\profile\Entity\Profile $profile */
+  $profile = reset($profiles);
+
+  if (!$profile->hasField('field_unit') || $profile->get('field_unit')->isEmpty()) {
+    // Profile has no units: return no results.
+    $query->addWhereExpression(0, '1 = 0');
+    return;
+  }
+
+  // Get all term IDs from profile.field_unit (Production Units).
+  $unit_ids = array_column($profile->get('field_unit')->getValue(), 'target_id');
+
+  if (empty($unit_ids)) {
+    $query->addWhereExpression(0, '1 = 0');
+    return;
+  }
+
+  \Drupal::logger('assigned unit')->warning('<pre><code>' . print_r($unit_ids, TRUE) . '</code></pre>');
+
+  // Ensure the Work Order's unit field table is joined.
+  // This is the field "Unit Assigned" (field_unit_assigned) on work_order.
+  $unit_table = $query->ensureTable('node__field_unit_assigned');
+
+  // Add restriction: field_unit_assigned_target_id IN (user's units).
+  $query->addWhere(
+    // Group: 0 (default AND group).
+    0,
+    $unit_table . '.field_unit_assigned_target_id',
+    $unit_ids,
+    'IN'
+  );
 }

@@ -36,11 +36,7 @@ inventory_log:
     - core/once
     - core/drupalSettings
 work_order:
-  css:
-    theme:
-      https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.min.css: { type: external }
   js:
-    https://code.jquery.com/ui/1.13.2/jquery-ui.min.js: { type: external }
     js/work_order.js: {}
   dependencies:
     - core/jquery

@@ -155,23 +155,48 @@ class InventoryController extends ControllerBase {
       $cost  = (float) ($item->get('field_cost_price')->value ?? 0);
       $total = $cost * $qty;
 
-      // --- Return JSON with HTML row ---
-      $row_html = '
-        <tr data-id="' . $log->id() . '">
-          <td>' . $item->label() . '</td>
-          <td>' . ($item->get('field_opening_stock')->value ?? '') . '</td>
-          <td>' . ($item->get('field_unit_of_measure')->entity->label() ?? '') . '</td>
-          <td>₹' . number_format($cost, 2) . '</td>
-          <td>' . $log->get('field_quantity')->value . '</td>
-          <td>₹' . number_format($cost * (float) $log->get('field_quantity')->value, 2) . '</td>
-          <td><button class="btn btn-outline-danger btn-sm remove-log" data-id="' . $log->id() . '">Remove</button></td>
-        </tr>
-      ';
+      // ======================================================
+      // REBUILD COMPLETE INVENTORY LOG TABLE BODY
+      // ======================================================
+      $log_ids = \Drupal::entityQuery('node')
+        ->condition('type', 'inventory_transaction_log')
+        ->condition('field_purchase_order', $quotation)
+        ->accessCheck(FALSE)
+        ->execute();
+
+      $logs = \Drupal\node\Entity\Node::loadMultiple($log_ids);
+
+      $tbody_html = '';
+      $total_sum = 0;
+
+      foreach ($logs as $lg) {
+        $linked_item = $lg->get('field_inventory_item')->entity;
+
+        if (!$linked_item) continue;
+
+        $cost_price = (float) $linked_item->get('field_cost_price')->value;
+        $qty_val = (float) $lg->get('field_quantity')->value;
+        $row_total = $cost_price * $qty_val;
+
+        $total_sum += $row_total;
+
+        $tbody_html .= '
+          <tr data-id="' . $lg->id() . '">
+            <td>' . $linked_item->label() . '</td>
+            <td>' . $linked_item->get('field_opening_stock')->value . '</td>
+            <td>' . $linked_item->get('field_unit_of_measure')->entity->label() . '</td>
+            <td>₹' . number_format($cost_price, 2) . '</td>
+            <td>' . $qty_val . '</td>
+            <td>₹' . number_format($row_total, 2) . '</td>
+            <td><button class="btn btn-outline-danger btn-sm remove-log" data-id="' . $lg->id() . '">Remove</button></td>
+          </tr>
+        ';
+      }
 
       return new JsonResponse([
         'status'  => 'success',
         'message' => $message,
-        'html'    => $row_html,
+        'html'    => $tbody_html,
         'total'   => $total,
       ]);
     }
@@ -187,21 +212,23 @@ class InventoryController extends ControllerBase {
   /**
    * Delete inventory log entry and restore stock.
    */
-  public function deleteLog($id) {
+  public function deleteLog($id, $restock = 0) {
     try {
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($id);
       if ($node && $node->bundle() === 'inventory_transaction_log') {
 
-        // ✅ Restore stock to inventory item before deletion
-        if ($node->hasField('field_inventory_item') && !$node->get('field_inventory_item')->isEmpty()) {
-          $item = $node->get('field_inventory_item')->entity;
-          if ($item && $item->hasField('field_opening_stock')) {
-            $qty = (float) ($node->get('field_quantity')->value ?? 0);
-            $current_stock = (float) ($item->get('field_opening_stock')->value ?? 0);
-            $item->set('field_opening_stock', $current_stock + $qty);
-            $item->setNewRevision(TRUE);
-            $item->setRevisionLogMessage('Stock restored by ' . $qty . ' after log deletion (Log ID ' . $id . ')');
-            $item->save();
+        if($restock == 1) {
+          // ✅ Restore stock to inventory item before deletion
+          if ($node->hasField('field_inventory_item') && !$node->get('field_inventory_item')->isEmpty()) {
+            $item = $node->get('field_inventory_item')->entity;
+            if ($item && $item->hasField('field_opening_stock')) {
+              $qty = (float) ($node->get('field_quantity')->value ?? 0);
+              $current_stock = (float) ($item->get('field_opening_stock')->value ?? 0);
+              $item->set('field_opening_stock', $current_stock + $qty);
+              $item->setNewRevision(TRUE);
+              $item->setRevisionLogMessage('Stock restored by ' . $qty . ' after log deletion (Log ID ' . $id . ')');
+              $item->save();
+            }
           }
         }
 

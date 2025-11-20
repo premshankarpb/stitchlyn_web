@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.quotation.field_discount
     - field.field.node.quotation.field_expected_due_date
     - field.field.node.quotation.field_payment_status
+    - field.field.node.quotation.field_processed
     - field.field.node.quotation.field_quotation_date
     - field.field.node.quotation.field_quotation_number
     - field.field.node.quotation.field_subtotal_amount
@@ -50,6 +51,7 @@ hidden:
   field_discount: true
   field_expected_due_date: true
   field_payment_status: true
+  field_processed: true
   field_quotation_date: true
   field_quotation_number: true
   field_subtotal_amount: true

@@ -1,4 +1,4 @@
-uuid: b690dd3a-ab88-4555-a4dd-bf4904e7b2ac
+uuid: 3c39cf75-a884-4422-9107-e33ab42b5140
 langcode: en
 status: true
 dependencies:
@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_product_costings
     - node.type.product
     - paragraphs.paragraphs_type.product_costings
+  module:
+    - entity_reference_revisions
 id: node.product.field_product_costings
 field_name: field_product_costings
 entity_type: node
@@ -68,4 +70,4 @@ settings:
       umbrella_attributes:
         weight: 30
         enabled: false
-field_type: entity_reference
+field_type: entity_reference_revisions

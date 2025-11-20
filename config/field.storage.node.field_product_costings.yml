@@ -1,17 +1,18 @@
-uuid: c9a81aee-91d9-4f23-ad6e-ae6d3dd4e53c
+uuid: e6c6716d-b7db-479c-8357-4fff16f3a7be
 langcode: en
 status: true
 dependencies:
   module:
+    - entity_reference_revisions
     - node
     - paragraphs
 id: node.field_product_costings
 field_name: field_product_costings
 entity_type: node
-type: entity_reference
+type: entity_reference_revisions
 settings:
   target_type: paragraph
-module: core
+module: entity_reference_revisions
 locked: false
 cardinality: -1
 translatable: true

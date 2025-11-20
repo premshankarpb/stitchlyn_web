@@ -33,6 +33,7 @@
         "drupal/quick_node_clone": "1.22",
         "drupal/serial": "^2.1",
         "drupal/simple_menu_permissions": "^3.0",
+        "drupal/smtp": "^1.4",
         "drupal/token": "^1.15",
         "drupal/views_data_export": "^1.6",
         "drupal/webform": "^6.3@beta",
