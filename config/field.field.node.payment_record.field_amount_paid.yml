@@ -11,12 +11,12 @@ entity_type: node
 bundle: payment_record
 label: 'Amount Paid'
 description: ''
-required: false
+required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  min: null
+  min: 1.0
   max: null
   prefix: ''
   suffix: ''
