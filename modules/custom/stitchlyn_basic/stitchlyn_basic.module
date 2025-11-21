@@ -259,17 +259,6 @@ function stitchlyn_basic_preprocess_node(array &$variables) {
 }
 
 /**
- * Implements hook_node_presave().
- */
-function stitchlyn_basic_node_presave(\Drupal\Core\Entity\EntityInterface $entity) {
-  if ($entity->getType() === 'payment_record') {
-    // Create a clean alias, e.g., /payments/1234 or /payments/{title}
-    $alias = '/dashboard/payments/' . $entity->id();
-    $entity->path = ['alias' => $alias];
-  }
-}
-
-/**
  * Implements hook_views_query_alter().
  *
  * Restrict "My Work Orders" view to units assigned to the logged-in Unit Manager.
@@ -339,4 +328,55 @@ function stitchlyn_basic_views_query_alter(ViewExecutable $view, QueryPluginBase
     $unit_ids,
     'IN'
   );
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function stitchlyn_basic_form_node_payment_record_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $form['#validate'][] = 'stitchlyn_basic_validate_payment_amount';
+}
+
+/**
+ * Custom validation: Payment amount must not exceed remaining pending.
+ */
+function stitchlyn_basic_validate_payment_amount(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $order_nid_raw = $form_state->getValue(['field_reference_order', 0, 'target_id']);
+  if (!$order_nid_raw) {
+    return;
+  }
+  // Convert "Purchase-Order_1 (19)" → 19.
+  $order_nid = preg_replace('/[^0-9]/', '', $order_nid_raw);
+  if (!$order_nid) {
+    return;
+  }
+
+  $order = \Drupal\node\Entity\Node::load($order_nid);
+  if (!$order) {
+    return;
+  }
+
+  // Read ACTUAL numeric values from node entity — not from form inputs.
+  $total_amount   = (float) ($order->get('field_total_amount')->value ?? 0);
+  $amount_paid    = (float) ($order->get('field_amount_collected')->value ?? 0);
+  $amount_pending = (float) ($order->get('field_amount_pending')->value ?? 0);
+
+  // New payment value user entered.
+  $new_payment = (float) $form_state->getValue(['field_amount_paid', 0, 'value']);
+
+  // Calculate remaining amount before applying the new payment.
+  $remaining = $total_amount - $amount_paid;
+
+  // Validation: prevent exceeding total.
+  if ($new_payment > $remaining) {
+    $form_state->setErrorByName('field_amount_paid', t(
+      'Payment exceeds remaining pending amount. Maximum payable now is: @max',
+      ['@max' => number_format($remaining, 2)]
+    ));
+  }
+  if ($remaining == 0) {
+    $form_state->setErrorByName('field_amount_paid', t(
+      'There is no amount pending for this order.',
+    ));
+  }
 }
