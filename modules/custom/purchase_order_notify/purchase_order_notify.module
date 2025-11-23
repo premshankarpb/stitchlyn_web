@@ -10,6 +10,7 @@ function purchase_order_notify_mail($key, &$message, $params) {
   switch ($key) {
     case 'purchase_order_fulfilled':
     case 'quotation_accepted':
+    case 'restock_raw_material':
       $message['subject'] = $params['subject'];
       $message['body'][] = $params['message'];
       break;

@@ -143,7 +143,7 @@ class PurchaseOrderMailService {
     );
 
     $result = $this->mailManager->mail(
-      'restock_inventory',
+      'purchase_order_notify',
       'restock_raw_material', // <-- Correct mail key
       $to,
       $langcode,
