@@ -72,6 +72,7 @@ class PurchaseOrderMailService {
    */
   public function sendQuotationAcceptedMail(NodeInterface $node): void {
 
+    // 1️⃣ Get the customer email
     $customer = $node->get('field_customer_reference')->entity;
 
     if ($customer instanceof \Drupal\user\UserInterface) {
@@ -80,48 +81,66 @@ class PurchaseOrderMailService {
         return;
       }
     }
-
-    $pdf_url = \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/quotation/" . $node->id() . "/pdf";
-
-    // 2. Download the PDF content.
-    $client = \Drupal::httpClient();
-    $response = $client->get($pdf_url);
-
-    if ($response->getStatusCode() !== 200) {
-      $this->messenger()->addError('Could not download PDF.');
+    else {
+      // No valid customer user → skip
       return;
     }
 
-    $pdf_data = $response->getBody()->getContents();
+    // 2️⃣ Build the PDF URL (existing route)
+    $pdf_url = \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/quotation/" . $node->id() . "/pdf";
 
-    $to = $email;
-    $langcode = $node->language()->getId();
+    // 3️⃣ Use current user's session for authentication
+    $request = \Drupal::requestStack()->getCurrentRequest();
+    $session_name = session_name(); // Usually SESS...
+    $session_id = $request->getSession()->getId();
+    $cookie = $session_name . '=' . $session_id;
+    $pdf_data = NULL;
 
+    // 4️⃣ Fetch PDF using HTTP client
+    try {
+      $client = \Drupal::httpClient();
+      $response = $client->get($pdf_url, [
+        'headers' => [
+            'Cookie' => $cookie,
+        ],
+      ]);
+
+      if ($response->getStatusCode() !== 200) {
+        \Drupal::messenger()->addError('Could not download PDF.');
+        return;
+      }
+
+      $pdf_data = $response->getBody()->getContents();
+
+    } catch (\Exception $e) {
+        \Drupal::messenger()->addError('Error fetching PDF: ' . $e->getMessage());
+        \Drupal::logger('purchase_order_notify')->error('PDF fetch error: @message', ['@message' => $e->getMessage()]);
+        return;
+    }
+
+    // 5️⃣ Prepare email parameters
     $params['subject'] = 'Quotation Accepted';
-    $params['attachment'] = [
-        'filecontent' => $pdf_data,
-        'filename' => 'quotation-' . $node->id() . '.pdf',
-        'filemime' => 'application/pdf',
-    ];
     $params['message'] = sprintf(
-      "A quotation has been accepted.\n\nTitle: %s\nURL: %s",
-      $node->label(),
-      $node->toUrl('canonical', ['absolute' => TRUE])->toString()
+        "A quotation has been accepted.\n\nTitle: %s\nURL: %s",
+        $node->label(),
+        $node->toUrl('canonical', ['absolute' => TRUE])->toString()
     );
 
-    $result = $this->mailManager->mail(
-      'purchase_order_notify',
-      'quotation_accepted', // <-- Correct mail key
-      $to,
-      $langcode,
-      $params
-    );
+    // 6️⃣ Add attachment only if PDF is available
+    if (!empty($pdf_data)) {
+      $params['attachment'] = [
+          'filecontent' => $pdf_data,
+          'filename' => 'quotation-' . $node->id() . '.pdf',
+          'filemime' => 'application/pdf',
+      ];
+    }
 
+    // 7️⃣ Log result
     if (empty($result['result'])) {
-      $this->logger->error('Failed to send Quotation Accepted email for @title.', ['@title' => $node->label()]);
+        $this->logger->error('Failed to send Quotation Accepted email for @title.', ['@title' => $node->label()]);
     }
     else {
-      $this->logger->info('Quotation Accepted email sent successfully for @title.', ['@title' => $node->label()]);
+        $this->logger->info('Quotation Accepted email sent successfully for @title.', ['@title' => $node->label()]);
     }
   }
 
