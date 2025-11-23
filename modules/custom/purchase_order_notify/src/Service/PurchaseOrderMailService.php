@@ -48,7 +48,7 @@ class PurchaseOrderMailService {
     $params['message'] = sprintf(
       "A Purchase Order has been fulfilled.\n\nTitle: %s\nURL: %s",
       $node->label(),
-      $node->toUrl('canonical', ['absolute' => TRUE])->toString()
+      \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id()
     );
 
     $result = $this->mailManager->mail(
@@ -123,7 +123,7 @@ class PurchaseOrderMailService {
     $params['message'] = sprintf(
         "A quotation has been accepted.\n\nTitle: %s\nURL: %s",
         $node->label(),
-        $node->toUrl('canonical', ['absolute' => TRUE])->toString()
+        \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/quotation/' . $node->id()
     );
 
     // 6️⃣ Add attachment only if PDF is available
@@ -158,7 +158,7 @@ class PurchaseOrderMailService {
     $params['message'] = sprintf(
       "Restock the Inventory Raw material.\n\nTitle: %s\nURL: %s",
       $node->label(),
-      $node->toUrl('canonical', ['absolute' => TRUE])->toString()
+      \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/inventory/' . $node->id()
     );
 
     $result = $this->mailManager->mail(
