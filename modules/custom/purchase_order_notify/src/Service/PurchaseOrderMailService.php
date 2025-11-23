@@ -76,8 +76,8 @@ class PurchaseOrderMailService {
     $customer = $node->get('field_customer_reference')->entity;
 
     if ($customer instanceof \Drupal\user\UserInterface) {
-      $email = $customer->get('mail')->value;
-      if (empty($email)) {
+      $to_email = $customer->get('mail')->value;
+      if (empty($to_email)) {
         return;
       }
     }
@@ -118,29 +118,34 @@ class PurchaseOrderMailService {
         return;
     }
 
-    // 5️⃣ Prepare email parameters
-    $params['subject'] = 'Quotation Accepted';
-    $params['message'] = sprintf(
-        "A quotation has been accepted.\n\nTitle: %s\nURL: %s",
-        $node->label(),
-        \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/quotation/' . $node->id()
-    );
+    // 5️⃣ Compose the email
+    /** @var MailerInterface $mailer */
+    $mailer = \Drupal::service('mailer.mailer');
+
+    $email = (new Email())
+      ->from('noreply@stitchlyn.com')
+      ->to($to_email)
+      ->subject('Quotation Accepted')
+      ->text(sprintf(
+          "A quotation has been accepted.\n\nTitle: %s\nURL: %s",
+          $node->label(),
+          \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/quotation/' . $node->id()
+      ));
 
     // 6️⃣ Add attachment only if PDF is available
     if (!empty($pdf_data)) {
-      $params['attachment'] = [
-          'filecontent' => $pdf_data,
-          'filename' => 'quotation-' . $node->id() . '.pdf',
-          'filemime' => 'application/pdf',
-      ];
+      $email->attach($pdf_data, 'quotation-' . $node->id() . '.pdf', 'application/pdf');
     }
 
-    // 7️⃣ Log result
-    if (empty($result['result'])) {
-        $this->logger->error('Failed to send Quotation Accepted email for @title.', ['@title' => $node->label()]);
-    }
-    else {
-        $this->logger->info('Quotation Accepted email sent successfully for @title.', ['@title' => $node->label()]);
+     // 7️⃣ Send the email
+    try {
+      $mailer->send($email);
+      $this->logger->info('Quotation Accepted email sent successfully for @title.', ['@title' => $node->label()]);
+    } catch (\Exception $e) {
+        $this->logger->error('Failed to send Quotation Accepted email for @title: @message', [
+          '@title' => $node->label(),
+          '@message' => $e->getMessage(),
+        ]);
     }
   }
 
