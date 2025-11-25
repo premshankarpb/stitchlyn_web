@@ -36,6 +36,7 @@ class PurchaseOrderMailService {
 
     if ($customer instanceof \Drupal\user\UserInterface) {
       $email = $customer->get('mail')->value;
+      $username = $user->getDisplayName();
       if (empty($email)) {
         return;
       }
@@ -44,12 +45,56 @@ class PurchaseOrderMailService {
     $to = $email;
     $langcode = $node->language()->getId();
 
+    // 2️⃣ Build the PDF URL (existing route)
+    $pdf_url = \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/po/" . $node->id() . "/pdf";
+
+    // 3️⃣ Use current user's session for authentication
+    $request = \Drupal::requestStack()->getCurrentRequest();
+    $session_name = session_name(); // Usually SESS...
+    $session_id = $request->getSession()->getId();
+    $cookie = $session_name . '=' . $session_id;
+    $pdf_data = NULL;
+
+    // 4️⃣ Fetch PDF using HTTP client
+    try {
+      $client = \Drupal::httpClient();
+      $response = $client->get($pdf_url, [
+        'headers' => [
+            'Cookie' => $cookie,
+        ],
+      ]);
+
+      if ($response->getStatusCode() !== 200) {
+        \Drupal::messenger()->addError('Could not download PDF.');
+        return;
+      }
+
+      $pdf_data = $response->getBody()->getContents();
+
+    } catch (\Exception $e) {
+        \Drupal::messenger()->addError('Error fetching PDF: ' . $e->getMessage());
+        \Drupal::logger('purchase_order_notify')->error('PDF fetch error: @message', ['@message' => $e->getMessage()]);
+        return;
+    }
+
+    // 5️⃣ Prepare email parameters
     $params['subject'] = 'Purchase Order Fulfilled';
     $params['message'] = sprintf(
-      "A Purchase Order has been fulfilled.\n\nTitle: %s\nURL: %s",
+      "Hello %s , <br> <br>
+      A Purchase Order has been fulfilled.\n\nTitle: %s\nURL: %s",
+      $username,
       $node->label(),
-      $node->toUrl('canonical', ['absolute' => TRUE])->toString()
+      \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id()
     );
+
+    // 6️⃣ Add attachment only if PDF is available
+    if (!empty($pdf_data)) {
+      $params['attachment'] = [
+          'filecontent' => $pdf_data,
+          'filename' => 'po-' . $node->id() . '.pdf',
+          'filemime' => 'application/pdf',
+      ];
+    }
 
     $result = $this->mailManager->mail(
       'purchase_order_notify',
