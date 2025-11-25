@@ -502,7 +502,9 @@ class QuotationAjaxController extends ControllerBase {
 
       // Attributes paragraph.
       if ($node->hasField('field_attributes') && !$node->get('field_attributes')->isEmpty()) {
-        $para = $node->get('field_attributes')->entity;
+        // $para = $node->get('field_attributes')->entity;
+        $para_items = $node->get('field_attributes')->referencedEntities();
+        $para = !empty($para_items) ? $para_items[0] : NULL;
 
         if ($para) {
           $rows[] = [
@@ -511,7 +513,6 @@ class QuotationAjaxController extends ControllerBase {
           ];
 
           foreach ($para->getFields() as $field_name => $field) {
-
             // Only process real fields
             if (strpos($field_name, 'field_') !== 0) continue;
             if ($field->isEmpty()) continue;
@@ -520,7 +521,7 @@ class QuotationAjaxController extends ControllerBase {
             $items = $field->getValue();
             $field_type = $field->getFieldDefinition()->getType();
             $output_items = [];
-
+            
             foreach ($items as $delta => $item) {
 
               /* -------------------------------
