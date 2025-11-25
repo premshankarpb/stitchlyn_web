@@ -81,10 +81,14 @@ class PurchaseOrderMailService {
     $params['subject'] = 'Purchase Order Fulfilled';
     $params['message'] = sprintf(
       "Hello %s , <br> <br>
-      A Purchase Order has been fulfilled.\n\nTitle: %s\nURL: %s",
+      A Purchase Order has been fulfilled.\n\nTitle: %s\nURL: %s <br><br>
+      Please find attached. If it is not available, you can also access it using the link below:<br>
+      <a href=\"%s\">%s</a>",
       $username,
       $node->label(),
-      \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id()
+      \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id(),
+      $node->label(),
+      \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id() . '/pdf'
     );
 
     // 6️⃣ Add attachment only if PDF is available
