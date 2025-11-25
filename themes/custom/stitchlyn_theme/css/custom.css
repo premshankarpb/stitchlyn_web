@@ -178,3 +178,7 @@ em.placeholder {
 .admin-layout .aesthetic-sidebar {
   padding-top: 3rem !important;
 }
+
+.inv-edit-fields{
+  width: auto !important;
+}

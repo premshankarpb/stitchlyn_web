@@ -140,6 +140,9 @@ function stitchlyn_theme_preprocess_page(array &$variables) {
   $social_render = $social_block->build();
   $social_render['#cache']['contexts'][] = 'user.roles';
   $variables['page']['social_links'] = $social_render['#items'] ?? [];
+
+  $current_user = \Drupal::currentUser();
+  $variables['current_user_entity'] = \Drupal\user\Entity\User::load($current_user->id());
 }
 
 /**
@@ -519,31 +522,5 @@ function stitchlyn_theme_page_attachments(array &$attachments) {
       $response->send();
       exit();
     }
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK() for header.html.twig.
- */
-function stitchlyn_theme_preprocess_header(&$variables) {
-  \Drupal::logger('custom')->notice('Preprocess header called.');
-  $account = \Drupal::currentUser();
-
-  if ($account->isAuthenticated()) {
-    $user = \Drupal\user\Entity\User::load($account->id());
-
-    if ($user->hasField('user_picture') && !$user->get('user_picture')->isEmpty()) {
-      $image = $user->get('user_picture')->entity;
-
-      if ($image instanceof File) {
-        $uri = $image->getFileUri();
-        $file_url_generator = \Drupal::service('file_url_generator');
-
-        $variables['user_picture_url'] = $file_url_generator->generateAbsoluteString($uri);
-      }
-    }
-  }
-  else {
-    $variables['user_picture_url'] = '';
   }
 }

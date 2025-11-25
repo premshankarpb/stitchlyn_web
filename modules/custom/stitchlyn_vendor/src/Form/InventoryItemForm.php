@@ -26,25 +26,59 @@ class InventoryItemForm extends FormBase {
       '#required' => TRUE,
     ];
 
+
+    $vocabulary_1 = 'item_category';
+    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocabulary_1);
+    $category_options = [];
+
+    foreach ($terms as $term) {
+      $category_options[$term->tid] = $term->name;
+    }
+
     $form['field_category'] = [
-      '#type' => 'entity_autocomplete',
+      '#type' => 'select',
       '#title' => $this->t('Item Category'),
-      '#target_type' => 'taxonomy_term',
-      '#selection_settings' => ['target_bundles' => ['item_category']],
+      '#options' => $category_options,
+      '#empty_option' => $this->t('- Select a category -'),
+      '#attributes' => [
+        'class' => ['inv-edit-fields'],
+      ],
     ];
+
+    $vocabulary_2 = 'inventory_type';
+    $terms_2 = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocabulary_2);
+    $inv_type_options = [];
+
+    foreach ($terms_2 as $term) {
+      $inv_type_options[$term->tid] = $term->name;
+    }
 
     $form['field_inventory_type'] = [
-      '#type' => 'entity_autocomplete',
+      '#type' => 'select',
       '#title' => $this->t('Inventory Type'),
-      '#target_type' => 'taxonomy_term',
-      '#selection_settings' => ['target_bundles' => ['inventory_type']],
+      '#options' => $inv_type_options,
+      '#empty_option' => $this->t('- Select an Inventory type -'),
+      '#attributes' => [
+        'class' => ['inv-edit-fields'],
+      ],
     ];
 
+    $vocabulary_3 = 'unit_measurement';
+    $terms_3 = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocabulary_3);
+    $inv_uom_options = [];
+
+    foreach ($terms_3 as $term) {
+      $inv_uom_options[$term->tid] = $term->name;
+    }
+
     $form['field_unit_of_measure'] = [
-      '#type' => 'entity_autocomplete',
+      '#type' => 'select',
       '#title' => $this->t('Unit of Measure'),
-      '#target_type' => 'taxonomy_term',
-      '#selection_settings' => ['target_bundles' => ['unit_measurement']],
+      '#options' => $inv_uom_options,
+      '#empty_option' => $this->t('- Select a Unit of Measure -'),
+      '#attributes' => [
+        'class' => ['inv-edit-fields'],
+      ],
     ];
 
     $form['field_cost_price'] = [
