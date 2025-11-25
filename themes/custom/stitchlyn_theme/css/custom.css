@@ -190,3 +190,7 @@ em.placeholder {
 .admin-layout .admin-sidebar {
   top: 0;
 }
+
+.path-dashboard .navbar-nav{
+  visibility: hidden;
+}
