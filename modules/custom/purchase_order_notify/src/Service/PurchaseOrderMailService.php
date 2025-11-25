@@ -77,6 +77,7 @@ class PurchaseOrderMailService {
 
     if ($customer instanceof \Drupal\user\UserInterface) {
       $email = $customer->get('mail')->value;
+      $username = $user->getDisplayName();
       if (empty($email)) {
         return;
       }
@@ -119,11 +120,15 @@ class PurchaseOrderMailService {
     }
 
     // 5️⃣ Prepare email parameters
-    $params['subject'] = 'Quotation Accepted';
     $params['message'] = sprintf(
-        "A quotation has been accepted.\n\nTitle: %s\nURL: %s",
-        $node->label(),
-        \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/quotation/' . $node->id()
+      "Hello %s,<br><br>
+      A quotation has been accepted.<br><br>
+      Please find the quotation attached.<br><br>
+      If it is not available, you can also access it using the link below:<br>
+      <a href=\"%s\">%s</a>",
+      $username,
+      \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/quotation/" . $node->id() . "/pdf",
+      $node->label()
     );
 
     // 6️⃣ Add attachment only if PDF is available
@@ -162,9 +167,9 @@ class PurchaseOrderMailService {
     $to = $mail_to;
     $langcode = $node->language()->getId();
 
-    $params['subject'] = 'Restock Inventory';
+    $params['subject'] = 'Reminder : Restock Inventory';
     $params['message'] = sprintf(
-      "Restock the Inventory Raw material.\n\nTitle: %s\nURL: %s",
+      "Hello <br> br> Restock the Inventory Raw material.\n\nTitle: %s\nURL: %s",
       $node->label(),
       \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/inventory/' . $node->id()
     );
