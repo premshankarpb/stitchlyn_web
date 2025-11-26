@@ -182,3 +182,15 @@ em.placeholder {
 .inv-edit-fields{
   width: auto !important;
 }
+
+.navbar {
+  padding: 0;
+}
+
+.admin-layout .admin-sidebar {
+  top: 0;
+}
+
+.path-dashboard .navbar-nav{
+  visibility: hidden;
+}
