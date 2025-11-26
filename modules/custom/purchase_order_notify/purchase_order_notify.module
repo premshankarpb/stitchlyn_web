@@ -11,36 +11,56 @@ function purchase_order_notify_mail($key, &$message, $params) {
 
   switch ($key) {
 
+    // ------------------------------------------------------------
+    // PURCHASE ORDER FULFILLED
+    // ------------------------------------------------------------
     case 'purchase_order_fulfilled':
       $message['subject'] = 'Purchase Order Fulfilled';
-      $message['body'][] = \Drupal::service('renderer')->renderPlain([
+
+      $render_array = [
         '#theme' => 'purchase_order_fulfilled',
         '#username' => $params['username'],
         '#po_title' => $params['po_title'],
         '#po_link' => $params['po_link'],
         '#pdf_link' => $params['pdf_link'],
         '#pdf_available' => !empty($params['attachment']),
-      ]);
+      ];
+
+      $message['body'][] = \Drupal::service('renderer')->renderPlain($render_array);
       break;
 
+
+    // ------------------------------------------------------------
+    // QUOTATION ACCEPTED
+    // ------------------------------------------------------------
     case 'quotation_accepted':
       $message['subject'] = 'Quotation Accepted';
-      $message['body'][] = \Drupal::service('renderer')->renderPlain([
+
+      $render_array = [
         '#theme' => 'quotation_accepted',
         '#username' => $params['username'],
         '#quotation_title' => $params['quotation_title'],
         '#quotation_pdf' => $params['quotation_pdf'],
         '#pdf_available' => !empty($params['attachment']),
-      ]);
+      ];
+
+      $message['body'][] = \Drupal::service('renderer')->renderPlain($render_array);
       break;
 
+
+    // ------------------------------------------------------------
+    // INVENTORY RESTOCK NOTIFICATION
+    // ------------------------------------------------------------
     case 'restock_raw_material':
       $message['subject'] = 'Inventory Restock Reminder';
-      $message['body'][] = \Drupal::service('renderer')->renderPlain([
+
+      $render_array = [
         '#theme' => 'restock_raw_material',
         '#item_title' => $params['item_title'],
         '#item_link' => $params['item_link'],
-      ]);
+      ];
+
+      $message['body'][] = \Drupal::service('renderer')->renderPlain($render_array);
       break;
   }
 }
