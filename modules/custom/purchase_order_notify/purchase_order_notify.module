@@ -7,14 +7,78 @@ use Drupal\Core\Entity\EntityInterface;
  * Implements hook_mail().
  */
 function purchase_order_notify_mail($key, &$message, $params) {
+  $message['headers']['Content-Type'] = 'text/html; charset=UTF-8';
+
   switch ($key) {
+
     case 'purchase_order_fulfilled':
+      $message['subject'] = 'Purchase Order Fulfilled';
+      $message['body'][] = \Drupal::service('renderer')->renderPlain([
+        '#theme' => 'purchase_order_fulfilled',
+        '#username' => $params['username'],
+        '#po_title' => $params['po_title'],
+        '#po_link' => $params['po_link'],
+        '#pdf_link' => $params['pdf_link'],
+        '#pdf_available' => !empty($params['attachment']),
+      ]);
+      break;
+
     case 'quotation_accepted':
+      $message['subject'] = 'Quotation Accepted';
+      $message['body'][] = \Drupal::service('renderer')->renderPlain([
+        '#theme' => 'quotation_accepted',
+        '#username' => $params['username'],
+        '#quotation_title' => $params['quotation_title'],
+        '#quotation_pdf' => $params['quotation_pdf'],
+        '#pdf_available' => !empty($params['attachment']),
+      ]);
+      break;
+
     case 'restock_raw_material':
-      $message['subject'] = $params['subject'];
-      $message['body'][] = $params['message'];
+      $message['subject'] = 'Inventory Restock Reminder';
+      $message['body'][] = \Drupal::service('renderer')->renderPlain([
+        '#theme' => 'restock_raw_material',
+        '#item_title' => $params['item_title'],
+        '#item_link' => $params['item_link'],
+      ]);
       break;
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function purchase_order_notify_theme() {
+  return [
+    'purchase_order_fulfilled' => [
+      'variables' => [
+        'username' => NULL,
+        'po_title' => NULL,
+        'po_link' => NULL,
+        'pdf_link' => NULL,
+        'pdf_available' => FALSE,
+      ],
+      'template' => 'mail/purchase_order_fulfilled',
+    ],
+
+    'quotation_accepted' => [
+      'variables' => [
+        'username' => NULL,
+        'quotation_title' => NULL,
+        'quotation_pdf' => NULL,
+        'pdf_available' => FALSE,
+      ],
+      'template' => 'mail/quotation_accepted',
+    ],
+
+    'restock_raw_material' => [
+      'variables' => [
+        'item_title' => NULL,
+        'item_link' => NULL,
+      ],
+      'template' => 'mail/restock_raw_material',
+    ],
+  ];
 }
 
 /**

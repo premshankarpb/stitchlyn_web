@@ -1,0 +1,15 @@
+<p>Hello {{ username }},</p>
+
+<p>Your quotation has been <strong>Accepted</strong>.</p>
+
+<p><strong>Quotation:</strong> {{ quotation_title }}</p>
+<p><strong>Download PDF:</strong> <a href="{{ quotation_pdf }}">{{ quotation_pdf }}</a></p>
+
+{% if pdf_available %}
+<p>The quotation PDF is attached.</p>
+{% else %}
+<p>The PDF is not attached. You can access it from the above link.</p>
+{% endif %}
+
+<br>
+<p>Thank you,<br>Stitchlyn Team</p>

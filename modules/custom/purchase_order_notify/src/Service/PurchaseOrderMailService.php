@@ -32,71 +32,40 @@ class PurchaseOrderMailService {
    * Send an email when a Purchase Order is marked as "Fulfilled".
    */
   public function sendPurchaseOrderFulfilledMail(NodeInterface $node): void {
+
     $customer = $node->get('field_vendor')->entity;
 
-    if ($customer instanceof \Drupal\user\UserInterface) {
-      $email = $customer->get('mail')->value;
-      $username = $user->getDisplayName();
-      if (empty($email)) {
-        return;
-      }
+    if (!$customer instanceof \Drupal\user\UserInterface) {
+      return;
     }
 
-    $to = $email;
+    $email = $customer->getEmail();
+    $username = $customer->getDisplayName();
+
+    if (empty($email)) {
+      return;
+    }
+
     $langcode = $node->language()->getId();
+    $to = $email;
 
-    // 2️⃣ Build the PDF URL (existing route)
-    $pdf_url = \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/po/" . $node->id() . "/pdf";
+    // Build PDF via shared service
+    $pdf_output = \Drupal::service('purchase_order_notify.pdf_builder')
+      ->buildPurchaseOrderPdf($node);
 
-    // 3️⃣ Use current user's session for authentication
-    $request = \Drupal::requestStack()->getCurrentRequest();
-    $session_name = session_name(); // Usually SESS...
-    $session_id = $request->getSession()->getId();
-    $cookie = $session_name . '=' . $session_id;
-    $pdf_data = NULL;
+    // Mail template params
+    $params = [
+      'username'  => $username,
+      'po_title'  => $node->label(),
+      'po_link'   => \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id(),
+      'pdf_link'  => \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id() . '/pdf',
+    ];
 
-    // 4️⃣ Fetch PDF using HTTP client
-    try {
-      $client = \Drupal::httpClient();
-      $response = $client->get($pdf_url, [
-        'headers' => [
-            'Cookie' => $cookie,
-        ],
-      ]);
-
-      if ($response->getStatusCode() !== 200) {
-        \Drupal::messenger()->addError('Could not download PDF.');
-        return;
-      }
-
-      $pdf_data = $response->getBody()->getContents();
-
-    } catch (\Exception $e) {
-        \Drupal::messenger()->addError('Error fetching PDF: ' . $e->getMessage());
-        \Drupal::logger('purchase_order_notify')->error('PDF fetch error: @message', ['@message' => $e->getMessage()]);
-        return;
-    }
-
-    // 5️⃣ Prepare email parameters
-    $params['subject'] = 'Purchase Order Fulfilled';
-    $params['message'] = sprintf(
-      "Hello %s , <br> <br>
-      A Purchase Order has been fulfilled.\n\nTitle: %s\nURL: %s <br><br>
-      Please find attached. If it is not available, you can also access it using the link below:<br>
-      <a href=\"%s\">%s</a>",
-      $username,
-      $node->label(),
-      \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id(),
-      $node->label(),
-      \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id() . '/pdf'
-    );
-
-    // 6️⃣ Add attachment only if PDF is available
-    if (!empty($pdf_data)) {
+    if (!empty($pdf_output)) {
       $params['attachment'] = [
-          'filecontent' => $pdf_data,
-          'filename' => 'po-' . $node->id() . '.pdf',
-          'filemime' => 'application/pdf',
+        'filecontent' => $pdf_output,
+        'filename'    => 'purchase-order-' . $node->id() . '.pdf',
+        'filemime'    => 'application/pdf',
       ];
     }
 
@@ -109,133 +78,129 @@ class PurchaseOrderMailService {
     );
 
     if (empty($result['result'])) {
-      $this->logger->error('Failed to send Fulfilled email for Purchase Order @title.', ['@title' => $node->label()]);
+      $this->logger->error('Failed to send PO Fulfilled email for @title.', [
+        '@title' => $node->label(),
+      ]);
     }
     else {
-      $this->logger->info('Fulfilled email sent successfully for Purchase Order @title.', ['@title' => $node->label()]);
+      $this->logger->info('PO Fulfilled email sent successfully for @title.', [
+        '@title' => $node->label(),
+      ]);
     }
   }
 
+
   /**
-   * Send an email when a Quotation node is created (accepted).
+   * Send an email when a Quotation node is accepted.
    */
   public function sendQuotationAcceptedMail(NodeInterface $node): void {
 
-    // 1️⃣ Get the customer email
+    // 1️⃣ Get customer user
     $customer = $node->get('field_customer_reference')->entity;
 
-    if ($customer instanceof \Drupal\user\UserInterface) {
-      $email = $customer->get('mail')->value;
-      $username = $user->getDisplayName();
-      if (empty($email)) {
-        return;
-      }
-    }
-    else {
-      // No valid customer user → skip
+    if (!$customer instanceof \Drupal\user\UserInterface) {
       return;
     }
 
-    // 2️⃣ Build the PDF URL (existing route)
-    $pdf_url = \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/quotation/" . $node->id() . "/pdf";
+    $email = $customer->getEmail();
+    $username = $customer->getDisplayName();
 
-    // 3️⃣ Use current user's session for authentication
-    $request = \Drupal::requestStack()->getCurrentRequest();
-    $session_name = session_name(); // Usually SESS...
-    $session_id = $request->getSession()->getId();
-    $cookie = $session_name . '=' . $session_id;
-    $pdf_data = NULL;
-
-    // 4️⃣ Fetch PDF using HTTP client
-    try {
-      $client = \Drupal::httpClient();
-      $response = $client->get($pdf_url, [
-        'headers' => [
-            'Cookie' => $cookie,
-        ],
-      ]);
-
-      if ($response->getStatusCode() !== 200) {
-        \Drupal::messenger()->addError('Could not download PDF.');
-        return;
-      }
-
-      $pdf_data = $response->getBody()->getContents();
-
-    } catch (\Exception $e) {
-        \Drupal::messenger()->addError('Error fetching PDF: ' . $e->getMessage());
-        \Drupal::logger('purchase_order_notify')->error('PDF fetch error: @message', ['@message' => $e->getMessage()]);
-        return;
+    if (empty($email)) {
+      return;
     }
 
-    // 5️⃣ Prepare email parameters
-    $params['message'] = sprintf(
-      "Hello %s,<br><br>
-      A quotation has been accepted.<br><br>
-      Please find the quotation attached.<br><br>
-      If it is not available, you can also access it using the link below:<br>
-      <a href=\"%s\">%s</a>",
-      $username,
-      \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/quotation/" . $node->id() . "/pdf",
-      $node->label()
-    );
+    $to = $email;
+    $langcode = $node->language()->getId();
 
-    // 6️⃣ Add attachment only if PDF is available
-    if (!empty($pdf_data)) {
+    // 2️⃣ Build the Quotation PDF using PdfBuilder service
+    $pdf_output = \Drupal::service('purchase_order_notify.pdf_builder')
+      ->buildQuotationPdf($node);
+
+    // 3️⃣ Prepare template variables
+    $params = [
+      'username'         => $username,
+      'quotation_title'  => $node->label(),
+      'quotation_pdf'    => \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/quotation/" . $node->id() . "/pdf",
+    ];
+
+    // 4️⃣ Attach PDF if successfully generated
+    if (!empty($pdf_output)) {
       $params['attachment'] = [
-          'filecontent' => $pdf_data,
-          'filename' => 'quotation-' . $node->id() . '.pdf',
-          'filemime' => 'application/pdf',
+        'filecontent' => $pdf_output,
+        'filename'    => 'quotation-' . $node->id() . '.pdf',
+        'filemime'    => 'application/pdf',
       ];
     }
 
+    // 5️⃣ Send email
     $result = $this->mailManager->mail(
       'purchase_order_notify',
-      'quotation_accepted', // <-- Correct mail key
-      $email,
-      $langcode,
-      $params
-    );
-
-    // 7️⃣ Log result
-    if (empty($result['result'])) {
-        $this->logger->error('Failed to send Quotation Accepted email for @title.', ['@title' => $node->label()]);
-    }
-    else {
-        $this->logger->info('Quotation Accepted email sent successfully for @title.', ['@title' => $node->label()]);
-    }
-  }
-
-  /**
-   * Send an email when a Inventory is running low.
-   */
-  public function sendRestockInventory(NodeInterface $node): void {
-    $config = \Drupal::config('stitchlyn_basic.erp_settings');
-    $mail_to = $config->get('client_email');
-
-    $to = $mail_to;
-    $langcode = $node->language()->getId();
-
-    $params['subject'] = 'Reminder : Restock Inventory';
-    $params['message'] = sprintf(
-      "Hello <br> br> Restock the Inventory Raw material.\n\nTitle: %s\nURL: %s",
-      $node->label(),
-      \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/inventory/' . $node->id()
-    );
-
-    $result = $this->mailManager->mail(
-      'purchase_order_notify',
-      'restock_raw_material', // <-- Correct mail key
+      'quotation_accepted',
       $to,
       $langcode,
       $params
     );
 
+    // 6️⃣ Log result
     if (empty($result['result'])) {
-      $this->logger->error('Failed to send Inventory restock email for @title.', ['@title' => $node->label()]);
+      $this->logger->error('Failed to send Quotation Accepted email for @title.', [
+        '@title' => $node->label(),
+      ]);
     }
     else {
-      $this->logger->info('Inventory restock email sent successfully for @title.', ['@title' => $node->label()]);
+      $this->logger->info('Quotation Accepted email sent successfully for @title.', [
+        '@title' => $node->label(),
+      ]);
+    }
+  }
+
+  /**
+   * Send an email when an Inventory Item is running low.
+   */
+  public function sendRestockInventory(NodeInterface $node): void {
+
+    // 1️⃣ Get admin email from Stitchlyn ERP settings
+    $config = \Drupal::config('stitchlyn_basic.erp_settings');
+    $mail_to = $config->get('client_email');
+
+    if (empty($mail_to)) {
+      $this->logger->error('Inventory restock email could not be sent. No admin email configured.');
+      return;
+    }
+
+    $to = $mail_to;
+    $langcode = $node->language()->getId();
+
+    // 2️⃣ Build the item link
+    $item_link = \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/inventory/' . $node->id();
+
+    // 3️⃣ Prepare template variables for hook_mail()
+    $params = [
+      'item_title' => $node->label(),
+      'item_link'  => $item_link,
+    ];
+
+    // 4️⃣ Send the email
+    $result = $this->mailManager->mail(
+      'purchase_order_notify',
+      'restock_raw_material',
+      $to,
+      $langcode,
+      $params
+    );
+
+    // 5️⃣ Logging
+    if (empty($result['result'])) {
+      $this->logger->error(
+        'Failed to send Inventory Restock email for @title.',
+        ['@title' => $node->label()]
+      );
+    }
+    else {
+      $this->logger->info(
+        'Inventory Restock email sent successfully for @title.',
+        ['@title' => $node->label()]
+      );
     }
   }
 

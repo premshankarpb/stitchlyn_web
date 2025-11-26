@@ -7,3 +7,9 @@ services:
     class: Drupal\purchase_order_notify\Service\PurchaseOrderMailService
     arguments: ['@plugin.manager.mail', '@logger.channel.purchase_order_notify', '@config.factory']
 
+  purchase_order_notify.pdf_builder:
+    class: Drupal\purchase_order_notify\Service\PdfBuilder
+    arguments:
+      - '@renderer'
+      - '@config.factory'
+      - '@entity_type.manager'

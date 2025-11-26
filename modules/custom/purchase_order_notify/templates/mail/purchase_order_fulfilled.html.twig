@@ -1,0 +1,16 @@
+<p>Hello {{ username }},</p>
+
+<p>The following Purchase Order has been <strong>Fulfilled</strong>:</p>
+
+<p><strong>Title:</strong> {{ po_title }}</p>
+<p><strong>View PO:</strong> <a href="{{ po_link }}">{{ po_link }}</a></p>
+
+{% if pdf_available %}
+<p>The PDF is attached to this email.</p>
+{% else %}
+<p>The PDF could not be attached. You can still download it here:</p>
+<p><a href="{{ pdf_link }}">{{ pdf_link }}</a></p>
+{% endif %}
+
+<br>
+<p>Regards,<br>Stitchlyn Team</p>
