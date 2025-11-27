@@ -10,7 +10,6 @@ function purchase_order_notify_mail($key, &$message, $params) {
 
   // Required for Hostinger & SMTP attachments
   $message['headers']['Content-Transfer-Encoding'] = '8bit';
-  $message['headers']['Content-Type'] = 'multipart/mixed; charset=UTF-8';
 
   switch ($key) {
 
