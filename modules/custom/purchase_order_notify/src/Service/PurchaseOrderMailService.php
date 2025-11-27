@@ -52,6 +52,7 @@ class PurchaseOrderMailService {
     // Build PDF via shared service
     $pdf_output = \Drupal::service('purchase_order_notify.pdf_builder')
       ->buildPurchaseOrderPdf($node);
+    \Drupal::logger('PO_pdf_size')->warning(strlen($pdf_output) . ' bytes');
 
     // Mail template params
     $params = [

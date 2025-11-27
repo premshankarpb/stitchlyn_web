@@ -301,9 +301,9 @@ class PdfBuilder {
     $dompdf->loadHtml($html);
     $dompdf->setPaper('A4', 'portrait');
     $dompdf->render();
-    // $vv = $dompdf->output();
-    // \Drupal::logger('PO_output')->warning('<pre><code>' . print_r($vv, TRUE) . '</code></pre>');
-    return $dompdf->output();
+    
+    // return $dompdf->output();
+    return (string) $dompdf->output();
   }
 
 }

@@ -7,26 +7,26 @@ use Drupal\Core\Entity\EntityInterface;
  * Implements hook_mail().
  */
 function purchase_order_notify_mail($key, &$message, $params) {
+
+  // Required for Hostinger & SMTP attachments
+  $message['headers']['Content-Transfer-Encoding'] = '8bit';
   $message['headers']['Content-Type'] = 'text/html; charset=UTF-8';
 
   switch ($key) {
 
-    // ------------------------------------------------------------
-    // PURCHASE ORDER FULFILLED
-    // ------------------------------------------------------------
     case 'purchase_order_fulfilled':
       $message['subject'] = 'Purchase Order Fulfilled';
 
-      // Attachment handling
       if (!empty($params['attachment'])) {
         $message['attachments'][] = [
           'filecontent' => $params['attachment']['filecontent'],
           'filename'    => $params['attachment']['filename'],
           'filemime'    => $params['attachment']['filemime'],
+          'encoding'    => 'base64',
         ];
       }
 
-      $render_array = [
+      $render = [
         '#theme' => 'purchase_order_fulfilled',
         '#username' => $params['username'],
         '#po_title' => $params['po_title'],
@@ -35,26 +35,23 @@ function purchase_order_notify_mail($key, &$message, $params) {
         '#pdf_available' => !empty($params['attachment']),
       ];
 
-      $message['body'][] = \Drupal::service('renderer')->renderPlain($render_array);
+      $message['body'][] = \Drupal::service('renderer')->renderPlain($render);
       break;
 
 
-    // ------------------------------------------------------------
-    // QUOTATION ACCEPTED
-    // ------------------------------------------------------------
     case 'quotation_accepted':
       $message['subject'] = 'Quotation Accepted';
 
-      // Attachment handling
       if (!empty($params['attachment'])) {
         $message['attachments'][] = [
           'filecontent' => $params['attachment']['filecontent'],
           'filename'    => $params['attachment']['filename'],
           'filemime'    => $params['attachment']['filemime'],
+          'encoding'    => 'base64',
         ];
       }
 
-      $render_array = [
+      $render = [
         '#theme' => 'quotation_accepted',
         '#username' => $params['username'],
         '#quotation_title' => $params['quotation_title'],
@@ -62,26 +59,24 @@ function purchase_order_notify_mail($key, &$message, $params) {
         '#pdf_available' => !empty($params['attachment']),
       ];
 
-      $message['body'][] = \Drupal::service('renderer')->renderPlain($render_array);
+      $message['body'][] = \Drupal::service('renderer')->renderPlain($render);
       break;
 
 
-    // ------------------------------------------------------------
-    // INVENTORY RESTOCK
-    // ------------------------------------------------------------
     case 'restock_raw_material':
       $message['subject'] = 'Inventory Restock Reminder';
 
-      $render_array = [
+      $render = [
         '#theme' => 'restock_raw_material',
         '#item_title' => $params['item_title'],
         '#item_link' => $params['item_link'],
       ];
 
-      $message['body'][] = \Drupal::service('renderer')->renderPlain($render_array);
+      $message['body'][] = \Drupal::service('renderer')->renderPlain($render);
       break;
   }
 }
+
 
 /**
  * Implements hook_theme().
