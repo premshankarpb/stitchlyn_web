@@ -57,7 +57,7 @@ class PurchaseOrderMailService {
     $params = [
       'username'  => $username,
       'po_title'  => $node->label(),
-      'po_link'   => \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id(),
+      'po_link'   => \Drupal::request()->getSchemeAndHttpHost() . '/po/' . $node->id(),
       'pdf_link'  => \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id() . '/pdf',
     ];
 

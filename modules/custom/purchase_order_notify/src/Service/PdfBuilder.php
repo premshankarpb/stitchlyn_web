@@ -292,7 +292,7 @@ class PdfBuilder {
     ];
 
     $html = $this->renderer->renderPlain($build);
-
+    \Drupal::logger('PO_html')->warning('<pre><code>' . print_r($html, TRUE) . '</code></pre>');
     // --- Generate PDF ---
     $options = new Options();
     $options->set('isRemoteEnabled', TRUE);
@@ -301,7 +301,8 @@ class PdfBuilder {
     $dompdf->loadHtml($html);
     $dompdf->setPaper('A4', 'portrait');
     $dompdf->render();
-
+    $vv = $dompdf->output();
+    \Drupal::logger('PO_output')->warning('<pre><code>' . print_r($vv, TRUE) . '</code></pre>');
     return $dompdf->output();
   }
 
