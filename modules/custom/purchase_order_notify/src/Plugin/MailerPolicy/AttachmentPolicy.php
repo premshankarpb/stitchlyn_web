@@ -2,13 +2,11 @@
 
 namespace Drupal\purchase_order_notify\Plugin\MailerPolicy;
 
-use Drupal\Core\Mail\MailFormatHelper;
 use Drupal\symfony_mailer\Plugin\EmailPolicyBase;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\Part\DataPart;
 
 /**
- * @MailerPolicy(
+ * @EmailPolicy(
  *   id = "purchase_order_notify_attachment",
  *   label = @Translation("PO/Quotation Attachment Handler"),
  *   description = @Translation("Adds PDF attachments from hook_mail()."),
@@ -21,7 +19,6 @@ class AttachmentPolicy extends EmailPolicyBase {
    * {@inheritdoc}
    */
   public function applies(array $message) {
-    // Apply when attachment exists.
     return !empty($message['params']['attachment']);
   }
 
@@ -33,18 +30,19 @@ class AttachmentPolicy extends EmailPolicyBase {
     \Drupal::logger('po_mail_debug')->info('<pre>' . print_r($message, TRUE) . '</pre>');
 
     if (empty($message['params']['attachment'])) {
-        \Drupal::logger('po_mail_debug')->warning('Attachment param missing');
-        return;
+      \Drupal::logger('po_mail_debug')->warning('Attachment param missing');
+      return;
     }
 
     $attachment = $message['params']['attachment'];
+
     \Drupal::logger('po_mail_debug')->info('Attachment detected');
 
     $email->attach(
-        $attachment['filecontent'],
-        $attachment['filename'],
-        $attachment['filemime']
+      $attachment['filecontent'],
+      $attachment['filename'],
+      $attachment['filemime']
     );
-	}
+  }
 
 }
