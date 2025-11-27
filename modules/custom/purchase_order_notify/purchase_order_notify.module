@@ -17,6 +17,15 @@ function purchase_order_notify_mail($key, &$message, $params) {
     case 'purchase_order_fulfilled':
       $message['subject'] = 'Purchase Order Fulfilled';
 
+      // Attachment handling
+      if (!empty($params['attachment'])) {
+        $message['attachments'][] = [
+          'filecontent' => $params['attachment']['filecontent'],
+          'filename'    => $params['attachment']['filename'],
+          'filemime'    => $params['attachment']['filemime'],
+        ];
+      }
+
       $render_array = [
         '#theme' => 'purchase_order_fulfilled',
         '#username' => $params['username'],
@@ -36,6 +45,15 @@ function purchase_order_notify_mail($key, &$message, $params) {
     case 'quotation_accepted':
       $message['subject'] = 'Quotation Accepted';
 
+      // Attachment handling
+      if (!empty($params['attachment'])) {
+        $message['attachments'][] = [
+          'filecontent' => $params['attachment']['filecontent'],
+          'filename'    => $params['attachment']['filename'],
+          'filemime'    => $params['attachment']['filemime'],
+        ];
+      }
+
       $render_array = [
         '#theme' => 'quotation_accepted',
         '#username' => $params['username'],
@@ -49,7 +67,7 @@ function purchase_order_notify_mail($key, &$message, $params) {
 
 
     // ------------------------------------------------------------
-    // INVENTORY RESTOCK NOTIFICATION
+    // INVENTORY RESTOCK
     // ------------------------------------------------------------
     case 'restock_raw_material':
       $message['subject'] = 'Inventory Restock Reminder';
