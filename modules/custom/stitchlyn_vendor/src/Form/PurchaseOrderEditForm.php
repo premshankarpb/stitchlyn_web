@@ -392,7 +392,6 @@ class PurchaseOrderEditForm extends FormBase {
 
           // Mark PO as processed — NEVER run inventory logic again
           $po->set('field_processed', 1);
-          $po->save();
           $this->messenger()->addStatus($this->t('Purchase Order related inventory records updated successfully.'));
       }
       UPDATE_SUMMARY_ONLY:
@@ -402,7 +401,7 @@ class PurchaseOrderEditForm extends FormBase {
       \Drupal::logger('stitchlyn_vendor')->error($e->getMessage());
       $this->messenger()->addError($this->t('Error occurred while saving Purchase Order. All changes were rolled back.'));
     }
-
+    $po->save();
     $form_state->setRedirect('<current>');
   }
 
