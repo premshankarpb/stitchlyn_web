@@ -206,71 +206,133 @@ class PurchaseOrderMailService {
    * Send an email when a Quotation node is accepted.
    */
   public function sendQuotationAcceptedMail(NodeInterface $node): void {
+
+    // 1) Get customer user from field_customer_reference.
     $customer = $node->get('field_customer_reference')->entity;
-    if (!$customer) return;
+    if (!$customer instanceof \Drupal\user\UserInterface) {
+      return;
+    }
 
     $email = $customer->getEmail();
     $username = $customer->getDisplayName();
-    $langcode = $node->language()->getId();
-    $base_url = \Drupal::request()->getSchemeAndHttpHost();
-
-    // Build PDF link
-    $pdf_link = $base_url . "/dashboard/quotation/{$node->id()}/pdf";
-
-    // Customer profile
-    $profiles = \Drupal::entityTypeManager()
-      ->getStorage('profile')
-      ->loadByProperties(['uid' => $customer->id(), 'type' => 'customer']);
-    $profile = reset($profiles);
-
-    $customer_data = [
-      'name' => $username,
-      'email' => $email,
-      'phone' => $profile->get('field_phone_number')->value ?? '',
-      'gst' => $profile->get('field_gst_number')->value ?? '',
-      'billing_address' => nl2br($profile->get('field_billing_address')->value ?? ''),
-    ];
-
-    // Items from your controller logic
-    $items = $this->quotationService->getLineItems($node);
-
-    // Params for twig template
-    $params = [
-      'username' => $username,
-      'invoice_no' => 'Quotation #' . $node->get('field_quotation_number')->value,
-      'customer' => $customer_data,
-      'items' => $items['list'],
-      'subtotal' => $items['subtotal'],
-      'discount' => $node->get('field_discount')->value ?? 0,
-      'tax_percentage' => $items['tax_percentage'],
-      'tax' => $items['tax'],
-      'total' => $items['total'],
-      'issue_date' => $node->get('field_quotation_date')->value,
-      'due_date' => $node->get('field_expected_due_date')->value,
-      'pdf_link' => $pdf_link,
-      'site_name' => \Drupal::config('system.site')->get('name'),
-    ];
-
-    $pdf_output = \Drupal::service('purchase_order_notify.pdf_builder')
-      ->buildQuotationPdf($node);
-
-    // 4️⃣ Attach PDF if successfully generated
-    if (!empty($pdf_output)) {
-      $params['attachment'] = [
-        'filecontent' => $pdf_output,
-        'filename'    => 'quotation-' . $node->id() . '.pdf',
-        'filemime'    => 'application/pdf',
-      ];
+    if (empty($email)) {
+      return;
     }
 
-    $this->mailManager->mail(
+    $langcode = $node->language()->getId();
+    $base_url = \Drupal::request()->getSchemeAndHttpHost();
+    $pdf_link = $base_url . '/dashboard/quotation/' . $node->id() . '/pdf';
+
+    // 2) ERP config (for tax %, site name etc.)
+    $config = $this->configFactory->get('stitchlyn_basic.erp_settings');
+    $tax_percentage = (float) ($config->get('tax_percentage') ?? 0);
+    $site_name = \Drupal::config('system.site')->get('name');
+
+    // 3) Customer profile details (profile type = customer).
+    $customer_profile = [
+      'name' => $username,
+      'email' => $email,
+      'billing_address' => '',
+      'phone' => '',
+      'gst' => '',
+    ];
+
+    $profiles = \Drupal::entityTypeManager()
+      ->getStorage('profile')
+      ->loadByProperties([
+        'uid' => $customer->id(),
+        'type' => 'customer',
+      ]);
+
+    if (!empty($profiles)) {
+      $profile = reset($profiles);
+      $customer_profile['billing_address'] = nl2br($profile->get('field_billing_address')->value ?? '');
+      $customer_profile['phone'] = $profile->get('field_phone_number')->value ?? '';
+      $customer_profile['gst'] = $profile->get('field_gst_number')->value ?? '';
+    }
+
+    // 4) Quotation dates.
+    $issue_date = $node->get('field_quotation_date')->value ?? date('Y-m-d');
+    $due_date = $node->get('field_expected_due_date')->value ?? date('Y-m-d');
+
+    // 5) Line items (quatation_line_items linked via field_linked_quotation).
+    $items = [];
+    $subtotal = 0;
+
+    $storage = \Drupal::entityTypeManager()->getStorage('node');
+    $line_item_nids = $storage->getQuery()
+      ->condition('type', 'quatation_line_items')
+      ->condition('field_linked_quotation', $node->id())
+      ->accessCheck(FALSE)
+      ->execute();
+
+    if (!empty($line_item_nids)) {
+      $line_items = $storage->loadMultiple($line_item_nids);
+
+      foreach ($line_items as $item) {
+        $product = $item->get('field_product')->entity;
+        $pname = $product ? $product->label() : '';
+        $quantity = (float) $item->get('field_quantity')->value;
+
+        $unit_price = $product && $product->hasField('field_cost_price')
+          ? (float) $product->get('field_cost_price')->value
+          : 0;
+
+        $total_price = $unit_price * $quantity;
+        $subtotal += $total_price;
+
+        $items[] = [
+          'name'       => $pname,
+          'quantity'   => $quantity,
+          'unit_price' => $unit_price,
+          'total'      => $total_price,
+        ];
+      }
+    }
+
+    // 6) Totals: discount, tax, grand total.
+    $discount = (float) ($node->get('field_discount')->value ?? 0);
+    $tax = ($subtotal - $discount) * ($tax_percentage / 100);
+    $total = $subtotal - $discount + $tax;
+
+    // 7) Build params for the mail template.
+    $params = [
+      'username'        => $username,
+      'invoice_no'      => 'Quotation #' . $node->get('field_quotation_number')->value,
+      'customer'        => $customer_profile,
+      'items'           => $items,
+      'subtotal'        => $subtotal,
+      'discount'        => $discount,
+      'tax_percentage'  => $tax_percentage,
+      'tax'             => $tax,
+      'total'           => $total,
+      'issue_date'      => $issue_date,
+      'due_date'        => $due_date,
+      'pdf_link'        => $pdf_link,
+      'site_name'       => $site_name,
+    ];
+
+    // 8) Send the mail.
+    $result = $this->mailManager->mail(
       'purchase_order_notify',
       'quotation_accepted',
       $email,
       $langcode,
       $params
     );
+
+    if (empty($result['result'])) {
+      $this->logger->error('Failed to send Quotation Accepted email for @title.', [
+        '@title' => $node->label(),
+      ]);
+    }
+    else {
+      $this->logger->info('Quotation Accepted email sent successfully for @title.', [
+        '@title' => $node->label(),
+      ]);
+    }
   }
+
 
   /**
    * Send an email when an Inventory Item is running low.
