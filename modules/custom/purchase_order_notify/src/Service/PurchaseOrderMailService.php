@@ -97,9 +97,10 @@ class PurchaseOrderMailService {
       $vendor_profile = reset($profiles);
     }
 
-    $params['vendor_name']    = $vendor->get('field_vendor_name')->value ?? $username;
+    // Correct vendor name from profile
+    $params['vendor_name'] = $vendor_profile ? ($vendor_profile->get('field_vendor_name')->value ?? $username) : $username;
     $params['vendor_address'] = $vendor_profile ? nl2br($vendor_profile->get('field_billing_address')->value ?? '') : '';
-    $params['vendor_gst']     = $vendor_profile ? ($vendor_profile->get('field_gst_number')->value ?? '') : '';
+    $params['vendor_gst'] = $vendor_profile ? ($vendor_profile->get('field_gst_number')->value ?? '') : '';
     $params['vendor_contact'] = $vendor_profile ? ($vendor_profile->get('field_phone_number')->value ?? '') : '';
 
     // -----------------------------
