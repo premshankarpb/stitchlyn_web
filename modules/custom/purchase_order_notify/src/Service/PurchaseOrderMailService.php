@@ -70,6 +70,35 @@ class PurchaseOrderMailService {
       ];
     }
 
+    $vendor = $node->get('field_vendor')->entity;
+    $vendor_profile = NULL;
+
+    if ($vendor) {
+      $profiles = \Drupal::entityTypeManager()
+        ->getStorage('profile')
+        ->loadByProperties([
+          'uid' => $vendor->id(),
+          'type' => 'vendor',
+        ]);
+
+      $vendor_profile = reset($profiles);
+    }
+
+    $params['vendor_name'] = $vendor ? $vendor->getDisplayName() : '';
+    $params['vendor_address'] = $vendor_profile ? nl2br($vendor_profile->get('field_address')->value) : '';
+    $params['vendor_gst'] = $vendor_profile ? $vendor_profile->get('field_gst')->value : '';
+
+    $params['payment_status'] = $payment_status ?? '';
+
+    $params['issue_date'] = $issue_date;
+    $params['due_date'] = $due_date;
+
+    $params['subtotal'] = $subtotal;
+    $params['tax'] = $tax;
+    $params['total'] = $total;
+
+    $params['items'] = $items;   // array of line items
+
     $result = $this->mailManager->mail(
       'purchase_order_notify',
       'purchase_order_fulfilled',
