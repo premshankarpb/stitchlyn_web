@@ -11,6 +11,7 @@ use Symfony\Component\Mime\Part\DataPart;
  *   id = "purchase_order_notify_attachment",
  *   label = @Translation("PO/Quotation Attachment Handler"),
  *   description = @Translation("Adds PDF attachments from mail params."),
+ *   type = "symfony_mailer",
  *   weight = 100
  * )
  */
