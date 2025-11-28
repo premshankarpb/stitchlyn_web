@@ -32,6 +32,7 @@ class PurchaseOrderMailService {
    * Send an email when a Purchase Order is marked as "Fulfilled".
    */
   public function sendPurchaseOrderFulfilledMail(NodeInterface $node): void {
+
     // -----------------------------
     // 1) Vendor user
     // -----------------------------
@@ -56,10 +57,11 @@ class PurchaseOrderMailService {
       ->buildPurchaseOrderPdf($node);
 
     // -----------------------------
-    // 3) Prepare base mail params
+    // 3) Base URL
     // -----------------------------
     $base_url = \Drupal::request()->getSchemeAndHttpHost();
 
+    // Base params
     $params = [
       'username'   => $username,
       'po_title'   => $node->label(),
@@ -69,7 +71,7 @@ class PurchaseOrderMailService {
     ];
 
     // -----------------------------
-    // 4) Add PDF attachment (optional)
+    // 4) PDF Attachment
     // -----------------------------
     if (!empty($pdf_output)) {
       $params['attachment'] = [
@@ -95,13 +97,13 @@ class PurchaseOrderMailService {
       $vendor_profile = reset($profiles);
     }
 
-    $params['vendor_name']    = $vendor->getDisplayName();
+    $params['vendor_name']    = $vendor->get('field_vendor_name')->value ?? $username;
     $params['vendor_address'] = $vendor_profile ? nl2br($vendor_profile->get('field_billing_address')->value ?? '') : '';
     $params['vendor_gst']     = $vendor_profile ? ($vendor_profile->get('field_gst_number')->value ?? '') : '';
     $params['vendor_contact'] = $vendor_profile ? ($vendor_profile->get('field_phone_number')->value ?? '') : '';
 
     // -----------------------------
-    // 6) Payment status
+    // 6) Payment status (taxonomy)
     // -----------------------------
     $payment_status = '';
 
@@ -121,10 +123,10 @@ class PurchaseOrderMailService {
     // 7) Issue / Due date
     // -----------------------------
     $issue_date = $node->get('field_date_of_purchase')->value ?? date('Y-m-d');
-    $due_date = date('Y-m-d', strtotime($issue_date . ' +7 days'));
+    $due_date   = date('Y-m-d', strtotime($issue_date . ' +7 days'));
 
     $params['issue_date'] = $issue_date;
-    $params['due_date'] = $due_date;
+    $params['due_date']   = $due_date;
 
     // -----------------------------
     // 8) Totals
@@ -138,7 +140,7 @@ class PurchaseOrderMailService {
     $params['total']    = $total;
 
     // -----------------------------
-    // 9) Line Items
+    // 9) Line Items (Purchase Order Items)
     // -----------------------------
     $items = [];
     $storage = \Drupal::entityTypeManager()->getStorage('node');
@@ -171,7 +173,7 @@ class PurchaseOrderMailService {
     $params['items'] = $items;
 
     // -----------------------------
-    // 10) SEND EMAIL
+    // 10) Send email
     // -----------------------------
     $result = $this->mailManager->mail(
       'purchase_order_notify',
@@ -181,6 +183,7 @@ class PurchaseOrderMailService {
       $params
     );
 
+    // Logging
     if (empty($result['result'])) {
       $this->logger->error('Failed to send PO Fulfilled email for @title.', [
         '@title' => $node->label(),
@@ -192,6 +195,7 @@ class PurchaseOrderMailService {
       ]);
     }
   }
+
 
 
   /**
