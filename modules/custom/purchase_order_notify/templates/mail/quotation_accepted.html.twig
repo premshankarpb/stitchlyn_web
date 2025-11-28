@@ -19,7 +19,7 @@
         {{ params.customer.billing_address|raw }}
       </p>
 
-      <h3 style="margin-top:25px;">params.Quotation Details</h3>
+      <h3 style="margin-top:25px;">Quotation Details</h3>
       <p>
         <strong>Quotation No:</strong> {{ params.invoice_no }}<br>
         <strong>Issue Date:</strong> {{ params.issue_date }}<br>
@@ -56,7 +56,7 @@
 
       <p style="margin-top:25px;">
         You can download the official PDF quotation here:<br>
-        <a href="{{ pdf_link }}" style="color:#0066cc;">{{ pdf_link }}</a>
+        <a href="{{ params.pdf_link }}" style="color:#0066cc;">{{ pdf_link }}</a>
       </p>
 
       <p style="margin-top:30px;">Thank you,<br>{{ params.site_name }}</p>

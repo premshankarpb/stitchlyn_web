@@ -311,6 +311,7 @@ class PurchaseOrderMailService {
       'pdf_link'        => $pdf_link,
       'site_name'       => $site_name,
       'pdf_available' => FALSE,
+      'quotation_title' => $node->label(),
     ];
 
     // 8) Send the mail.
