@@ -7,7 +7,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Part\DataPart;
 
 /**
- * @EmailPolicy(
+ * @MailerPolicy(
  *   id = "purchase_order_notify_attachment",
  *   label = @Translation("PO/Quotation Attachment Handler"),
  *   description = @Translation("Adds PDF attachments from mail params."),
@@ -21,7 +21,6 @@ class AttachmentPolicy extends EmailPolicyBase {
    */
   public function applies(array $message) {
 
-    // Debug to confirm plugin activation
     \Drupal::logger('po_mail_debug')->info('AttachmentPolicy::applies triggered');
 
     return !empty($message['params']['attachment']);
@@ -42,9 +41,9 @@ class AttachmentPolicy extends EmailPolicyBase {
     $file = $message['params']['attachment'];
 
     $email->addPart(new DataPart(
-      $file['filecontent'],      // binary PDF
-      $file['filename'],         // e.g. po-19.pdf
-      $file['filemime']          // application/pdf
+      $file['filecontent'],
+      $file['filename'],
+      $file['filemime']
     ));
 
     \Drupal::logger('po_mail_debug')->info('PDF attachment added successfully.');
