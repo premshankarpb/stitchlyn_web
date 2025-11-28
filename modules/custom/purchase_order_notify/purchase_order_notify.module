@@ -31,6 +31,7 @@ function purchase_order_notify_mail($key, &$message, $params) {
         '#po_title' => $params['po_title'],
         '#po_link' => $params['po_link'],
         '#pdf_link' => $params['pdf_link'],
+        '#params' => $params,
         '#pdf_available' => !empty($params['attachment']),
       ];
 
@@ -89,6 +90,7 @@ function purchase_order_notify_theme() {
         'po_link' => NULL,
         'pdf_link' => NULL,
         'pdf_available' => FALSE,
+        'params' => [],
       ],
       'template' => 'mail/purchase_order_fulfilled',
     ],

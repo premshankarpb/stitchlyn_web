@@ -61,15 +61,6 @@ class PurchaseOrderMailService {
     // -----------------------------
     $base_url = \Drupal::request()->getSchemeAndHttpHost();
 
-    // Base params
-    // $params = [
-    //   'username'   => $username,
-    //   'po_title'   => $node->label(),
-    //   'po_link'    => $base_url . '/dashboard/po/' . $node->id(),
-    //   'pdf_link'   => $base_url . '/dashboard/po/' . $node->id() . '/pdf',
-    //   'site_name'  => \Drupal::config('system.site')->get('name'),
-    // ];
-
     // -----------------------------
     // 4) PDF Attachment
     // -----------------------------
@@ -119,16 +110,11 @@ class PurchaseOrderMailService {
       }
     }
 
-    // $params['payment_status'] = $payment_status;
-
     // -----------------------------
     // 7) Issue / Due date
     // -----------------------------
     $issue_date = $node->get('field_date_of_purchase')->value ?? date('Y-m-d');
     $due_date   = date('Y-m-d', strtotime($issue_date . ' +7 days'));
-
-    // $params['issue_date'] = $issue_date;
-    // $params['due_date']   = $due_date;
 
     // -----------------------------
     // 8) Totals
@@ -136,10 +122,6 @@ class PurchaseOrderMailService {
     $subtotal = (float) ($node->get('field_subtotal_amount')->value ?? 0);
     $tax      = (float) ($node->get('field_tax_amount')->value ?? 0);
     $total    = (float) ($node->get('field_total_amount')->value ?? 0);
-
-    // $params['subtotal'] = $subtotal;
-    // $params['tax']      = $tax;
-    // $params['total']    = $total;
 
     // -----------------------------
     // 9) Line Items (Purchase Order Items)
@@ -172,8 +154,7 @@ class PurchaseOrderMailService {
       }
     }
 
-    // $params['items'] = $items;
-
+    // Final params array
      $params = [
       'username'   => $username,
       'po_title'   => $node->label(),
