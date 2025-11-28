@@ -47,8 +47,11 @@ class DashboardController extends ControllerBase {
 
       'quotations' => [
         'total' => $this->getNodeCount('quotation'),
-        'fulfilled' => $this->getNodeCountByStatus('quotation', 1), // Published = Fulfilled
-        'not_completed' => $this->getNodeCountByStatus('quotation', 0), // Unpublished = Not Completed
+        'draft' => $this->getNodeCountByStatus('quotation', 0, 'draft'), // Unpublished = draft
+        'approved' => $this->getNodeCountByStatus('quotation', 0, 'accepted'), // Unpublished = approved
+        'in_progress' => $this->getNodeCountByStatus('quotation', 0, 'in_progress'), // Unpublished = in_progress
+        'follow_up' => $this->getNodeCountByStatus('quotation', 0, 'to_update'), // Unpublished = follow_up
+
       ],
 
       'work_orders' => [
@@ -98,12 +101,20 @@ class DashboardController extends ControllerBase {
     return $query->count()->execute();
   }
 
-  protected function getNodeCountByStatus($type, $status = 1) {
-    $query = \Drupal::entityQuery('node')
-      ->condition('type', $type)
-      ->condition('status', $status)
+  protected function getNodeCountByStatus($type, $status, $mod) {
+
+    $cms_query = \Drupal::entityQuery('content_moderation_state')
+      ->condition('content_entity_type_id', 'node')
+      ->condition('moderation_state', $mod)
       ->accessCheck(FALSE);
-    return $query->count()->execute();
+
+    $cms_ids = $cms_query->execute();
+
+    if (empty($cms_ids)) {
+      $cms_ids = [0]; // invalid nid → returns zero nodes
+    }
+
+    return $cms_query->count()->execute();
   }
 
   /**
