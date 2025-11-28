@@ -172,8 +172,9 @@ class PurchaseOrderMailService {
     }
 
     $params['items'] = $items;
-
-    \Drupal::logger('params')->warning('<pre><code>' . print_r($params, TRUE) . '</code></pre>');
+    $params1 = $params;
+    unset($params1['attachment']);
+    \Drupal::logger('params')->warning('<pre><code>' . print_r($params1, TRUE) . '</code></pre>');
     // -----------------------------
     // 10) Send email
     // -----------------------------
