@@ -15,6 +15,7 @@ use Symfony\Component\Mime\Part\DataPart;
  *   weight = 100
  * )
  */
+
 class AttachmentPolicy extends EmailPolicyBase {
 
   /**
