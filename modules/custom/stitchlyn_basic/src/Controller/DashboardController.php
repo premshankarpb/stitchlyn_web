@@ -4,6 +4,8 @@ namespace Drupal\stitchlyn_basic\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\Core\Datetime\DrupalDateTime;
+
 
 /**
  * Provides the Dashboard page controller.
@@ -57,7 +59,8 @@ class DashboardController extends ControllerBase {
       'work_orders' => [
         'total' => $this->getNodeCount('work_order'),
         'done' => $this->getNodeCountByTaxonomy('work_order', 'field_order_status', 'Done'),
-        'in_progress' => $this->getNodeCountByTaxonomy('work_order', 'field_order_status', 'In Progress'),
+        'in_progress_due' => $this->getNodesWithDPlusOrMinus3('minus'),
+        'in_progress' => $this->getNodesWithDPlusOrMinus3('plus'),
         'to_do' => $this->getNodeCountByTaxonomy('work_order', 'field_order_status', 'To Do'),
         'rejected' => $this->getNodeCountByTaxonomy('work_order', 'field_order_status', 'Rejected'),
       ],
@@ -148,6 +151,38 @@ class DashboardController extends ControllerBase {
     }
     return 0;
   }
+
+
+function getNodesWithDPlusOrMinus3($sign) {
+
+  if($sign == 'plus'){
+    $the_sign = '>=';
+  }
+  if($sign == 'minus'){
+    $the_sign = '<';
+  }
+  // Compute "now + 3 days"
+  $threshold = new DrupalDateTime('now');
+  $threshold->modify('+3 days');
+
+  // Normalize time to start of day
+  $threshold->setTime(0, 0, 0);
+
+  // Convert to storage format (adjust depending on field type)
+  //$threshold_storage = $threshold->format('Y-m-d\TH:i:s'); // For datetime
+  $threshold_storage = $threshold->format('Y-m-d'); // For date-only field
+
+  // Query nodes
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'work_order')
+    ->condition('field_expected_due_date', $threshold_storage, $the_sign)
+    ->accessCheck(FALSE);
+
+  $nids = $query->count()->execute();
+  return $nids;
+
+}
+
 
   /**
    * Count nodes by workflow moderation state.
