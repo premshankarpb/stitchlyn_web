@@ -102,6 +102,7 @@ function purchase_order_notify_theme() {
         'quotation_title' => NULL,
         'quotation_pdf' => NULL,
         'pdf_available' => FALSE,
+        'params' => [],
       ],
       'template' => 'mail/quotation_accepted',
     ],

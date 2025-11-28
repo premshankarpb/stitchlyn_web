@@ -310,6 +310,7 @@ class PurchaseOrderMailService {
       'due_date'        => $due_date,
       'pdf_link'        => $pdf_link,
       'site_name'       => $site_name,
+      'pdf_available' => FALSE,
     ];
 
     // 8) Send the mail.
