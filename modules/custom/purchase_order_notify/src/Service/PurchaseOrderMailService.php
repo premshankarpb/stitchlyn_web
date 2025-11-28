@@ -202,40 +202,57 @@ class PurchaseOrderMailService {
     }
   }
 
-
-
   /**
    * Send an email when a Quotation node is accepted.
    */
   public function sendQuotationAcceptedMail(NodeInterface $node): void {
-
-    // 1️⃣ Get customer user
     $customer = $node->get('field_customer_reference')->entity;
-
-    if (!$customer instanceof \Drupal\user\UserInterface) {
-      return;
-    }
+    if (!$customer) return;
 
     $email = $customer->getEmail();
     $username = $customer->getDisplayName();
-
-    if (empty($email)) {
-      return;
-    }
-
-    $to = $email;
     $langcode = $node->language()->getId();
+    $base_url = \Drupal::request()->getSchemeAndHttpHost();
 
-    // 2️⃣ Build the Quotation PDF using PdfBuilder service
+    // Build PDF link
+    $pdf_link = $base_url . "/dashboard/quotation/{$node->id()}/pdf";
+
+    // Customer profile
+    $profiles = \Drupal::entityTypeManager()
+      ->getStorage('profile')
+      ->loadByProperties(['uid' => $customer->id(), 'type' => 'customer']);
+    $profile = reset($profiles);
+
+    $customer_data = [
+      'name' => $username,
+      'email' => $email,
+      'phone' => $profile->get('field_phone_number')->value ?? '',
+      'gst' => $profile->get('field_gst_number')->value ?? '',
+      'billing_address' => nl2br($profile->get('field_billing_address')->value ?? ''),
+    ];
+
+    // Items from your controller logic
+    $items = $this->quotationService->getLineItems($node);
+
+    // Params for twig template
+    $params = [
+      'username' => $username,
+      'invoice_no' => 'Quotation #' . $node->get('field_quotation_number')->value,
+      'customer' => $customer_data,
+      'items' => $items['list'],
+      'subtotal' => $items['subtotal'],
+      'discount' => $node->get('field_discount')->value ?? 0,
+      'tax_percentage' => $items['tax_percentage'],
+      'tax' => $items['tax'],
+      'total' => $items['total'],
+      'issue_date' => $node->get('field_quotation_date')->value,
+      'due_date' => $node->get('field_expected_due_date')->value,
+      'pdf_link' => $pdf_link,
+      'site_name' => \Drupal::config('system.site')->get('name'),
+    ];
+
     $pdf_output = \Drupal::service('purchase_order_notify.pdf_builder')
       ->buildQuotationPdf($node);
-
-    // 3️⃣ Prepare template variables
-    $params = [
-      'username'         => $username,
-      'quotation_title'  => $node->label(),
-      'quotation_pdf'    => \Drupal::request()->getSchemeAndHttpHost() . "/dashboard/quotation/" . $node->id() . "/pdf",
-    ];
 
     // 4️⃣ Attach PDF if successfully generated
     if (!empty($pdf_output)) {
@@ -246,26 +263,13 @@ class PurchaseOrderMailService {
       ];
     }
 
-    // 5️⃣ Send email
-    $result = $this->mailManager->mail(
+    $this->mailManager->mail(
       'purchase_order_notify',
       'quotation_accepted',
-      $to,
+      $email,
       $langcode,
       $params
     );
-
-    // 6️⃣ Log result
-    if (empty($result['result'])) {
-      $this->logger->error('Failed to send Quotation Accepted email for @title.', [
-        '@title' => $node->label(),
-      ]);
-    }
-    else {
-      $this->logger->info('Quotation Accepted email sent successfully for @title.', [
-        '@title' => $node->label(),
-      ]);
-    }
   }
 
   /**

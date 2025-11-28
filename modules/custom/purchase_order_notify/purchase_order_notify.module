@@ -57,6 +57,7 @@ function purchase_order_notify_mail($key, &$message, $params) {
         '#quotation_title' => $params['quotation_title'],
         '#quotation_pdf' => $params['quotation_pdf'],
         '#pdf_available' => !empty($params['attachment']),
+        '#params' => $params,
       ];
 
       $message['body'][] = \Drupal::service('renderer')->renderPlain($render);

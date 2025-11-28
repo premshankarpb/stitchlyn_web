@@ -1,13 +1,65 @@
-<p>Hello {{ username }},</p>
+<table style="font-family: Arial, sans-serif; font-size:14px; width:100%; border-spacing:0;">
+  <tr>
+    <td>
+      <h2 style="margin:0; padding:0;">Quotation Accepted</h2>
+      <p>Hello {{ username }},</p>
 
-<p>Your quotation has been <strong>Accepted</strong>.</p>
+      <p>
+        Your quotation <strong>{{ params.invoice_no }}</strong> has been accepted.<br>
+        Below are the full details for your reference.
+      </p>
 
-<p><strong>Quotation:</strong> {{ quotation_title }}</p>
-<p><strong>Download PDF:</strong> <a href="{{ quotation_pdf }}">{{ quotation_pdf }}</a></p>
+      <h3 style="margin-top:25px;">Customer Details</h3>
+      <p>
+        <strong>Name:</strong> {{ params.customer.name }}<br>
+        <strong>Email:</strong> {{ params.customer.email }}<br>
+        <strong>Phone:</strong> {{ params.customer.phone }}<br>
+        <strong>GST No:</strong> {{ params.customer.gst }}<br>
+        <strong>Billing Address:</strong><br>
+        {{ params.customer.billing_address|raw }}
+      </p>
 
-{% if pdf_available %}
-<p>The quotation PDF is attached.</p>
-{% endif %}
+      <h3 style="margin-top:25px;">params.Quotation Details</h3>
+      <p>
+        <strong>Quotation No:</strong> {{ params.invoice_no }}<br>
+        <strong>Issue Date:</strong> {{ params.issue_date }}<br>
+        <strong>Expected Due Date:</strong> {{ params.due_date }}<br>
+      </p>
 
-<br>
-<p>Thank you,<br>Stitchlyn Team</p>
+      <h3 style="margin-top:25px;">Items</h3>
+
+      <table style="width:100%; border-collapse: collapse;">
+        <tr>
+          <th style="border:1px solid #ccc; padding:8px; background:#f5f5f5;">Item</th>
+          <th style="border:1px solid #ccc; padding:8px; background:#f5f5f5;">Qty</th>
+          <th style="border:1px solid #ccc; padding:8px; background:#f5f5f5;">Rate</th>
+          <th style="border:1px solid #ccc; padding:8px; background:#f5f5f5;">Total</th>
+        </tr>
+
+        {% for it in params.items %}
+          <tr>
+            <td style="border:1px solid #ccc; padding:8px;">{{ it.name }}</td>
+            <td style="border:1px solid #ccc; padding:8px;">{{ it.quantity }}</td>
+            <td style="border:1px solid #ccc; padding:8px;">₹{{ it.unit_price }}</td>
+            <td style="border:1px solid #ccc; padding:8px;">₹{{ it.total }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+      <h3 style="margin-top:25px;">Totals</h3>
+      <p>
+        <strong>Subtotal:</strong> ₹{{ params.subtotal }}<br>
+        <strong>Discount:</strong> ₹{{ params.discount }}<br>
+        <strong>Tax ({{ params.tax_percentage }}%):</strong> ₹{{ params.tax }}<br>
+        <strong>Total:</strong> <span style="font-size:16px; font-weight:bold;">₹{{ params.total }}</span>
+      </p>
+
+      <p style="margin-top:25px;">
+        You can download the official PDF quotation here:<br>
+        <a href="{{ pdf_link }}" style="color:#0066cc;">{{ pdf_link }}</a>
+      </p>
+
+      <p style="margin-top:30px;">Thank you,<br>{{ params.site_name }}</p>
+    </td>
+  </tr>
+</table>
