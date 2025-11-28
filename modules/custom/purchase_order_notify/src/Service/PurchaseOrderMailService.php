@@ -32,36 +32,45 @@ class PurchaseOrderMailService {
    * Send an email when a Purchase Order is marked as "Fulfilled".
    */
   public function sendPurchaseOrderFulfilledMail(NodeInterface $node): void {
+    // -----------------------------
+    // 1) Vendor user
+    // -----------------------------
+    $vendor = $node->get('field_vendor')->entity;
 
-    $customer = $node->get('field_vendor')->entity;
-
-    if (!$customer instanceof \Drupal\user\UserInterface) {
+    if (!$vendor instanceof \Drupal\user\UserInterface) {
       return;
     }
 
-    $email = $customer->getEmail();
-    $username = $customer->getDisplayName();
+    $email = $vendor->getEmail();
+    $username = $vendor->getDisplayName();
+    $langcode = $node->language()->getId();
 
     if (empty($email)) {
       return;
     }
 
-    $langcode = $node->language()->getId();
-    $to = $email;
-
-    // Build PDF via shared service
+    // -----------------------------
+    // 2) Build PDF using shared service
+    // -----------------------------
     $pdf_output = \Drupal::service('purchase_order_notify.pdf_builder')
       ->buildPurchaseOrderPdf($node);
-    \Drupal::logger('PO_pdf_size')->warning(strlen($pdf_output) . ' bytes');
 
-    // Mail template params
+    // -----------------------------
+    // 3) Prepare base mail params
+    // -----------------------------
+    $base_url = \Drupal::request()->getSchemeAndHttpHost();
+
     $params = [
-      'username'  => $username,
-      'po_title'  => $node->label(),
-      'po_link'   => \Drupal::request()->getSchemeAndHttpHost() . '/po/' . $node->id(),
-      'pdf_link'  => \Drupal::request()->getSchemeAndHttpHost() . '/dashboard/po/' . $node->id() . '/pdf',
+      'username'   => $username,
+      'po_title'   => $node->label(),
+      'po_link'    => $base_url . '/dashboard/po/' . $node->id(),
+      'pdf_link'   => $base_url . '/dashboard/po/' . $node->id() . '/pdf',
+      'site_name'  => \Drupal::config('system.site')->get('name'),
     ];
 
+    // -----------------------------
+    // 4) Add PDF attachment (optional)
+    // -----------------------------
     if (!empty($pdf_output)) {
       $params['attachment'] = [
         'filecontent' => $pdf_output,
@@ -70,39 +79,104 @@ class PurchaseOrderMailService {
       ];
     }
 
-    $vendor = $node->get('field_vendor')->entity;
+    // -----------------------------
+    // 5) Vendor profile details
+    // -----------------------------
     $vendor_profile = NULL;
 
-    if ($vendor) {
-      $profiles = \Drupal::entityTypeManager()
-        ->getStorage('profile')
-        ->loadByProperties([
-          'uid' => $vendor->id(),
-          'type' => 'vendor',
-        ]);
+    $profiles = \Drupal::entityTypeManager()
+      ->getStorage('profile')
+      ->loadByProperties([
+        'uid' => $vendor->id(),
+        'type' => 'vendor',
+      ]);
 
+    if (!empty($profiles)) {
       $vendor_profile = reset($profiles);
     }
 
-    $params['vendor_name'] = $vendor ? $vendor->getDisplayName() : '';
-    $params['vendor_address'] = $vendor_profile ? nl2br($vendor_profile->get('field_billing_address')->value) : '';
-    $params['vendor_gst'] = $vendor_profile ? $vendor_profile->get('field_gst')->value : '';
-    $params['vendor_contact'] = $vendor_profile ? $vendor_profile->get('field_phone_number')->value : '';
-    $params['payment_status'] = $payment_status ?? '';
+    $params['vendor_name']    = $vendor->getDisplayName();
+    $params['vendor_address'] = $vendor_profile ? nl2br($vendor_profile->get('field_address')->value ?? '') : '';
+    $params['vendor_gst']     = $vendor_profile ? ($vendor_profile->get('field_gst')->value ?? '') : '';
+    $params['vendor_contact'] = $vendor_profile ? ($vendor_profile->get('field_phone_number')->value ?? '') : '';
+
+    // -----------------------------
+    // 6) Payment status
+    // -----------------------------
+    $payment_status = '';
+
+    if (!$node->get('field_payment_status')->isEmpty()) {
+      $term = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term')
+        ->load($node->get('field_payment_status')->target_id);
+
+      if ($term) {
+        $payment_status = $term->label();
+      }
+    }
+
+    $params['payment_status'] = $payment_status;
+
+    // -----------------------------
+    // 7) Issue / Due date
+    // -----------------------------
+    $issue_date = $node->get('field_date_of_purchase')->value ?? date('Y-m-d');
+    $due_date = date('Y-m-d', strtotime($issue_date . ' +7 days'));
 
     $params['issue_date'] = $issue_date;
     $params['due_date'] = $due_date;
 
+    // -----------------------------
+    // 8) Totals
+    // -----------------------------
+    $subtotal = (float) ($node->get('field_subtotal_amount')->value ?? 0);
+    $tax      = (float) ($node->get('field_tax_amount')->value ?? 0);
+    $total    = (float) ($node->get('field_total_amount')->value ?? 0);
+
     $params['subtotal'] = $subtotal;
-    $params['tax'] = $tax;
-    $params['total'] = $total;
+    $params['tax']      = $tax;
+    $params['total']    = $total;
 
-    $params['items'] = $items;   // array of line items
+    // -----------------------------
+    // 9) Line Items
+    // -----------------------------
+    $items = [];
+    $storage = \Drupal::entityTypeManager()->getStorage('node');
 
+    $item_nids = $storage->getQuery()
+      ->condition('type', 'purchase_order_items')
+      ->condition('field_purchase_order', $node->id())
+      ->accessCheck(FALSE)
+      ->execute();
+
+    if (!empty($item_nids)) {
+      $line_items = $storage->loadMultiple($item_nids);
+
+      foreach ($line_items as $item) {
+        $ref = $item->get('field_item_reference')->entity;
+        $name = $ref ? $ref->label() : '';
+        $qty = (float) ($item->get('field_quantity')->value ?? 0);
+        $rate = (float) ($item->get('field_item_rate')->value ?? 0);
+        $line_total = $qty * $rate;
+
+        $items[] = [
+          'name'       => $name,
+          'quantity'   => $qty,
+          'unit_price' => $rate,
+          'total'      => $line_total,
+        ];
+      }
+    }
+
+    $params['items'] = $items;
+
+    // -----------------------------
+    // 10) SEND EMAIL
+    // -----------------------------
     $result = $this->mailManager->mail(
       'purchase_order_notify',
       'purchase_order_fulfilled',
-      $to,
+      $email,
       $langcode,
       $params
     );
