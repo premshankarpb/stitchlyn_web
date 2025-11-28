@@ -96,8 +96,8 @@ class PurchaseOrderMailService {
     }
 
     $params['vendor_name']    = $vendor->getDisplayName();
-    $params['vendor_address'] = $vendor_profile ? nl2br($vendor_profile->get('field_address')->value ?? '') : '';
-    $params['vendor_gst']     = $vendor_profile ? ($vendor_profile->get('field_gst')->value ?? '') : '';
+    $params['vendor_address'] = $vendor_profile ? nl2br($vendor_profile->get('field_billing_address')->value ?? '') : '';
+    $params['vendor_gst']     = $vendor_profile ? ($vendor_profile->get('field_gst_number')->value ?? '') : '';
     $params['vendor_contact'] = $vendor_profile ? ($vendor_profile->get('field_phone_number')->value ?? '') : '';
 
     // -----------------------------
