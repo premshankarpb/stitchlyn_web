@@ -68,8 +68,9 @@ class DashboardController extends ControllerBase {
       'purchase_orders' => [
         'total' => $this->getNodeCount('purchase_order'),
         'paid' => $this->getNodeCountByTaxonomy('purchase_order', 'field_payment_status', 'Paid'),
-        'partial' => $this->getNodeCountByTaxonomy('purchase_order', 'field_payment_status', 'Partial'),
-        'unpaid' => $this->getNodeCountByTaxonomy('purchase_order', 'field_payment_status', 'Unpaid'),
+        'issued' => $this->getNodeCountByTaxonomy('purchase_order', 'field_purchase_order_status', 'Issued'),
+        'ship_in_progress' => $this->getNodeCountByTaxonomy('purchase_order', 'field_purchase_order_status', 'Shipment In Progress'),
+        'fullfilled' => $this->getNodeCountByTaxonomy('purchase_order', 'field_purchase_order_status', 'Fulfilled'),
       ],
     ];
 

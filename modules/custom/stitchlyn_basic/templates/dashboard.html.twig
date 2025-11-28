@@ -106,12 +106,16 @@
       <div class="box-count">{{ counts.purchase_orders.paid }}</div>
     </div>
     <div class="dashboard-box box-purchase">
-      <div class="box-title">Partial</div>
-      <div class="box-count">{{ counts.purchase_orders.partial }}</div>
+      <div class="box-title">Issued</div>
+      <div class="box-count">{{ counts.purchase_orders.issued }}</div>
     </div>
     <div class="dashboard-box box-purchase">
-      <div class="box-title">Unpaid</div>
-      <div class="box-count">{{ counts.purchase_orders.unpaid }}</div>
+      <div class="box-title">Shipment In Progress</div>
+      <div class="box-count">{{ counts.purchase_orders.ship_in_progress }}</div>
+    </div>
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Fullfilled</div>
+      <div class="box-count">{{ counts.purchase_orders.fullfilled }}</div>
     </div>
   </div>
   <div class="section-footer">
