@@ -62,19 +62,20 @@ class PurchaseOrderMailService {
     $base_url = \Drupal::request()->getSchemeAndHttpHost();
 
     // Base params
-    $params = [
-      'username'   => $username,
-      'po_title'   => $node->label(),
-      'po_link'    => $base_url . '/dashboard/po/' . $node->id(),
-      'pdf_link'   => $base_url . '/dashboard/po/' . $node->id() . '/pdf',
-      'site_name'  => \Drupal::config('system.site')->get('name'),
-    ];
+    // $params = [
+    //   'username'   => $username,
+    //   'po_title'   => $node->label(),
+    //   'po_link'    => $base_url . '/dashboard/po/' . $node->id(),
+    //   'pdf_link'   => $base_url . '/dashboard/po/' . $node->id() . '/pdf',
+    //   'site_name'  => \Drupal::config('system.site')->get('name'),
+    // ];
 
     // -----------------------------
     // 4) PDF Attachment
     // -----------------------------
+    $attachment = [];
     if (!empty($pdf_output)) {
-      $params['attachment'] = [
+      $attachment = [
         'filecontent' => $pdf_output,
         'filename'    => 'purchase-order-' . $node->id() . '.pdf',
         'filemime'    => 'application/pdf',
@@ -98,10 +99,10 @@ class PurchaseOrderMailService {
     }
 
     // Correct vendor name from profile
-    $params['vendor_name'] = $vendor_profile ? ($vendor_profile->get('field_vendor_name')->value ?? $username) : $username;
-    $params['vendor_address'] = $vendor_profile ? nl2br($vendor_profile->get('field_billing_address')->value ?? '') : '';
-    $params['vendor_gst'] = $vendor_profile ? ($vendor_profile->get('field_gst_number')->value ?? '') : '';
-    $params['vendor_contact'] = $vendor_profile ? ($vendor_profile->get('field_phone_number')->value ?? '') : '';
+    $vendor_name = $vendor_profile ? ($vendor_profile->get('field_vendor_name')->value ?? $username) : $username;
+    $vendor_address = $vendor_profile ? nl2br($vendor_profile->get('field_billing_address')->value ?? '') : '';
+    $vendor_gst = $vendor_profile ? ($vendor_profile->get('field_gst_number')->value ?? '') : '';
+    $vendor_contact = $vendor_profile ? ($vendor_profile->get('field_phone_number')->value ?? '') : '';
 
     // -----------------------------
     // 6) Payment status (taxonomy)
@@ -118,7 +119,7 @@ class PurchaseOrderMailService {
       }
     }
 
-    $params['payment_status'] = $payment_status;
+    // $params['payment_status'] = $payment_status;
 
     // -----------------------------
     // 7) Issue / Due date
@@ -126,8 +127,8 @@ class PurchaseOrderMailService {
     $issue_date = $node->get('field_date_of_purchase')->value ?? date('Y-m-d');
     $due_date   = date('Y-m-d', strtotime($issue_date . ' +7 days'));
 
-    $params['issue_date'] = $issue_date;
-    $params['due_date']   = $due_date;
+    // $params['issue_date'] = $issue_date;
+    // $params['due_date']   = $due_date;
 
     // -----------------------------
     // 8) Totals
@@ -136,9 +137,9 @@ class PurchaseOrderMailService {
     $tax      = (float) ($node->get('field_tax_amount')->value ?? 0);
     $total    = (float) ($node->get('field_total_amount')->value ?? 0);
 
-    $params['subtotal'] = $subtotal;
-    $params['tax']      = $tax;
-    $params['total']    = $total;
+    // $params['subtotal'] = $subtotal;
+    // $params['tax']      = $tax;
+    // $params['total']    = $total;
 
     // -----------------------------
     // 9) Line Items (Purchase Order Items)
@@ -171,10 +172,31 @@ class PurchaseOrderMailService {
       }
     }
 
-    $params['items'] = $items;
+    // $params['items'] = $items;
+
+     $params = [
+      'username'   => $username,
+      'po_title'   => $node->label(),
+      'po_link'    => $base_url . '/dashboard/po/' . $node->id(),
+      'pdf_link'   => $base_url . '/dashboard/po/' . $node->id() . '/pdf',
+      'site_name'  => \Drupal::config('system.site')->get('name'),
+      'vendor_name'  => $vendor_name,
+      'vendor_address'  => $vendor_address,
+      'vendor_gst'  => $vendor_gst,
+      'vendor_contact'  => $vendor_contact,
+      'payment_status'  => $payment_status,
+      'issue_date'  => $issue_date,
+      'due_date'  => $due_date,
+      'items'  => $items,
+      'subtotal'  => $subtotal,
+      'tax'  => $tax,
+      'total'  => $total,
+      'attachment'  => $attachment,
+    ];
     $params1 = $params;
     unset($params1['attachment']);
     \Drupal::logger('params')->warning('<pre><code>' . print_r($params1, TRUE) . '</code></pre>');
+
     // -----------------------------
     // 10) Send email
     // -----------------------------
