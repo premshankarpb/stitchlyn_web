@@ -14,6 +14,23 @@ use Drupal\node\Entity\Node;
 class PaymentController extends ControllerBase {
 
   /**
+   * Payment view page.
+   */
+  public function view(NodeInterface $node) {
+    if ($node->bundle() !== 'payment_record') {
+      throw new NotFoundHttpException();
+    }
+
+    $view_mode = 'full';
+    $build = $this->entityTypeManager()
+      ->getViewBuilder('node')
+      ->view($node, $view_mode);
+    $build['#cache']['contexts'][] = 'user.permissions';
+
+    return $build;
+  }
+
+  /**
    * Render the add form for a payment_record node.
    */
 

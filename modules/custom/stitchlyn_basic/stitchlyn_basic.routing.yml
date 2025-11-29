@@ -30,6 +30,17 @@ stitchlyn_basic.payment_add:
     _title: 'Add Payment'
   requirements:
     _permission: 'create payment_record content'
+stitchlyn_basic.payment_view:
+  path: 'dashboard/payments/{node}'
+  defaults:
+    _controller: '\Drupal\stitchlyn_basic\Controller\PaymentController::view'
+    _title: 'View Payment'
+  requirements:
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node
 stitchlyn_basic.payment_edit:
   path: 'dashboard/payments/{node}/edit'
   defaults:
