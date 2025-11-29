@@ -184,7 +184,7 @@ class QuotationEditForm extends FormBase {
         $type = $workflow->getTypePlugin();
 
         // Load all states from this workflow.
-        // $states = $type->getStates();
+        $states = $type->getStates();
         // foreach ($states as $sid => $state) {
         //   $state_options[$sid] = $state->label();
         // }
@@ -192,14 +192,12 @@ class QuotationEditForm extends FormBase {
         // Get allowed transitions from current state.
         $transitions = $type->getTransitions($current_state_id);
         foreach ($transitions as $transition) {
-          // Check if user has permission for THIS transition.
           if ($transition->access($node, \Drupal::currentUser())) {
             $target_state = $transition->getToState()->id();
             $label        = $transition->getToState()->label();
             $state_options[$target_state] = $label;
           }
         }
-        $state_options['requested'] = 'Requested';
 
         // Current state details.
         $current_state_id = $node->hasField('moderation_state') ? (string) $node->get('moderation_state')->value : '';
