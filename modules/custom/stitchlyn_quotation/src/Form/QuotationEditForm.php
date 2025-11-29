@@ -36,6 +36,12 @@ class QuotationEditForm extends FormBase {
     $form_state->set('node', $node);
     $quotation_id = $node->id();
 
+    $form['totals']['node_id'] = [
+      '#type' => 'hidden',
+      '#value' => $quotation_id,
+      '#attributes' => ['id' => 'hidden-node_id'],
+    ];
+
     // ========== Quotation Information ==========
     $form['quotation_info'] = [
       '#type' => 'details',
@@ -325,7 +331,7 @@ class QuotationEditForm extends FormBase {
 
     if ($moderation_state == 'accepted') {
       // Get the quotation node ID.
-      $quotation_id = $form_state->getValue('nid') ?? $form_state->getValue('node_id') ?? NULL;
+      $quotation_id = $form_state->getValue('node_id') ?? $form_state->getValue('node_id') ?? NULL;
 
       if ($quotation_id) {
         // Fetch all inventory logs linked to this quotation.
