@@ -44,16 +44,20 @@
   <h2>Quotations</h2>
   <div class="dashboard-grid">
     <div class="dashboard-box box-quotation">
-      <div class="box-title">Total Quotations</div>
-      <div class="box-count">{{ counts.quotations.total }}</div>
+      <div class="box-title">Draft Quotations</div>
+      <div class="box-count">{{ counts.quotations.draft }}</div>
     </div>
     <div class="dashboard-box box-quotation">
-      <div class="box-title">Fulfilled Quotations</div>
-      <div class="box-count">{{ counts.quotations.fulfilled }}</div>
+      <div class="box-title">Pending Quotations</div>
+      <div class="box-count">{{ counts.quotations.in_progress }}</div>
     </div>
     <div class="dashboard-box box-quotation">
-      <div class="box-title">Not Completed Quotations</div>
-      <div class="box-count">{{ counts.quotations.not_completed }}</div>
+      <div class="box-title">Follow up Quotations</div>
+      <div class="box-count">{{ counts.quotations.follow_up }}</div>
+    </div>
+    <div class="dashboard-box box-quotation">
+      <div class="box-title">Approved Quotations</div>
+      <div class="box-count">{{ counts.quotations.approved }}</div>
     </div>
   </div>
   <div class="section-footer">
@@ -71,11 +75,15 @@
       <div class="box-count">{{ counts.work_orders.done }}</div>
     </div>
     <div class="dashboard-box box-work">
+      <div class="box-title">In Progress Due</div>
+      <div class="box-count">{{ counts.work_orders.in_progress_due }}</div>
+    </div>
+    <div class="dashboard-box box-work">
       <div class="box-title">In Progress</div>
       <div class="box-count">{{ counts.work_orders.in_progress }}</div>
     </div>
     <div class="dashboard-box box-work">
-      <div class="box-title">To Do</div>
+      <div class="box-title">Pending</div>
       <div class="box-count">{{ counts.work_orders.to_do }}</div>
     </div>
     <div class="dashboard-box box-work">
@@ -98,12 +106,16 @@
       <div class="box-count">{{ counts.purchase_orders.paid }}</div>
     </div>
     <div class="dashboard-box box-purchase">
-      <div class="box-title">Partial</div>
-      <div class="box-count">{{ counts.purchase_orders.partial }}</div>
+      <div class="box-title">Issued</div>
+      <div class="box-count">{{ counts.purchase_orders.issued }}</div>
     </div>
     <div class="dashboard-box box-purchase">
-      <div class="box-title">Unpaid</div>
-      <div class="box-count">{{ counts.purchase_orders.unpaid }}</div>
+      <div class="box-title">Shipment In Progress</div>
+      <div class="box-count">{{ counts.purchase_orders.ship_in_progress }}</div>
+    </div>
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Fullfilled</div>
+      <div class="box-count">{{ counts.purchase_orders.fullfilled }}</div>
     </div>
   </div>
   <div class="section-footer">

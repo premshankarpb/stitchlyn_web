@@ -4,6 +4,8 @@ namespace Drupal\stitchlyn_basic\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\Core\Datetime\DrupalDateTime;
+
 
 /**
  * Provides the Dashboard page controller.
@@ -47,14 +49,18 @@ class DashboardController extends ControllerBase {
 
       'quotations' => [
         'total' => $this->getNodeCount('quotation'),
-        'fulfilled' => $this->getNodeCountByStatus('quotation', 1), // Published = Fulfilled
-        'not_completed' => $this->getNodeCountByStatus('quotation', 0), // Unpublished = Not Completed
+        'draft' => $this->getNodeCountByStatus('quotation', 0, 'draft'), // Unpublished = draft
+        'approved' => $this->getNodeCountByStatus('quotation', 0, 'accepted'), // Unpublished = approved
+        'in_progress' => $this->getNodeCountByStatus('quotation', 0, 'in_progress'), // Unpublished = in_progress
+        'follow_up' => $this->getNodeCountByStatus('quotation', 0, 'to_update'), // Unpublished = follow_up
+
       ],
 
       'work_orders' => [
         'total' => $this->getNodeCount('work_order'),
         'done' => $this->getNodeCountByTaxonomy('work_order', 'field_order_status', 'Done'),
-        'in_progress' => $this->getNodeCountByTaxonomy('work_order', 'field_order_status', 'In Progress'),
+        'in_progress_due' => $this->getNodesWithDPlusOrMinus3('minus'),
+        'in_progress' => $this->getNodesWithDPlusOrMinus3('plus'),
         'to_do' => $this->getNodeCountByTaxonomy('work_order', 'field_order_status', 'To Do'),
         'rejected' => $this->getNodeCountByTaxonomy('work_order', 'field_order_status', 'Rejected'),
       ],
@@ -62,8 +68,9 @@ class DashboardController extends ControllerBase {
       'purchase_orders' => [
         'total' => $this->getNodeCount('purchase_order'),
         'paid' => $this->getNodeCountByTaxonomy('purchase_order', 'field_payment_status', 'Paid'),
-        'partial' => $this->getNodeCountByTaxonomy('purchase_order', 'field_payment_status', 'Partial'),
-        'unpaid' => $this->getNodeCountByTaxonomy('purchase_order', 'field_payment_status', 'Unpaid'),
+        'issued' => $this->getNodeCountByTaxonomy('purchase_order', 'field_purchase_order_status', 'Issued'),
+        'ship_in_progress' => $this->getNodeCountByTaxonomy('purchase_order', 'field_purchase_order_status', 'Shipment In Progress'),
+        'fullfilled' => $this->getNodeCountByTaxonomy('purchase_order', 'field_purchase_order_status', 'Fulfilled'),
       ],
     ];
 
@@ -98,12 +105,20 @@ class DashboardController extends ControllerBase {
     return $query->count()->execute();
   }
 
-  protected function getNodeCountByStatus($type, $status = 1) {
-    $query = \Drupal::entityQuery('node')
-      ->condition('type', $type)
-      ->condition('status', $status)
+  protected function getNodeCountByStatus($type, $status, $mod) {
+
+    $cms_query = \Drupal::entityQuery('content_moderation_state')
+      ->condition('content_entity_type_id', 'node')
+      ->condition('moderation_state', $mod)
       ->accessCheck(FALSE);
-    return $query->count()->execute();
+
+    $cms_ids = $cms_query->execute();
+
+    if (empty($cms_ids)) {
+      $cms_ids = [0]; // invalid nid → returns zero nodes
+    }
+
+    return $cms_query->count()->execute();
   }
 
   /**
@@ -137,6 +152,38 @@ class DashboardController extends ControllerBase {
     }
     return 0;
   }
+
+
+function getNodesWithDPlusOrMinus3($sign) {
+
+  if($sign == 'plus'){
+    $the_sign = '>=';
+  }
+  if($sign == 'minus'){
+    $the_sign = '<';
+  }
+  // Compute "now + 3 days"
+  $threshold = new DrupalDateTime('now');
+  $threshold->modify('+3 days');
+
+  // Normalize time to start of day
+  $threshold->setTime(0, 0, 0);
+
+  // Convert to storage format (adjust depending on field type)
+  //$threshold_storage = $threshold->format('Y-m-d\TH:i:s'); // For datetime
+  $threshold_storage = $threshold->format('Y-m-d'); // For date-only field
+
+  // Query nodes
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'work_order')
+    ->condition('field_expected_due_date', $threshold_storage, $the_sign)
+    ->accessCheck(FALSE);
+
+  $nids = $query->count()->execute();
+  return $nids;
+
+}
+
 
   /**
    * Count nodes by workflow moderation state.
