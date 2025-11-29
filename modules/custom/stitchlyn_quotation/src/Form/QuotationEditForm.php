@@ -328,11 +328,11 @@ class QuotationEditForm extends FormBase {
     // Normalize capitalization just in case.
     $moderation_state = strtolower(trim($moderation_state));
 
-
+    \Drupal::logger('Q_moderation_state')->warning('<pre><code>' . print_r($moderation_state, TRUE) . '</code></pre>');
     if ($moderation_state == 'accepted') {
       // Get the quotation node ID.
       $quotation_id = $form_state->getValue('node_id') ?? $form_state->getValue('node_id') ?? NULL;
-
+      \Drupal::logger('Q_quotation_id')->warning('<pre><code>' . print_r($quotation_id, TRUE) . '</code></pre>');
       if ($quotation_id) {
         // Fetch all inventory logs linked to this quotation.
         $log_ids = \Drupal::entityQuery('node')
@@ -340,7 +340,7 @@ class QuotationEditForm extends FormBase {
           ->condition('field_purchase_order', $quotation_id)
           ->accessCheck(FALSE)
           ->execute();
-
+        \Drupal::logger('Q_log_ids')->warning('<pre><code>' . print_r($log_ids, TRUE) . '</code></pre>');
         if (!empty($log_ids)) {
           $logs = \Drupal\node\Entity\Node::loadMultiple($log_ids);
 
