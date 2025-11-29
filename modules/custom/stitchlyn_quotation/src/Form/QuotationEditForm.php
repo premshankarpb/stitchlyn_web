@@ -185,18 +185,8 @@ class QuotationEditForm extends FormBase {
 
         // Load all states from this workflow.
         $states = $type->getStates();
-        // foreach ($states as $sid => $state) {
-        //   $state_options[$sid] = $state->label();
-        // }
-        $state_options = [];
-        // Get allowed transitions from current state.
-        $transitions = $type->getTransitions($current_state_id);
-        foreach ($transitions as $transition) {
-          if ($transition->access($node, \Drupal::currentUser())) {
-            $target_state = $transition->getToState()->id();
-            $label        = $transition->getToState()->label();
-            $state_options[$target_state] = $label;
-          }
+        foreach ($states as $sid => $state) {
+          $state_options[$sid] = $state->label();
         }
 
         // Current state details.

@@ -192,7 +192,7 @@ class MyQuotationEditForm extends FormBase {
         // Load all states from this workflow.
         $states = $type->getStates();
         foreach ($states as $sid => $state) {
-          if($state->label() == 'Draft' || $state->label() == 'To Update'){
+          if($state->label() == 'Draft' || $state->label() == 'To Update' || $state->label() == 'Requested'){
             $state_options[$sid] = $state->label();
           }
         }
