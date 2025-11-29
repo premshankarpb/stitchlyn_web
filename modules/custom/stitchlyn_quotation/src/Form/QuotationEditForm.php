@@ -199,6 +199,7 @@ class QuotationEditForm extends FormBase {
             $state_options[$target_state] = $label;
           }
         }
+        $state_options['requested'] = 'Requested';
 
         // Current state details.
         $current_state_id = $node->hasField('moderation_state') ? (string) $node->get('moderation_state')->value : '';
