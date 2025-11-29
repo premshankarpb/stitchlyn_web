@@ -194,3 +194,7 @@ em.placeholder {
 .path-dashboard .navbar-nav{
   visibility: hidden;
 }
+
+.admin-layout .dark-sidebar .sidebar-content {
+  padding-top: 3rem !important;
+}
