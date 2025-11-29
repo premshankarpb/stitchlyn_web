@@ -112,6 +112,7 @@
 
                 modalEl.addEventListener('hidden.bs.modal', function () {
                   $('#workorder-wrapper').html(res.html);
+                  $('.modal-backdrop').hide();
                   Drupal.attachBehaviors(document, drupalSettings);
                 }, { once: true });
 

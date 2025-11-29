@@ -331,9 +331,6 @@ class QuotationEditForm extends FormBase {
     if ($moderation_state == 'accepted') {
       // Get the quotation node ID.
       $quotation_id = $node->id();
-      $quotation_id1 = $values['node_id'] ?? $values['node_id'] ?? NULL;
-      \Drupal::logger('Q_quotation_id')->warning('<pre><code>' . print_r($quotation_id, TRUE) . '</code></pre>');
-      \Drupal::logger('Q_quotation_id1')->warning('<pre><code>' . print_r($quotation_id1, TRUE) . '</code></pre>');
       if ($quotation_id) {
         // Fetch all inventory logs linked to this quotation.
         $log_ids = \Drupal::entityQuery('node')
@@ -341,7 +338,6 @@ class QuotationEditForm extends FormBase {
           ->condition('field_purchase_order', $quotation_id)
           ->accessCheck(FALSE)
           ->execute();
-        \Drupal::logger('Q_log_ids')->warning('<pre><code>' . print_r($log_ids, TRUE) . '</code></pre>');
         if (!empty($log_ids)) {
           $logs = \Drupal\node\Entity\Node::loadMultiple($log_ids);
 
