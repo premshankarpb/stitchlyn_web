@@ -19,6 +19,7 @@ body {
 
 .product-card img{
   height: 220px;
+  width: -webkit-fill-available;
 }
 
 .card-title a{
