@@ -314,7 +314,7 @@ class MyQuotationEditForm extends FormBase {
 
     $this->messenger()->addMessage($this->t('Quotation saved successfully with updated totals.'));
     if($values['moderation_state'] == 'requested'){
-      $form_state->setRedirect('stitchlyn_quotation.my_quotations');
+      $form_state->setRedirect('stitchlyn_vendor.my_quotation');
     }
   }
 
