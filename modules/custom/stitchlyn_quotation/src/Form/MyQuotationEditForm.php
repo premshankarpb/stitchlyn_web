@@ -310,13 +310,12 @@ class MyQuotationEditForm extends FormBase {
     // Update order fields.
     $node->set('field_amount_collected', $total_collected);
     $node->set('field_amount_pending', $pending_amount);
-
-    \Drupal::logger('total_collected')->warning('<pre><code>' . print_r($total_collected, TRUE) . '</code></pre>');
-    \Drupal::logger('pending_amount')->warning('<pre><code>' . print_r($pending_amount, TRUE) . '</code></pre>');
-
     $node->save();
 
     $this->messenger()->addMessage($this->t('Quotation saved successfully with updated totals.'));
+    if($values['moderation_state'] == 'requested'){
+      $form_state->setRedirect('stitchlyn_quotation.my_quotations');
+    }
   }
 
 }
