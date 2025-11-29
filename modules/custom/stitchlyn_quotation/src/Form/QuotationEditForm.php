@@ -36,7 +36,7 @@ class QuotationEditForm extends FormBase {
     $form_state->set('node', $node);
     $quotation_id = $node->id();
 
-    $form['totals']['node_id'] = [
+    $form['node_id'] = [
       '#type' => 'hidden',
       '#value' => $quotation_id,
       '#attributes' => ['id' => 'hidden-node_id'],
@@ -328,11 +328,12 @@ class QuotationEditForm extends FormBase {
     // Normalize capitalization just in case.
     $moderation_state = strtolower(trim($moderation_state));
 
-    \Drupal::logger('Q_moderation_state')->warning('<pre><code>' . print_r($moderation_state, TRUE) . '</code></pre>');
     if ($moderation_state == 'accepted') {
       // Get the quotation node ID.
-      $quotation_id = $form_state->getValue('node_id') ?? $form_state->getValue('node_id') ?? NULL;
+      $quotation_id = $node->id();
+      $quotation_id1 = $values['node_id'] ?? $values['node_id'] ?? NULL;
       \Drupal::logger('Q_quotation_id')->warning('<pre><code>' . print_r($quotation_id, TRUE) . '</code></pre>');
+      \Drupal::logger('Q_quotation_id1')->warning('<pre><code>' . print_r($quotation_id1, TRUE) . '</code></pre>');
       if ($quotation_id) {
         // Fetch all inventory logs linked to this quotation.
         $log_ids = \Drupal::entityQuery('node')
