@@ -33,7 +33,7 @@
             {% set set_edit = '' %}
             {% if get_mod_status == 'published' %}
               {% set set_mod_status = 'Fullfilled' %}
-            {% elseif get_mod_status == 'requested' or get_mod_status == 'draft' %}
+            {% elseif get_mod_status == 'to_update' or get_mod_status == 'draft' %}
               {% set set_edit = ' | <a href="quotation/' ~ node_item.id ~ '/edit">Edit</a>' %}
               {% set set_mod_status = get_mod_status %}
             {% else %}
