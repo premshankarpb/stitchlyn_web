@@ -342,6 +342,7 @@ class PurchaseOrderEditForm extends FormBase {
               if (!$inventory_node) continue;
 
               $current_stock = (float) ($inventory_node->get('field_opening_stock')->value ?? 0);
+              
 
               // ✔ CASE 1: LOG EXISTS — UPDATE LOG & STOCK
               if ($existing_log_ids) {
@@ -359,6 +360,15 @@ class PurchaseOrderEditForm extends FormBase {
 
                       // Update stock difference
                       $inventory_node->set('field_opening_stock', $current_stock + $difference);
+                      $new_stock = $current_stock + $difference;
+                      // --- Create new revision and comment ---
+                      $inventory_node->setNewRevision(TRUE);
+                      $inventory_node->setRevisionUserId(\Drupal::currentUser()->id());
+                      $inventory_node->setRevisionCreationTime(REQUEST_TIME);
+                      $inventory_node->setRevisionLogMessage(
+                        'Stock increased by ' . $difference . ' due to Purchase order ID #' . $nid .
+                        ' (previous stock: ' . $current_stock . ', new stock: ' . $new_stock . ').'
+                      );
                       $inventory_node->save();
                   }
               }
@@ -385,6 +395,16 @@ class PurchaseOrderEditForm extends FormBase {
 
                   // Stock Increase
                   $inventory_node->set('field_opening_stock', $current_stock + $new_qty);
+
+                  $new_stock = $current_stock + $new_qty;
+                  // --- Create new revision and comment ---
+                  $inventory_node->setNewRevision(TRUE);
+                  $inventory_node->setRevisionUserId(\Drupal::currentUser()->id());
+                  $inventory_node->setRevisionCreationTime(REQUEST_TIME);
+                  $inventory_node->setRevisionLogMessage(
+                    'Stock increased by ' . $new_qty . ' due to QuotPurchsae order ID #' . $nid .
+                    ' (previous stock: ' . $current_stock . ', new stock: ' . $new_stock . ').'
+                  );
                   $inventory_node->save();
               }
 
