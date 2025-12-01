@@ -67,7 +67,7 @@ class ERPClientSettingsForm extends ConfigFormBase {
     $form['enable_mail'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable Mail trigger'),
-      '#default_value' => $config->get('enable_po_mail') ?? 0,
+      '#default_value' => $config->get('enable_mail') ?? 0,
       '#description' => $this->t('If enabled, emails will be sent.'),
     ];
 
