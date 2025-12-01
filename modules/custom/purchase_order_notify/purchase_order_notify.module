@@ -126,6 +126,9 @@ function purchase_order_notify_entity_update(EntityInterface $entity) {
   if (!$entity instanceof NodeInterface) {
     return;
   }
+  // Load ERP config for tax.
+  $config = \Drupal::config('stitchlyn_basic.erp_settings');
+  $enable_mail = (float) ($config->get('enable_mail') ?? 0);
 
   $bundle = $entity->bundle();
 
@@ -143,8 +146,10 @@ function purchase_order_notify_entity_update(EntityInterface $entity) {
             return;
           }
         }
-
-        \Drupal::service('purchase_order_notify.mail_service')->sendPurchaseOrderFulfilledMail($entity);
+        if(enable_mail != 0){
+          // Send the email when status changes to Fulfilled.
+          \Drupal::service('purchase_order_notify.mail_service')->sendPurchaseOrderFulfilledMail($entity);
+        }
       }
     }
   }
@@ -163,9 +168,10 @@ function purchase_order_notify_entity_update(EntityInterface $entity) {
             return;
           }
         }
-
-        // Send the email when moderation_state changes to Accepted.
-        \Drupal::service('purchase_order_notify.mail_service')->sendQuotationAcceptedMail($entity);
+        if(enable_mail != 0){
+          // Send the email when moderation_state changes to Accepted.
+          \Drupal::service('purchase_order_notify.mail_service')->sendQuotationAcceptedMail($entity);
+        }
       }
     }
   }
@@ -190,7 +196,9 @@ function purchase_order_notify_entity_update(EntityInterface $entity) {
           $reorder_level = $entity->get('field_reorder_level')->value;
 
           if($current_stock <= $reorder_level){
-            \Drupal::service('purchase_order_notify.mail_service')->sendRestockInventory($entity);
+            if(enable_mail != 0){
+              \Drupal::service('purchase_order_notify.mail_service')->sendRestockInventory($entity);
+            }
           }
 
         }

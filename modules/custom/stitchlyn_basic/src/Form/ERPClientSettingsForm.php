@@ -64,6 +64,13 @@ class ERPClientSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Set the global tax rate (%) used for quotations.'),
     ];
 
+    $form['enable_mail'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Mail trigger'),
+      '#default_value' => $config->get('enable_po_mail') ?? 0,
+      '#description' => $this->t('If enabled, emails will be sent.'),
+    ];
+
     $form['client_logo'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Client Logo'),
@@ -96,6 +103,7 @@ class ERPClientSettingsForm extends ConfigFormBase {
       ->set('client_contact', $form_state->getValue('client_contact'))
       ->set('client_gst', $form_state->getValue('client_gst'))
       ->set('tax_percentage', $form_state->getValue('tax_percentage'))
+      ->set('enable_mail', $form_state->getValue('enable_mail'))
       ->set('client_logo', $form_state->getValue('client_logo'))
       ->save();
   }
