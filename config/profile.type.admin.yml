@@ -1,0 +1,13 @@
+uuid: 86ef9562-f008-4f42-af37-b1d053e9de8f
+langcode: en
+status: true
+dependencies: {  }
+id: admin
+label: Admin
+display_label: Admin
+multiple: false
+registration: false
+roles:
+  admin: admin
+allow_revisions: true
+new_revision: false

@@ -12,6 +12,7 @@ dependencies:
     - node.type.product
     - taxonomy.vocabulary.item_category
   module:
+    - csv_serialization
     - image
     - node
     - rest
@@ -153,7 +154,7 @@ display:
         options:
           offset: 0
           pagination_heading_level: h4
-          items_per_page: 10
+          items_per_page: 3
           total_pages: null
           id: 0
           tags:
@@ -329,8 +330,8 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        title:
-          id: title
+        title_1:
+          id: title_1
           table: node_field_data
           field: title
           relationship: none
@@ -339,16 +340,34 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: field
-          label: ''
+          label: Title
           exclude: false
           alter:
             alter_text: false
+            text: ''
             make_link: false
+            path: ''
             absolute: false
-            word_boundary: false
-            ellipsis: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
             strip_tags: false
             trim: false
+            preserve_tags: ''
             html: false
           element_type: ''
           element_class: ''
@@ -365,7 +384,7 @@ display:
           click_sort_column: value
           type: string
           settings:
-            link_to_entity: true
+            link_to_entity: false
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -428,7 +447,7 @@ display:
           click_sort_column: target_id
           type: entity_reference_label
           settings:
-            link: true
+            link: false
           group_column: target_id
           group_columns: {  }
           group_rows: true
@@ -491,7 +510,7 @@ display:
           click_sort_column: target_id
           type: entity_reference_label
           settings:
-            link: true
+            link: false
           group_column: target_id
           group_columns: {  }
           group_rows: true
@@ -589,6 +608,7 @@ display:
           plugin_id: bundle
           value:
             product: product
+          group: 1
         title:
           id: title
           table: node_field_data
@@ -599,7 +619,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: string
-          operator: '='
+          operator: contains
           value: ''
           group: 1
           exposed: true
@@ -622,6 +642,7 @@ display:
               administrator: '0'
               vendor: '0'
               unit_manager: '0'
+              admin: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -643,13 +664,13 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: string
-          operator: '='
+          operator: contains
           value: ''
           group: 1
           exposed: true
           expose:
             operator_id: field_sku_code_value_op
-            label: 'SKU code (field_sku_code)'
+            label: 'SKU code'
             description: ''
             use_operator: false
             operator: field_sku_code_value_op
@@ -666,6 +687,7 @@ display:
               administrator: '0'
               vendor: '0'
               unit_manager: '0'
+              admin: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -710,6 +732,7 @@ display:
               administrator: '0'
               vendor: '0'
               unit_manager: '0'
+              admin: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -725,7 +748,7 @@ display:
             group_items: {  }
           reduce_duplicates: false
           vid: item_category
-          type: textfield
+          type: select
           hierarchy: false
           limit: true
           error_message: true
@@ -733,6 +756,33 @@ display:
         operator: AND
         groups:
           1: AND
+      style:
+        type: data_export
+        options:
+          formats:
+            csv: csv
+          csv_settings:
+            delimiter: ','
+            enclosure: '"'
+            escape_char: \
+            strip_tags: true
+            trim: true
+            encoding: utf8
+            utf8_bom: '0'
+            use_serializer_encode_only: false
+            output_header: true
+          xml_settings:
+            encoding: UTF-8
+            root_node_name: response
+            item_node_name: item
+            format_output: false
+      row:
+        type: data_field
+        options:
+          field_options:
+            title:
+              alias: ''
+              raw_output: true
       defaults:
         fields: false
         filters: false
@@ -1241,6 +1291,7 @@ display:
           plugin_id: bundle
           value:
             product: product
+          group: 1
         title:
           id: title
           table: node_field_data
@@ -1251,7 +1302,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: string
-          operator: '='
+          operator: contains
           value: ''
           group: 1
           exposed: true
@@ -1274,6 +1325,7 @@ display:
               administrator: '0'
               vendor: '0'
               unit_manager: '0'
+              admin: '0'
             placeholder: ''
           is_grouped: false
           group_info:
@@ -1295,7 +1347,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: string
-          operator: '='
+          operator: contains
           value: ''
           group: 1
           exposed: true
@@ -1318,6 +1370,7 @@ display:
               administrator: '0'
               vendor: '0'
               unit_manager: '0'
+              admin: '0'
             placeholder: ''
           is_grouped: false
           group_info:

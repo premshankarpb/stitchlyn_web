@@ -1,0 +1,29 @@
+uuid: e5e4082c-6fd1-4d28-bd9d-363c6029c5bc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_size
+    - paragraphs.paragraphs_type.kaappa
+    - taxonomy.vocabulary.size
+id: paragraph.kaappa.field_size
+field_name: field_size
+entity_type: paragraph
+bundle: kaappa
+label: Size
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      size: size
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

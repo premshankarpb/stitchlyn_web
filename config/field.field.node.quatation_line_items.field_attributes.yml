@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_attributes
     - node.type.quatation_line_items
+    - paragraphs.paragraphs_type.candle_attribute
+    - paragraphs.paragraphs_type.kappa_attribute
     - paragraphs.paragraphs_type.shirt_attribute
     - paragraphs.paragraphs_type.umbrella_attributes
   module:
@@ -23,13 +25,18 @@ settings:
   handler: 'default:paragraph'
   handler_settings:
     target_bundles:
+      candle_attribute: candle_attribute
       shirt_attribute: shirt_attribute
+      kappa_attribute: kappa_attribute
       umbrella_attributes: umbrella_attributes
     negate: 0
     target_bundles_drag_drop:
       banner_item:
         weight: 13
         enabled: false
+      candle_attribute:
+        weight: 19
+        enabled: true
       cta_banner:
         weight: 14
         enabled: false
@@ -45,6 +52,15 @@ settings:
       home_banner:
         weight: 18
         enabled: false
+      kaappa:
+        weight: 25
+        enabled: false
+      kappa_attribute:
+        weight: 24
+        enabled: true
+      product_costings:
+        weight: 26
+        enabled: false
       shirt_attribute:
         weight: 20
         enabled: true
@@ -53,12 +69,6 @@ settings:
         enabled: false
       simple_card_item:
         weight: 20
-        enabled: false
-      st:
-        weight: 21
-        enabled: false
-      stats:
-        weight: 22
         enabled: false
       type_a_card_cta:
         weight: 23

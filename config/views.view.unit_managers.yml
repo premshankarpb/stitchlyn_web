@@ -362,7 +362,7 @@ display:
           entity_type: profile
           plugin_id: entity_link_edit
           label: Actions
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -413,7 +413,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: custom
-          label: 'Custom text'
+          label: Actions
           exclude: false
           alter:
             alter_text: true

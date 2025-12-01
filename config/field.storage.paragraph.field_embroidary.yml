@@ -1,16 +1,16 @@
-uuid: b3eb82a0-00c0-4b35-835f-4d8fac3a9576
+uuid: 3fa2189a-d165-47a4-bafa-a24c1f961780
 langcode: en
 status: true
 dependencies:
   module:
     - paragraphs
-id: paragraph.field_length1
-field_name: field_length1
+    - taxonomy
+id: paragraph.field_embroidary
+field_name: field_embroidary
 entity_type: paragraph
-type: decimal
+type: entity_reference
 settings:
-  precision: 10
-  scale: 2
+  target_type: taxonomy_term
 module: core
 locked: false
 cardinality: 1

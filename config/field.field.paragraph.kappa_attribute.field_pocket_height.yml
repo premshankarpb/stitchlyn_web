@@ -1,0 +1,23 @@
+uuid: 0dc3f967-3a8c-42ee-affd-a1b065f3d120
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_pocket_height
+    - paragraphs.paragraphs_type.kappa_attribute
+id: paragraph.kappa_attribute.field_pocket_height
+field_name: field_pocket_height
+entity_type: paragraph
+bundle: kappa_attribute
+label: 'pocket height'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

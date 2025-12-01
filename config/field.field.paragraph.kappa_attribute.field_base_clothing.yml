@@ -1,0 +1,33 @@
+uuid: 45fd7acf-9013-4ff1-a62b-68c7e5c4af29
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_base_clothing
+    - paragraphs.paragraphs_type.kappa_attribute
+    - taxonomy.vocabulary.base_cloth
+  content:
+    - 'taxonomy_term:base_cloth:d671259f-4cff-4947-b012-ca42d6f1e20f'
+id: paragraph.kappa_attribute.field_base_clothing
+field_name: field_base_clothing
+entity_type: paragraph
+bundle: kappa_attribute
+label: 'Base Clothing'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    target_uuid: d671259f-4cff-4947-b012-ca42d6f1e20f
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      base_cloth: base_cloth
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

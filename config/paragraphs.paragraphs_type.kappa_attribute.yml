@@ -1,0 +1,10 @@
+uuid: d5236652-ea71-48b5-baa5-f86f97bee137
+langcode: en
+status: true
+dependencies: {  }
+id: kappa_attribute
+label: 'Kappa Attribute'
+icon_uuid: null
+icon_default: null
+description: 'Attribute for preist Kappa'
+behavior_plugins: {  }

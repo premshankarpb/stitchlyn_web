@@ -1,0 +1,51 @@
+uuid: 6162c3d8-02e7-4d18-9dfd-d6b8ddefdf81
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.profile.admin.field_name
+    - field.field.profile.admin.field_phone_number
+    - field.field.profile.admin.field_remarks
+    - field.field.profile.admin.field_unit
+    - profile.type.admin
+  module:
+    - phonenumber
+    - text
+id: profile.admin.default
+targetEntityType: profile
+bundle: admin
+mode: default
+content:
+  field_name:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_phone_number:
+    type: phone_international
+    label: hidden
+    settings:
+      title: ''
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_remarks:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 12
+    region: content
+  field_unit:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden: {  }

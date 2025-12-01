@@ -1,0 +1,19 @@
+uuid: ff0cd483-4853-4075-8d54-b1989bf37fce
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_name
+    - profile.type.admin
+id: profile.admin.field_name
+field_name: field_name
+entity_type: profile
+bundle: admin
+label: Name
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

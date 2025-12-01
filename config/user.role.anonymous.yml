@@ -4,9 +4,11 @@ status: true
 dependencies:
   config:
     - filter.format.restricted_html
+    - workflows.workflow.quotation_workflow
   module:
     - comment
     - contact
+    - content_moderation
     - filter
     - paragraphs_type_permissions
     - search
@@ -22,6 +24,7 @@ permissions:
   - 'access content'
   - 'access site-wide contact form'
   - 'search content'
+  - 'use quotation_workflow transition quation_requested'
   - 'use text format restricted_html'
   - 'view paragraph content banner_item'
   - 'view paragraph content candle_attribute'
@@ -34,7 +37,5 @@ permissions:
   - 'view paragraph content shirt_attribute'
   - 'view paragraph content simple_card'
   - 'view paragraph content simple_card_item'
-  - 'view paragraph content st'
-  - 'view paragraph content stats'
   - 'view paragraph content type_a_card_cta'
   - 'view paragraph content umbrella_attributes'

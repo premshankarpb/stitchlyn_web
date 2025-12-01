@@ -1,0 +1,9 @@
+uuid: bfa3e028-7855-4ce3-a4cf-c1fbfbf77beb
+langcode: en
+status: true
+dependencies: {  }
+name: Embroidary
+vid: embroidary
+description: null
+weight: 0
+new_revision: false

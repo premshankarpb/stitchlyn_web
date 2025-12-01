@@ -1,0 +1,22 @@
+uuid: 6f8d3d58-f7a2-4090-a4a1-6b40d9a18d49
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_remarks
+    - profile.type.admin
+  module:
+    - text
+id: profile.admin.field_remarks
+field_name: field_remarks
+entity_type: profile
+bundle: admin
+label: Remarks
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

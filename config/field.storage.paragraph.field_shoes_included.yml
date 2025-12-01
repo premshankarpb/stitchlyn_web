@@ -1,17 +1,14 @@
-uuid: 3618f6a3-e140-4919-82c1-929a4991774c
+uuid: 2e3fcab7-3138-44a7-a06d-eb1b436d86ef
 langcode: en
 status: true
 dependencies:
   module:
     - paragraphs
-id: paragraph.field_stat_number
-field_name: field_stat_number
+id: paragraph.field_shoes_included
+field_name: field_shoes_included
 entity_type: paragraph
-type: string
-settings:
-  max_length: 255
-  case_sensitive: false
-  is_ascii: false
+type: boolean
+settings: {  }
 module: core
 locked: false
 cardinality: 1

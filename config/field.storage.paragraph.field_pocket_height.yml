@@ -1,17 +1,16 @@
-uuid: e5e6f12e-91ab-4fbb-b78b-4067134975fa
+uuid: 8812bf67-a73e-4bc0-ba58-a2c568d4d72d
 langcode: en
 status: true
 dependencies:
   module:
     - paragraphs
-id: paragraph.field_stat_label
-field_name: field_stat_label
+id: paragraph.field_pocket_height
+field_name: field_pocket_height
 entity_type: paragraph
-type: string
+type: integer
 settings:
-  max_length: 255
-  case_sensitive: false
-  is_ascii: false
+  unsigned: false
+  size: normal
 module: core
 locked: false
 cardinality: 1

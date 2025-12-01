@@ -1,0 +1,20 @@
+uuid: a8378f73-fe39-4cb1-93da-fc97f949f2c6
+langcode: en
+status: true
+dependencies:
+  module:
+    - paragraphs
+id: paragraph.field_shoulder_length
+field_name: field_shoulder_length
+entity_type: paragraph
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

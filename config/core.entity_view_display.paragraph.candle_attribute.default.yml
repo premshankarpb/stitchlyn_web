@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.candle_attribute.field_candle_images
     - field.field.paragraph.candle_attribute.field_candle_length
     - field.field.paragraph.candle_attribute.field_candle_radius
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.candle_attribute
   module:
     - image
@@ -25,10 +26,10 @@ content:
     region: content
   field_candle_images:
     type: image
-    label: above
+    label: inline
     settings:
-      image_link: ''
-      image_style: ''
+      image_link: file
+      image_style: thumbnail
       image_loading:
         attribute: lazy
     third_party_settings: {  }

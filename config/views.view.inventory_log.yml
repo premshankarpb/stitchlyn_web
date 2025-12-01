@@ -450,7 +450,20 @@ display:
       cache:
         type: tag
         options: {  }
-      empty: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text
+          empty: true
+          content:
+            value: 'No contents in the system.'
+            format: basic_html
+          tokenize: false
       sorts:
         created:
           id: created
@@ -545,7 +558,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: text_custom
-          empty: false
+          empty: true
           content: '<a class="btn btn-primary" href="/node/add/inventory_transaction_log">Add a transaction</a>'
           tokenize: false
       footer: {  }

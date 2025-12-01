@@ -1,0 +1,29 @@
+uuid: 458d5af9-8aba-455d-be65-ce505405ffb5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_embroidary
+    - paragraphs.paragraphs_type.kappa_attribute
+    - taxonomy.vocabulary.embroidary
+id: paragraph.kappa_attribute.field_embroidary
+field_name: field_embroidary
+entity_type: paragraph
+bundle: kappa_attribute
+label: Embroidary
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      embroidary: embroidary
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,41 @@
+uuid: 97db2de1-abd9-4924-933f-97fd973c5511
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.kaappa.field_colour
+    - field.field.paragraph.kaappa.field_shoes_included
+    - field.field.paragraph.kaappa.field_size
+    - paragraphs.paragraphs_type.kaappa
+id: paragraph.kaappa.default
+targetEntityType: paragraph
+bundle: kaappa
+mode: default
+content:
+  field_colour:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_shoes_included:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_size:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

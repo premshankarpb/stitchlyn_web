@@ -1,0 +1,23 @@
+uuid: 39c9eea3-7831-4765-a3bd-1a4ccecb6898
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_shoes_included
+    - paragraphs.paragraphs_type.kaappa
+id: paragraph.kaappa.field_shoes_included
+field_name: field_shoes_included
+entity_type: paragraph
+bundle: kaappa
+label: 'Shoes Included'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

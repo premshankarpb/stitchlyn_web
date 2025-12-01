@@ -1,0 +1,9 @@
+uuid: 9ed79000-0ab5-4f73-9f36-2fc8371f4da1
+langcode: en
+status: true
+dependencies: {  }
+name: 'Base cloth'
+vid: base_cloth
+description: null
+weight: 0
+new_revision: false

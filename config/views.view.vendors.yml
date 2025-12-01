@@ -8,8 +8,7 @@ dependencies:
     - field.storage.profile.field_phone_number
     - field.storage.profile.field_status
     - field.storage.profile.field_vendor_name
-    - taxonomy.vocabulary.vendor_status
-    - taxonomy.vocabulary.vendor_type
+    - taxonomy.vocabulary.status
     - user.role.vendor
   module:
     - csv_serialization
@@ -805,7 +804,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          vid: vendor_status
+          vid: status
           type: select
           hierarchy: false
           limit: true
@@ -2170,57 +2169,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          vid: vendor_status
-          type: select
-          hierarchy: false
-          limit: true
-          error_message: true
-        field_vendor_type_target_id:
-          id: field_vendor_type_target_id
-          table: profile__field_vendor_type
-          field: field_vendor_type_target_id
-          relationship: profile
-          group_type: group
-          admin_label: ''
-          plugin_id: taxonomy_index_tid
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_vendor_type_target_id_op
-            label: 'Vendor Type'
-            description: ''
-            use_operator: false
-            operator: field_vendor_type_target_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_vendor_type_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              content_editor: '0'
-              administrator: '0'
-              vendor: '0'
-              unit_manager: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          vid: vendor_type
+          vid: status
           type: select
           hierarchy: false
           limit: true
@@ -2244,7 +2193,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: text_custom
-          empty: false
+          empty: true
           content: '<a class="btn btn-primary" href="add/vendor">Add Vendor</a>'
           tokenize: false
       display_extenders: {  }

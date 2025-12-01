@@ -1,0 +1,23 @@
+uuid: da884f3e-8357-48e3-aad4-08e445ccbc71
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_shoulder_length
+    - paragraphs.paragraphs_type.kappa_attribute
+id: paragraph.kappa_attribute.field_shoulder_length
+field_name: field_shoulder_length
+entity_type: paragraph
+bundle: kappa_attribute
+label: 'Shoulder length'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

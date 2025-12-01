@@ -5,9 +5,11 @@ dependencies:
   config:
     - filter.format.basic_html
     - filter.format.webform_default
+    - workflows.workflow.quotation_workflow
   module:
     - comment
     - contact
+    - content_moderation
     - file
     - filter
     - node
@@ -36,6 +38,7 @@ permissions:
   - 'search content'
   - 'skip comment approval'
   - 'update own customer profile'
+  - 'use quotation_workflow transition quation_requested'
   - 'use text format basic_html'
   - 'use text format webform_default'
   - 'view own customer profile'
@@ -52,8 +55,6 @@ permissions:
   - 'view paragraph content shirt_attribute'
   - 'view paragraph content simple_card'
   - 'view paragraph content simple_card_item'
-  - 'view paragraph content st'
-  - 'view paragraph content stats'
   - 'view paragraph content type_a_card_cta'
   - 'view paragraph content umbrella_attributes'
   - 'view unpublished paragraphs'

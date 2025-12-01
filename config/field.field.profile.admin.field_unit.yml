@@ -1,0 +1,29 @@
+uuid: 144582a3-e250-4b5a-b665-decfca721ec0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_unit
+    - profile.type.admin
+    - taxonomy.vocabulary.production_units
+id: profile.admin.field_unit
+field_name: field_unit
+entity_type: profile
+bundle: admin
+label: Unit
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      production_units: production_units
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

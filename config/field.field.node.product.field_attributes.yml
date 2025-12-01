@@ -6,8 +6,9 @@ dependencies:
     - field.storage.node.field_attributes
     - node.type.product
     - paragraphs.paragraphs_type.candle_attribute
+    - paragraphs.paragraphs_type.kaappa
+    - paragraphs.paragraphs_type.kappa_attribute
     - paragraphs.paragraphs_type.shirt_attribute
-    - paragraphs.paragraphs_type.st_antonys_test_paragraph
     - paragraphs.paragraphs_type.umbrella_attributes
   module:
     - entity_reference_revisions
@@ -27,8 +28,9 @@ settings:
     target_bundles:
       candle_attribute: candle_attribute
       shirt_attribute: shirt_attribute
+      kappa_attribute: kappa_attribute
       umbrella_attributes: umbrella_attributes
-      st_antonys_test_paragraph: st_antonys_test_paragraph
+      kaappa: kaappa
     negate: 0
     target_bundles_drag_drop:
       banner_item:
@@ -52,6 +54,12 @@ settings:
       home_banner:
         weight: 18
         enabled: false
+      kaappa:
+        weight: 25
+        enabled: true
+      kappa_attribute:
+        weight: 24
+        enabled: true
       product_costings:
         weight: 24
         enabled: false
@@ -63,15 +71,6 @@ settings:
         enabled: false
       simple_card_item:
         weight: 20
-        enabled: false
-      st:
-        weight: 21
-        enabled: false
-      st_antonys_test_paragraph:
-        weight: 30
-        enabled: true
-      stats:
-        weight: 22
         enabled: false
       type_a_card_cta:
         weight: 23

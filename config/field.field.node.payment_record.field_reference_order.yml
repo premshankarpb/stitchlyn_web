@@ -13,7 +13,7 @@ entity_type: node
 bundle: payment_record
 label: 'Reference order'
 description: ''
-required: false
+required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''

@@ -14,6 +14,7 @@ dependencies:
     - taxonomy.vocabulary.order_type
     - taxonomy.vocabulary.payment_mode
   module:
+    - csv_serialization
     - datetime
     - node
     - rest
@@ -1323,11 +1324,31 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+      style:
+        type: data_export
+        options:
+          formats:
+            csv: csv
+          csv_settings:
+            delimiter: ','
+            enclosure: '"'
+            escape_char: \
+            strip_tags: true
+            trim: true
+            encoding: utf8
+            utf8_bom: '0'
+            use_serializer_encode_only: false
+            output_header: true
+          xml_settings:
+            encoding: UTF-8
+            root_node_name: response
+            item_node_name: item
+            format_output: false
       defaults:
         fields: false
       display_extenders: {  }
       path: export/payment_records
-      filename: Payment-records
+      filename: ''
       automatic_download: false
       store_in_public_file_directory: null
       custom_redirect_path: false

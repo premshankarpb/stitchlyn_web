@@ -31,6 +31,7 @@ module:
   history: 0
   image: 0
   link: 0
+  mailer_transport: 0
   menu_item_role_access: 0
   menu_link_content: 0
   menu_ui: 0
@@ -49,12 +50,12 @@ module:
   serial: 0
   serialization: 0
   shortcut: 0
-  smtp: 0
   stitchlyn_basic: 0
   stitchlyn_product: 0
   stitchlyn_quotation: 0
   stitchlyn_unit: 0
   stitchlyn_vendor: 0
+  symfony_mailer: 0
   system: 0
   taxonomy: 0
   text: 0

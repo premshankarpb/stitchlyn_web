@@ -1,24 +1,20 @@
-uuid: 22f9befd-f44b-47ec-8771-a39f7b311744
+uuid: 342c1098-707a-4b54-b797-3df462aa81f3
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_colour
-    - paragraphs.paragraphs_type.st_antonys_test_paragraph
+    - paragraphs.paragraphs_type.kaappa
     - taxonomy.vocabulary.color
-  content:
-    - 'taxonomy_term:color:df2fcd82-b148-4fa7-ae55-98556290bfb7'
-id: paragraph.st_antonys_test_paragraph.field_colour
+id: paragraph.kaappa.field_colour
 field_name: field_colour
 entity_type: paragraph
-bundle: st_antonys_test_paragraph
+bundle: kaappa
 label: Colour
 description: ''
 required: true
 translatable: false
-default_value:
-  -
-    target_uuid: df2fcd82-b148-4fa7-ae55-98556290bfb7
+default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'

@@ -1,0 +1,64 @@
+uuid: 27c29d2e-85ec-4703-bfa3-1e48b4b73d8a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.kappa_attribute.field_base_clothing
+    - field.field.paragraph.kappa_attribute.field_embroidary
+    - field.field.paragraph.kappa_attribute.field_pocket_height
+    - field.field.paragraph.kappa_attribute.field_refer_image
+    - field.field.paragraph.kappa_attribute.field_shoulder_length
+    - paragraphs.paragraphs_type.kappa_attribute
+  module:
+    - image
+id: paragraph.kappa_attribute.default
+targetEntityType: paragraph
+bundle: kappa_attribute
+mode: default
+content:
+  field_base_clothing:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_embroidary:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_pocket_height:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_refer_image:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_shoulder_length:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }
