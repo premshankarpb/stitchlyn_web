@@ -136,12 +136,12 @@ class MyQuotationEditForm extends FormBase {
       '#attributes' => ['id' => 'hidden-subtotal'],
     ];
 
-    $form['totals']['field_discount'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Discount'),
-      '#default_value' => $node->get('field_discount')->value ?? 0,
-      '#step' => 0.01,
-    ];
+    // $form['totals']['field_discount'] = [
+    //   '#type' => 'number',
+    //   '#title' => $this->t('Discount'),
+    //   '#default_value' => $node->get('field_discount')->value ?? 0,
+    //   '#step' => 0.01,
+    // ];
 
     // Tax (readonly + hidden mirror)
     $form['totals']['field_tax_amount'] = [
@@ -265,7 +265,7 @@ class MyQuotationEditForm extends FormBase {
     $node->set('field_quotation_date', $values['field_quotation_date']);
     $node->set('field_expected_due_date', $values['field_expected_due_date']);
     $node->set('body', ['value' => $values['body'], 'format' => 'basic_html']);
-    $node->set('field_discount', $values['field_discount']);
+    $node->set('field_discount', 0);
 
     $subtotal = $values['field_subtotal_amount'];
     $tax = $values['field_tax_amount'];
