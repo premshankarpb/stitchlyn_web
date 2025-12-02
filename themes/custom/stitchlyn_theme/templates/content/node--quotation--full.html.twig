@@ -197,7 +197,9 @@
         <div class="inventory-section mt-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h4>Inventory Logs</h4>
-            <button id="add-inventory-log" class="btn btn-success btn-sm">+ Add Log</button>
+            {% if not node.field_processed.value %}
+              <button id="add-inventory-log" class="btn btn-success btn-sm">+ Add Log</button>
+            {% endif %}
           </div>
 
           {% if inventory_logs|length > 0 %}
@@ -245,9 +247,7 @@
         <div class="workorder-section mt-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h4>Work Orders</h4>
-            {% if not node.field_processed.value %}
-              <button id="add-workorder" class="btn btn-success btn-sm">+ Add Work Order</button>
-            {% endif %}
+            <button id="add-workorder" class="btn btn-success btn-sm">+ Add Work Order</button>
           </div>
 
           {# Wrapper for dynamic table replacement #}
