@@ -149,7 +149,7 @@
                 $('#view-wo-quantity').text(d.quantity);
                 $('#view-wo-due').text(d.expected_due_date);
                 $('#view-wo-status').text(d.order_status);
-                $('#view-wo-remarks').text(d.remarks || '—');
+                $('#view-wo-remarks').html(d.remarks || '—');
 
                 const modal = new bootstrap.Modal(document.getElementById('workOrderViewModal'));
                 modal.show();

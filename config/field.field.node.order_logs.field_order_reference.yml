@@ -1,0 +1,33 @@
+uuid: a1202857-b862-4cfe-8ffc-c501770333bb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_order_reference
+    - node.type.order_logs
+    - node.type.purchase_order
+    - node.type.quotation
+    - node.type.work_order
+id: node.order_logs.field_order_reference
+field_name: field_order_reference
+entity_type: node
+bundle: order_logs
+label: 'Order Reference'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      purchase_order: purchase_order
+      quotation: quotation
+      work_order: work_order
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: purchase_order
+field_type: entity_reference

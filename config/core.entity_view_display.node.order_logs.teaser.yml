@@ -1,0 +1,32 @@
+uuid: 62e49ccc-f76d-4b54-80ef-32a8e3a44dde
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.order_logs.body
+    - field.field.node.order_logs.field_order_reference
+    - node.type.order_logs
+  module:
+    - text
+    - user
+id: node.order_logs.teaser
+targetEntityType: node
+bundle: order_logs
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_order_reference: true
