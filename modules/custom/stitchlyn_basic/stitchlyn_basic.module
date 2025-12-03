@@ -339,20 +339,18 @@ function stitchlyn_basic_form_node_payment_record_form_alter(&$form, \Drupal\Cor
 /**
  * Implements common hook_form_alter().
  */
-function stitchlyn_basic_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  if ($form_id === 'order_logs_node_form') {
-    $workorder_id = \Drupal::request()->query->get('workorder');
-    if (!empty($workorder_id)) {
-      $workorder_entity = Node::load($workorder_id);
-      if ($workorder_entity) {
-        // This is for entity reference fields.
-        if (isset($form['field_order_reference']['widget'][0]['target_id'])) {
-          $form['field_order_reference']['widget'][0]['target_id']['#default_value'] = $workorder_entity;
-        }
-        // If the widget is a dropdown
-        if (isset($form['field_order_reference']['widget'][0]['#default_value'])) {
-          $form['field_order_reference']['widget'][0]['#default_value'] = $workorder_id;
-        }
+function stitchlyn_basic_form_node_order_logs_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $workorder_id = \Drupal::request()->query->get('workorder');
+  if (!empty($workorder_id)) {
+    $workorder_entity = Node::load($workorder_id);
+    if ($workorder_entity) {
+      // This is for entity reference fields.
+      if (isset($form['field_order_reference']['widget'][0]['target_id'])) {
+        $form['field_order_reference']['widget'][0]['target_id']['#default_value'] = $workorder_entity;
+      }
+      // If the widget is a dropdown
+      if (isset($form['field_order_reference']['widget'][0]['#default_value'])) {
+        $form['field_order_reference']['widget'][0]['#default_value'] = $workorder_id;
       }
     }
   }
