@@ -239,6 +239,7 @@ class WorkOrderController extends ControllerBase {
             $html .= '<td>
                 <button class="btn btn-outline-primary btn-sm view-workorder" data-id="' . $wo['id'] . '">View</button>
                 <button class="btn btn-outline-secondary btn-sm edit-workorder" data-id="' . $wo['id'] . '">Edit</button>
+                <a href="/node/add/order_logs?workorder=' . $wo['id'] . '"  target="_blank" class="btn btn-outline-success">Add Logs</a>
             </td>';
             $html .= '</tr>';
         }
