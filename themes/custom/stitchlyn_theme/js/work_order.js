@@ -150,7 +150,35 @@
                 $('#view-wo-due').text(d.expected_due_date);
                 $('#view-wo-status').text(d.order_status);
                 $('#view-wo-remarks').html(d.remarks || '—');
+                 // ---- Work order logs ----
+                const logs = d.work_order_logs || [];
+                let logsHtml = '';
 
+                if (Array.isArray(logs) && logs.length > 0) {
+                  logs.forEach(function (log) {
+                    // log.created is a Unix timestamp (seconds)
+                    const dt = new Date(log.created * 1000);
+
+                    const dd   = String(dt.getDate()).padStart(2, '0');
+                    const mm   = String(dt.getMonth() + 1).padStart(2, '0'); // months 0–11
+                    const yyyy = dt.getFullYear();
+                    const hh   = String(dt.getHours()).padStart(2, '0');
+                    const min  = String(dt.getMinutes()).padStart(2, '0');
+
+                    const formatted = `${dd}-${mm}-${yyyy}, ${hh}:${min}`;
+
+                    // log.log_data already has the exact HTML from body → inject as HTML
+                    logsHtml += `
+                      <div class="wo-log-entry mb-2">
+                        <div class="wo-log-meta"><strong>${formatted}</strong></div>
+                        <div class="wo-log-body">${log.log_data}</div>
+                      </div>
+                    `;
+                  });
+                } else {
+                  logsHtml = '—';
+                }
+                $('#view-wo-logs').html(logsHtml);
                 const modal = new bootstrap.Modal(document.getElementById('workOrderViewModal'));
                 modal.show();
 

@@ -336,6 +336,16 @@ function stitchlyn_basic_views_query_alter(ViewExecutable $view, QueryPluginBase
 function stitchlyn_basic_form_node_payment_record_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   $form['#validate'][] = 'stitchlyn_basic_validate_payment_amount';
 }
+/**
+ * Implements common hook_form_alter().
+ */
+function stitchlyn_basic_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'order_logs_node_form') {
+  if ($workorder = \Drupal::request()->query->get('workorder')) {
+    $form['field_order_reference']['widget'][0]['target_id']['#default_value'] = $workorder;
+  }
+}
+}
 
 /**
  * Custom validation: Payment amount must not exceed remaining pending.

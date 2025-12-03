@@ -337,6 +337,7 @@ class WorkOrderController extends ControllerBase {
           <td>
             <button class="btn btn-outline-primary btn-sm view-workorder" data-id="' . $wo->id() . '">View</button>
             <button class="btn btn-outline-secondary btn-sm edit-workorder" data-id="' . $wo->id() . '">Edit</button>
+            <a href="/node/add/order_logs?workorder=' . $wo->id() . '"  target="_blank" class="btn btn-outline-success">Add Logs</a>
           </td>
         </tr>
       ';
@@ -377,6 +378,21 @@ class WorkOrderController extends ControllerBase {
     if (!$node || $node->bundle() !== 'work_order') {
       return new JsonResponse(['status' => 'error', 'message' => 'Work order not found.']);
     }
+    $work_order_logs = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties([
+        'type' => 'order_logs',
+        'field_order_reference' => $id,
+      ]);
+    $wo_log_data = [];
+    foreach ($work_order_logs as $wo_log) {
+      $log_data = $wo_log->get('body')->value ?? '';
+      $wo_log_data[] = [
+        'id' => $wo_log->id(),
+        'log_data' => $log_data,
+        'created' => $wo_log->getCreatedTime(),
+      ];
+    }
 
     $data = [
       'title' => $node->label(),
@@ -386,6 +402,7 @@ class WorkOrderController extends ControllerBase {
       'expected_due_date' => $node->get('field_expected_due_date')->value ?? '',
       'order_status' => $node->get('field_order_status')->entity->label() ?? '',
       'remarks' => $node->get('body')->value ?? '',
+      'work_order_logs' => $wo_log_data,
     ];
 
     return new JsonResponse(['status' => 'success', 'data' => $data]);

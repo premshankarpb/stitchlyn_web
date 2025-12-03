@@ -386,6 +386,22 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
       $expected_due = $wo->get('field_expected_due_date')->value ?? '';
       $wo_title = $wo->label();
 
+      $work_order_logs = \Drupal::entityTypeManager()
+        ->getStorage('node')
+        ->loadByProperties([
+          'type' => 'order_logs',
+          'field_order_reference' => $wo->id(),
+        ]);
+      $wo_log_data = [];
+      foreach ($work_order_logs as $wo_log) {
+        $log_data = $wo_log->get('body')->value ?? '';
+        $wo_log_data[] = [
+          'id' => $wo_log->id(),
+          'log_data' => $log_data,
+          'created' => $wo_log->getCreatedTime(),
+        ];
+      }
+
       $work_orders_data[] = [
         'id' => $wo->id(),
         'title' => $wo_title,
@@ -396,6 +412,7 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
         'remarks' => $remarks,
         'expected_due' => $expected_due,
         'order_status' => $order_status,
+        'logs' => $wo_log_data,
       ];
     }
 
