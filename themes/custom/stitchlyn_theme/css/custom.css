@@ -199,3 +199,7 @@ em.placeholder {
 .admin-layout .dark-sidebar .sidebar-content {
   padding-top: 3rem !important;
 }
+
+.vendor-phone{
+  visibility: hidden;
+}
