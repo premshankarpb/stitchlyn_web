@@ -1,3 +1,6 @@
+{{ attach_library('stitchlyn_theme/bootstrap_js') }}
+{{ attach_library('stitchlyn_theme/work_order') }}
+
 <div class="container">
 <article class="po-detail">
 
@@ -64,6 +67,94 @@
   </main>
 
   <hr>
+
+  {# Wrapper for dynamic table replacement #}
+  <div id="workorder-wrapper">
+    {% if work_orders|length > 0 %}
+      <table class="table table-bordered table-striped align-middle" id="workorder-table">
+        <thead class="table-light">
+          <tr>
+            <th>Work Order #</th>
+            <th>Linked Line Item</th>
+            <th>Unit Assigned</th>
+            <th>Quantity</th>
+            <th>Expected Due Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for wo in work_orders %}
+            <tr>
+              <td>{{ wo.title }}</td>
+              <td>{{ wo.line_item }}</td>
+              <td>{{ wo.unit }}</td>
+              <td>{{ wo.quantity }}</td>
+              <td>{{ wo.expected_due }}</td>
+              <td>{{ wo.order_status }}</td>
+              <td>
+                <button class="btn btn-outline-primary btn-sm view-workorder" data-id="{{ wo.id }}">View</button>
+                <a href="/node/add/order_logs?workorder={{ wo.id }}" target="_blank" class="btn btn-outline-success">Add Logs</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No work orders found.</p>
+    {% endif %}
+  </div>
+
+  {# ================= View Work Order Modal ================= #}
+  <div class="modal fade" id="workOrderViewModal" tabindex="-1" aria-labelledby="workOrderViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-header bg-light">
+          <h5 class="modal-title fw-bold" id="workOrderViewModalLabel">Work Order Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <table class="table table-bordered table-striped mb-0">
+            <tbody>
+              <tr>
+                <th>Work Order #</th>
+                <td id="view-wo-title">—</td>
+              </tr>
+              <tr>
+                <th>Linked Line Item</th>
+                <td id="view-wo-line-item">—</td>
+              </tr>
+              <tr>
+                <th>Production Unit</th>
+                <td id="view-wo-unit">—</td>
+              </tr>
+              <tr>
+                <th>Quantity</th>
+                <td id="view-wo-quantity">—</td>
+              </tr>
+              <tr>
+                <th>Expected Due Date</th>
+                <td id="view-wo-due">—</td>
+              </tr>
+              <tr>
+                <th>Status</th>
+                <td id="view-wo-status">—</td>
+              </tr>
+              <tr>
+                <th>Remarks</th>
+                <td id="view-wo-remarks">—</td>
+              </tr>
+              <tr>
+                <th>Order Logs</th>
+                <td id="view-wo-logs">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>  
 
 </article>
 </div>

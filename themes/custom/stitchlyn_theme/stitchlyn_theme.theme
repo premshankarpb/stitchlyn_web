@@ -483,6 +483,83 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
     \Drupal::service('page_cache_kill_switch')->trigger();
   }
 
+  if ($node instanceof \Drupal\node\NodeInterface && $node->bundle() === 'work_order') {
+
+    // ---- Load Work Orders ----
+    $work_orders_data = [];
+    $work_orders = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties([
+        'type' => 'work_order',
+        'nid' => $node->id(),
+      ]);
+
+    foreach ($work_orders as $wo) {
+      $line_item_label = '';
+      $unit_label = '';
+      $qty = (float) ($wo->get('field_quantity')->value ?? 0);
+      $remarks = $wo->get('body')->value ?? '';
+      $order_status = '';
+
+      // Line item
+      if ($wo->hasField('field_linked_line_item') && !$wo->get('field_linked_line_item')->isEmpty()) {
+        $linked_item = $wo->get('field_linked_line_item')->entity;
+        if ($linked_item) {
+          $line_item_label = $linked_item->label();
+        }
+      }
+
+      // Unit
+      if ($wo->hasField('field_unit_assigned') && !$wo->get('field_unit_assigned')->isEmpty()) {
+        $unit_term = $wo->get('field_unit_assigned')->entity;
+        if ($unit_term) {
+          $unit_label = $unit_term->label();
+        }
+      }
+
+      // ✅ Order Status (safe check)
+      if ($wo->hasField('field_order_status') && !$wo->get('field_order_status')->isEmpty()) {
+        $term = $wo->get('field_order_status')->entity;
+        if ($term) {
+          $order_status = $term->label();
+        }
+      }
+      $serial = $wo->get('field_work_order_number')->value ?? '';
+      $expected_due = $wo->get('field_expected_due_date')->value ?? '';
+      $wo_title = $wo->label();
+
+      $work_order_logs = \Drupal::entityTypeManager()
+        ->getStorage('node')
+        ->loadByProperties([
+          'type' => 'order_logs',
+          'field_order_reference' => $wo->id(),
+        ]);
+      $wo_log_data = [];
+      foreach ($work_order_logs as $wo_log) {
+        $log_data = $wo_log->get('body')->value ?? '';
+        $wo_log_data[] = [
+          'id' => $wo_log->id(),
+          'log_data' => $log_data,
+          'created' => $wo_log->getCreatedTime(),
+        ];
+      }
+
+      $work_orders_data[] = [
+        'id' => $wo->id(),
+        'title' => $wo_title,
+        'serial' => $serial,
+        'line_item' => $line_item_label,
+        'unit' => $unit_label,
+        'quantity' => $qty,
+        'remarks' => $remarks,
+        'expected_due' => $expected_due,
+        'order_status' => $order_status,
+        'logs' => $wo_log_data,
+      ];
+    }
+
+    $variables['work_orders'] = $work_orders_data;
+  }
 
 }
 
