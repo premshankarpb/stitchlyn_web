@@ -277,7 +277,7 @@ class QuotationEditForm extends FormBase {
       $payment_tid = (int) ($values['field_payment_status'] ?? 0);
       $node->set('field_payment_status', $payment_tid ? ['target_id' => $payment_tid] : NULL);
     }
-
+    \Drupal::logger('moderation')->warning('<pre><code>' . print_r($values, TRUE) . '</code></pre>');
     // --- Directly update moderation state (selected workflow state) ---
     if ($node->hasField('moderation_state') && !empty($values['moderation_state'])) {
       $node->set('moderation_state', $values['moderation_state']);
