@@ -238,3 +238,31 @@ function _stitchlyn_quotation_get_term_id($vocab, $name) {
 
   return !empty($terms) ? reset($terms) : NULL;
 }
+
+function stitchlyn_quotation_form_node_work_order_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $user = \Drupal::currentUser();
+  $form['#attributes']['class'][] = 'container';
+
+  if ($user->hasRole('unit_manager')) {
+    // List of fields to disable.
+    $restricted_fields = [
+      'title',
+      'field_linked_quotation',
+      'field_quantity',
+      'field_linked_line_item',
+      'field_unit_assigned',
+      'field_expected_due_date',
+      'body',
+    ];
+
+    foreach ($restricted_fields as $field_name) {
+      if (isset($form[$field_name])) {
+        // Disable the widget.
+        $form[$field_name]['#disabled'] = TRUE;
+
+        // Optional: hide it entirely
+        // $form[$field_name]['#access'] = FALSE;
+      }
+    }
+  }
+}
