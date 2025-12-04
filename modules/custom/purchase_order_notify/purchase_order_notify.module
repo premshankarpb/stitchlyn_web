@@ -146,7 +146,7 @@ function purchase_order_notify_entity_update(EntityInterface $entity) {
             return;
           }
         }
-        if(enable_mail != 0){
+        if($enable_mail == 1) {
           // Send the email when status changes to Fulfilled.
           \Drupal::service('purchase_order_notify.mail_service')->sendPurchaseOrderFulfilledMail($entity);
         }
@@ -168,7 +168,7 @@ function purchase_order_notify_entity_update(EntityInterface $entity) {
             return;
           }
         }
-        if(enable_mail != 0){
+        if($enable_mail == 1) {
           // Send the email when moderation_state changes to Accepted.
           \Drupal::service('purchase_order_notify.mail_service')->sendQuotationAcceptedMail($entity);
         }
@@ -196,7 +196,7 @@ function purchase_order_notify_entity_update(EntityInterface $entity) {
           $reorder_level = $entity->get('field_reorder_level')->value;
 
           if($current_stock <= $reorder_level){
-            if(enable_mail != 0){
+            if($enable_mail == 1) {
               \Drupal::service('purchase_order_notify.mail_service')->sendRestockInventory($entity);
             }
           }
