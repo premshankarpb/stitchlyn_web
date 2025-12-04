@@ -203,3 +203,12 @@ em.placeholder {
 .vendor-phone{
   visibility: hidden;
 }
+
+.log-header{
+  font-size: x-large;
+  margin-bottom: 20px;
+}
+
+.add-logs{
+  float: right !important;
+}
