@@ -271,12 +271,6 @@ class QuotationEditForm extends FormBase {
     $node->set('field_subtotal_amount', $subtotal);
     $node->set('field_tax_amount', $tax);
     $node->set('field_total_amount', $total);
-
-    // --- Payment status update ---
-    if ($node->hasField('field_payment_status')) {
-      $payment_tid = (int) ($values['field_payment_status'] ?? 0);
-      $node->set('field_payment_status', $payment_tid ? ['target_id' => $payment_tid] : NULL);
-    }
     
     // --- Directly update moderation state (selected workflow state) ---
     if ($node->hasField('moderation_state') && !empty($values['moderation_state'])) {
@@ -306,6 +300,33 @@ class QuotationEditForm extends FormBase {
     // Update order fields.
     $node->set('field_amount_collected', $total_collected);
     $node->set('field_amount_pending', $pending_amount);
+
+    // ---------------- PAYMENT STATUS VALIDATION ---------------- //
+    if ($node->hasField('field_payment_status')) {
+      $selected_tid = (int) ($values['field_payment_status'] ?? 0);
+      // Identify the "Paid" term ID.
+      $paid_tid = NULL;
+      $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('payment_status', 0, 1, TRUE);
+      foreach ($terms as $term) {
+        if (strtolower($term->label()) === 'paid') {
+          $paid_tid = $term->id();
+          break;
+        }
+      }
+      // If trying to set Paid but pending amount is not zero → block it.
+      if ($selected_tid == $paid_tid && $pending_amount > 0) {
+        // DO NOT update payment status to Paid.
+        // Message to user.
+        $this->messenger()->addWarning($this->t(
+          'Cannot set this quotation as Paid because the pending amount (@pending) is not zero.',
+          ['@pending' => $pending_amount]
+        ));
+      }
+      else {
+        // Valid selection → save normally
+        $node->set('field_payment_status', $selected_tid ? ['target_id' => $selected_tid] : NULL);
+      }
+    }
 
     $node->save();
 
