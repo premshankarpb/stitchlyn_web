@@ -34,9 +34,9 @@
               <li class="list-group-item"><i class="fas fa-envelope-open text-warning me-2"></i>
                 <strong>Quotation:</strong> {{ node.field_linked_quotation.entity.label }} </li>
               <li class="list-group-item"><i class="fas fa fa-angle-double-right text-warning me-2"></i>
-                <strong>Quotation Item:</strong> ₹ {{ node.field_linked_line_item.entity.label }} </li>
+                <strong>Quotation Item:</strong> {{ node.field_linked_line_item.entity.label }} </li>
               <li class="list-group-item"><i class="fa fa-building text-primary me-2"></i>
-                <strong>Unit Assigned:</strong> ₹ {{ node.field_unit_assigned.entity.label }} </li>
+                <strong>Unit Assigned:</strong> {{ node.field_unit_assigned.entity.label }} </li>
             </ul>
           </div>
         </div>
@@ -72,91 +72,35 @@
 
   {# Wrapper for dynamic table replacement #}
   <div id="workorder-wrapper">
-    {% if work_orders|length > 0 %}
+    <div class="log-header">
+      <strong>Work Order Log</strong>
+      <span class="add-logs">
+        <a href="/node/add/order_logs?workorder={{ node.id() }}" target="_blank" class="btn btn-outline-success">Add Logs</a>
+      </span>
+    </div>
+    {% if work_orders_logs|length > 0 %}
       <table class="table table-bordered table-striped align-middle" id="workorder-table">
         <thead class="table-light">
           <tr>
-            <th>Work Order #</th>
-            <th>Linked Line Item</th>
-            <th>Unit Assigned</th>
-            <th>Quantity</th>
-            <th>Expected Due Date</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>Log ID</th>
+            <th>Remarks</th>
+            <th>Generated on</th>
           </tr>
         </thead>
         <tbody>
-          {% for wo in work_orders %}
+          {% for wo in work_orders_logs %}
             <tr>
-              <td>{{ wo.title }}</td>
-              <td>{{ wo.line_item }}</td>
-              <td>{{ wo.unit }}</td>
-              <td>{{ wo.quantity }}</td>
-              <td>{{ wo.expected_due }}</td>
-              <td>{{ wo.order_status }}</td>
-              <td>
-                <button class="btn btn-outline-primary btn-sm view-workorder" data-id="{{ wo.id }}">View</button>
-                <a href="/node/add/order_logs?workorder={{ wo.id }}" target="_blank" class="btn btn-outline-success">Add Logs</a>
-              </td>
+              <td>{{ wo.id }}</td>
+              <td>{{ wo.log_data|striptags }}</td>
+              <td>{{ wo.created }}</td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
     {% else %}
-      <p>No work orders found.</p>
+      <p>No work orders logs found.</p>
     {% endif %}
   </div>
-
-  {# ================= View Work Order Modal ================= #}
-  <div class="modal fade" id="workOrderViewModal" tabindex="-1" aria-labelledby="workOrderViewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-      <div class="modal-content">
-        <div class="modal-header bg-light">
-          <h5 class="modal-title fw-bold" id="workOrderViewModalLabel">Work Order Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-          <table class="table table-bordered table-striped mb-0">
-            <tbody>
-              <tr>
-                <th>Work Order #</th>
-                <td id="view-wo-title">—</td>
-              </tr>
-              <tr>
-                <th>Linked Line Item</th>
-                <td id="view-wo-line-item">—</td>
-              </tr>
-              <tr>
-                <th>Production Unit</th>
-                <td id="view-wo-unit">—</td>
-              </tr>
-              <tr>
-                <th>Quantity</th>
-                <td id="view-wo-quantity">—</td>
-              </tr>
-              <tr>
-                <th>Expected Due Date</th>
-                <td id="view-wo-due">—</td>
-              </tr>
-              <tr>
-                <th>Status</th>
-                <td id="view-wo-status">—</td>
-              </tr>
-              <tr>
-                <th>Remarks</th>
-                <td id="view-wo-remarks">—</td>
-              </tr>
-              <tr>
-                <th>Order Logs</th>
-                <td id="view-wo-logs">—</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>  
 
 </article>
 </div>
