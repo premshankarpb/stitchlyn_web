@@ -352,6 +352,7 @@ function stitchlyn_basic_form_node_order_logs_form_alter(&$form, \Drupal\Core\Fo
       if (isset($form['field_order_reference']['widget'][0]['#default_value'])) {
         $form['field_order_reference']['widget'][0]['#default_value'] = $workorder_id;
       }
+      $form['#attributes']['class'][] = 'container';
     }
   }
 }
