@@ -218,79 +218,153 @@ em.placeholder {
      ========================================================================== */
   
   /* ==========================================================================
-     MANAGER DASHBOARD - LIGHT THEME (SITE MATCH)
+     MANAGER DASHBOARD - MASONRY & SEMANTIC COLORS
      ========================================================================== */
   
-  /* Remove old vars, use direct values for simplicity in this override */
-  
   .dashboard-container {
-      font-family: 'Lato', sans-serif; /* Match site font */
+      font-family: 'Lato', sans-serif;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+  }
+  
+  /* Masonry Layout */
+  .masonry-grid {
+      column-count: 1; /* Mobile default */
+      column-gap: 1.5rem;
+  }
+  
+  @media (min-width: 768px) {
+      .masonry-grid {
+          column-count: 2;
+      }
+  }
+  
+  @media (min-width: 1200px) {
+      .masonry-grid {
+          column-count: 3;
+      }
+  }
+  
+  /* Card Base Styles */
+  .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 1.5rem;
   }
   
   .kpi-card {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      border-radius: 12px;
+      border: 0;
+      border-radius: 16px;
       overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
   }
   
   .kpi-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(37, 55, 78, 0.15) !important;
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
   }
   
-  .kpi-card.neutral {
-      border-top: 4px solid #25374e !important;
+  .card-body {
+      padding: 2rem;
   }
   
-  .kpi-card.warning {
-      border-top: 4px solid #ffc107 !important;
+  /* Semantic Color Status Classes */
+  /* CRITICAL: Overdue - Soft Red */
+  .status-critical {
+      background-color: #fee2e2;
+      color: #991b1b;
+  }
+  .status-critical .icon-circle {
+      background-color: rgba(255,255,255,0.6);
+      color: #dc2626;
+  }
+  .status-critical .progress-bar {
+      background-color: #dc2626;
+  }
+  .status-critical .display-4 {
+      color: #7f1d1d;
   }
   
-  .kpi-card.critical {
-      border-top: 4px solid #dc3545 !important;
+  /* WARNING: Due Soon - Soft Amber */
+  .status-warning {
+      background-color: #fef3c7;
+      color: #92400e;
+  }
+  .status-warning .icon-circle {
+      background-color: rgba(255,255,255,0.6);
+      color: #d97706;
+  }
+  .status-warning .progress-bar {
+      background-color: #d97706;
+  }
+  .status-warning .display-4 {
+      color: #78350f;
   }
   
-  /* Icon Circles */
+  /* INFO: Pending/Normal - Soft Blue */
+  .status-info {
+      background-color: #dbeafe; /* Soft Blue */
+      color: #1e40af;
+  }
+  .status-info .icon-circle {
+      background-color: rgba(255,255,255,0.6);
+      color: #2563eb;
+  }
+  .status-info .progress-bar {
+      background-color: #2563eb;
+  }
+  .status-info .display-4 {
+      color: #1e3a8a;
+  }
+  
+  /* SUCCESS: Completed - Soft Green */
+  .status-success {
+      background-color: #d1fae5;
+      color: #065f46;
+  }
+  .status-success .icon-circle {
+      background-color: rgba(255,255,255,0.6);
+      color: #059669;
+  }
+  
+  /* NEUTRAL: Default/White */
+  .status-neutral {
+      background-color: #ffffff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  }
+  
+  /* Typography & Icons */
+  .display-4 {
+      font-weight: 800;
+      letter-spacing: -1px;
+  }
+  
+  .card-label {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      font-size: 0.85rem;
+      opacity: 0.8;
+  }
+  
   .icon-circle {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      border-radius: 12px; /* Soft square */
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   }
   
-  .bg-warning-subtle {
-      background-color: rgba(255, 193, 7, 0.15);
-  }
-  
-  .bg-danger-subtle {
-      background-color: rgba(220, 53, 69, 0.1);
-  }
-  
-  /* Typography Overrides */
-  .display-4 {
-      font-weight: 900;
-  }
-  
-  .text-primary {
-      color: #25374e !important; /* Force Brand Blue */
-  }
-  
-  .bg-primary {
-      background-color: #25374e !important;
-  }
-  
-  /* Progress Bar Tweaks */
-  .progress {
-      border-radius: 10px;
-      background-color: #e9ecef;
-      overflow: hidden;
-  }
-  
-  .progress-bar {
-      border-radius: 10px;
-      font-weight: 600;
-      line-height: 24px;
-      text-align: center;
+  /* Clock Widget */
+  .dash-clock-widget {
+      background: #25374e;
+      color: white;
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      box-shadow: 0 10px 15px -3px rgba(37, 55, 78, 0.3);
   }
