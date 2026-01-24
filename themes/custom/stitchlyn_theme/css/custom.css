@@ -218,153 +218,151 @@ em.placeholder {
      ========================================================================== */
   
   /* ==========================================================================
-     MANAGER DASHBOARD - MASONRY & SEMANTIC COLORS
+     MANAGER DASHBOARD - BENTO GRID & STICKER UI
      ========================================================================== */
   
   .dashboard-container {
       font-family: 'Lato', sans-serif;
       max-width: 1400px;
       margin: 0 auto;
-      padding: 0 1.5rem;
+      padding: 2rem;
+      background-color: #fafafa; /* Clean canvas */
   }
   
-  /* Masonry Layout */
-  .masonry-grid {
-      column-count: 1; /* Mobile default */
-      column-gap: 1.5rem;
+  /* --- Grid Layout --- */
+  .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      grid-auto-rows: min-content;
   }
   
   @media (min-width: 768px) {
-      .masonry-grid {
-          column-count: 2;
+      .bento-grid {
+          grid-template-columns: repeat(2, 1fr);
+          grid-auto-rows: 240px; /* Fixed height rows for bento feel */
       }
   }
   
   @media (min-width: 1200px) {
-      .masonry-grid {
-          column-count: 3;
+      .bento-grid {
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: 160px 240px 240px; /* Specific row, main row, footer row */
       }
   }
   
-  /* Card Base Styles */
-  .masonry-item {
-      break-inside: avoid;
-      margin-bottom: 1.5rem;
-  }
+  /* --- Spanning Classes --- */
+  .span-col-2 { grid-column: span 2; }
+  .span-col-3 { grid-column: span 3; }
+  .span-col-4 { grid-column: span 4; }
   
-  .kpi-card {
-      border: 0;
-      border-radius: 16px;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      position: relative;
-  }
+  .span-row-2 { grid-row: span 2; }
   
-  .kpi-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-  }
-  
-  .card-body {
+  /* --- Card Styling --- */
+  .bento-card {
+      border-radius: 32px; /* Super rounded */
       padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   }
   
-  /* Semantic Color Status Classes */
-  /* CRITICAL: Overdue - Soft Red */
-  .status-critical {
-      background-color: #fee2e2;
-      color: #991b1b;
-  }
-  .status-critical .icon-circle {
-      background-color: rgba(255,255,255,0.6);
-      color: #dc2626;
-  }
-  .status-critical .progress-bar {
-      background-color: #dc2626;
-  }
-  .status-critical .display-4 {
-      color: #7f1d1d;
+  .bento-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      z-index: 10;
   }
   
-  /* WARNING: Due Soon - Soft Amber */
-  .status-warning {
-      background-color: #fef3c7;
-      color: #92400e;
+  /* --- Semantic Themes (Pastels) --- */
+  
+  /* Critical / Overdue -> Rose/Purple */
+  .theme-critical {
+      background: linear-gradient(135deg, #f9a8d4 0%, #c084fc 100%);
+      color: #581c87;
   }
-  .status-warning .icon-circle {
-      background-color: rgba(255,255,255,0.6);
-      color: #d97706;
+  .theme-critical .sticker-icon { color: #7e22ce; opacity: 0.15; }
+  .theme-critical .display-value { color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  .theme-critical .card-label { color: rgba(255,255,255,0.9); }
+  
+  /* Warning / Due Soon -> Peach/Orange */
+  .theme-warning {
+      background: linear-gradient(135deg, #fdba74 0%, #fb923c 100%);
+      color: #7c2d12;
   }
-  .status-warning .progress-bar {
-      background-color: #d97706;
+  .theme-warning .sticker-icon { color: #c2410c; opacity: 0.15; }
+  .theme-warning .display-value { color: #fff; }
+  .theme-warning .card-label { color: rgba(255,255,255,0.9); }
+  
+  /* Info / Pending -> Light Blue/Cyan */
+  .theme-info {
+      background: linear-gradient(135deg, #a5f3fc 0%, #67e8f9 100%);
+      color: #0e7490;
   }
-  .status-warning .display-4 {
-      color: #78350f;
+  .theme-info .sticker-icon { color: #0891b2; opacity: 0.2; }
+  .theme-info .display-value { color: #164e63; }
+  
+  /* Stats -> White/Clean */
+  .theme-clean {
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #e2e8f0;
   }
   
-  /* INFO: Pending/Normal - Soft Blue */
-  .status-info {
-      background-color: #dbeafe; /* Soft Blue */
-      color: #1e40af;
-  }
-  .status-info .icon-circle {
-      background-color: rgba(255,255,255,0.6);
-      color: #2563eb;
-  }
-  .status-info .progress-bar {
-      background-color: #2563eb;
-  }
-  .status-info .display-4 {
-      color: #1e3a8a;
+  /* Clock -> Dark Midnight */
+  .theme-clock {
+      background: #1e293b;
+      color: #fff;
   }
   
-  /* SUCCESS: Completed - Soft Green */
-  .status-success {
-      background-color: #d1fae5;
-      color: #065f46;
-  }
-  .status-success .icon-circle {
-      background-color: rgba(255,255,255,0.6);
-      color: #059669;
-  }
-  
-  /* NEUTRAL: Default/White */
-  .status-neutral {
-      background-color: #ffffff;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-  }
-  
-  /* Typography & Icons */
-  .display-4 {
+  /* --- Typography --- */
+  .display-value {
+      font-size: 4.5rem;
       font-weight: 800;
-      letter-spacing: -1px;
+      line-height: 1;
+      letter-spacing: -2px;
+      margin-bottom: 0.5rem;
   }
   
   .card-label {
+      font-size: 1.1rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      font-weight: 700;
-      font-size: 0.85rem;
-      opacity: 0.8;
   }
   
-  .icon-circle {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px; /* Soft square */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  /* --- Sticker Icons (The "Art") --- */
+  .sticker-icon {
+      position: absolute;
+      right: -20px;
+      bottom: -30px;
+      font-size: 10rem;
+      transform: rotate(-15deg);
+      pointer-events: none;
+      transition: transform 0.4s ease;
   }
   
-  /* Clock Widget */
-  .dash-clock-widget {
-      background: #25374e;
-      color: white;
-      border-radius: 50px;
-      padding: 0.5rem 1.5rem;
-      box-shadow: 0 10px 15px -3px rgba(37, 55, 78, 0.3);
+  .bento-card:hover .sticker-icon {
+      transform: rotate(0deg) scale(1.1);
   }
+  
+  /* --- Progress Bars Custom --- */
+  .progress-pill {
+      height: 12px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.3);
+      overflow: hidden;
+      margin-top: auto;
+  }
+  .progress-pill .bar {
+      height: 100%;
+      border-radius: 99px;
+      background: white;
+  }
+  
+  /* Override Masonry specificity */
+  .masonry-grid { display: none !important; }

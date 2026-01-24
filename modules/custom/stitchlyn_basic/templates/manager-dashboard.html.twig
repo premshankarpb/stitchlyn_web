@@ -1,134 +1,103 @@
 {# 
     Manager Dashboard Template 
-    Layout: Masonry Grid
-    Theme: Semantic Colors (Pastels)
+    Layout: Bento Grid (CSS Grid)
+    Theme: Creative Pastels (Sticker Art)
   #}
   
-  <div class="dashboard-container py-4">
+  <div class="dashboard-container">
   
-      {# --- Header --- #}
-      <div class="d-flex justify-content-between align-items-center mb-5 ps-2 pe-2">
-          <div>
-              <h6 class="text-uppercase text-muted fw-bold mb-1 ls-1">Live Overview</h6>
-              <h2 class="fw-black mb-0" style="color: #25374e; font-weight: 900;">Production Floor</h2>
-          </div>
-          <div class="dash-clock-widget d-flex align-items-center">
-              <i class="far fa-clock me-2 opacity-75"></i>
-              <span id="clock-time" class="fw-bold me-2">--:--</span>
-              <span id="clock-date" class="small opacity-75 border-start border-secondary ps-2 text-white-50">...</span>
-          </div>
-      </div>
+      <div class="bento-grid">
   
-      {# --- Masonry Grid --- #}
-      <div class="masonry-grid">
-  
-          {# 1. CRITICAL CARD: Overdue #}
-          <div class="masonry-item">
-              <div class="card kpi-card status-critical h-100">
-                  <div class="card-body">
-                      <div class="d-flex justify-content-between mb-4">
-                          <div class="icon-circle">
-                              <i class="fas fa-exclamation-triangle"></i>
-                          </div>
-                      </div>
-                      <div class="mb-3">
-                          <h2 class="display-4 mb-0">{{ overdue_orders|default('5') }}</h2>
-                          <span class="card-label">Overdue Orders</span>
-                      </div>
-                      <div class="progress bg-white bg-opacity-50" style="height: 6px;">
-                          <div class="progress-bar" role="progressbar" style="width: 100%"></div>
-                      </div>
+          {# 1. CLOCK WIDGET (Top Left, Wide) #}
+          <div class="bento-card theme-clock span-col-2">
+              <div class="d-flex flex-column justify-content-center h-100">
+                  <h6 class="text-uppercase text-white-50 fw-bold ls-1 mb-2">Live Floor Status</h6>
+                  <div class="d-flex align-items-baseline">
+                      <h1 id="clock-time" class="display-3 fw-bold me-3 mb-0">--:--</h1>
+                      <span id="clock-date" class="h4 text-white-50 fw-normal">...</span>
                   </div>
               </div>
+              <!-- Decorative Circles -->
+              <i class="fas fa-industry sticker-icon" style="opacity: 0.05; font-size: 12rem; right: -40px; top: -20px;"></i>
           </div>
   
-          {# 2. WARNING CARD: Due Soon #}
-          <div class="masonry-item">
-              <div class="card kpi-card status-warning h-100">
-                  <div class="card-body">
-                      <div class="d-flex justify-content-between mb-4">
-                          <div class="icon-circle">
-                              <i class="fas fa-stopwatch"></i>
-                          </div>
-                      </div>
-                      <div class="mb-3">
-                          <h2 class="display-4 mb-0">{{ due_soon_orders|default('18') }}</h2>
-                          <span class="card-label">Due Within 3 Days</span>
-                      </div>
-                      <div class="progress bg-white bg-opacity-50" style="height: 6px;">
-                          <div class="progress-bar" role="progressbar" style="width: 65%"></div>
-                      </div>
-                  </div>
+          {# 2. PENDING ORDERS (Top Right, Standard) #}
+          <div class="bento-card theme-info">
+              <div>
+                  <h6 class="card-label">Pending</h6>
+                  <div class="display-value">{{ total_pending_orders|default('42') }}</div>
               </div>
-          </div>
-  
-          {# 3. INFO CARD: Total Pending #}
-          <div class="masonry-item">
-              <div class="card kpi-card status-info h-100">
-                  <div class="card-body">
-                      <div class="d-flex justify-content-between mb-4">
-                          <div class="icon-circle">
-                              <i class="fas fa-clipboard-list"></i>
-                          </div>
-                          <span class="badge bg-white text-primary rounded-pill px-3 py-2 shadow-sm">Total Load</span>
-                      </div>
-                      <div class="mb-3">
-                          <h2 class="display-4 mb-0">{{ total_pending_orders|default('42') }}</h2>
-                          <span class="card-label">Total Outstanding</span>
-                      </div>
-                      <div class="progress bg-white bg-opacity-50" style="height: 6px;">
-                          <div class="progress-bar" role="progressbar" style="width: 45%"></div>
-                      </div>
-                  </div>
+              <div class="progress-pill">
+                  <div class="bar" style="width: 45%"></div>
               </div>
+              <i class="fas fa-clipboard-list sticker-icon"></i>
           </div>
   
-          {# 4. FEATURE CARD: Monthly Progress #}
-          <div class="masonry-item">
-              <div class="card kpi-card status-neutral h-100">
-                  <div class="card-body p-4">
-                      <h5 class="fw-bold text-dark mb-4">Monthly Goal Progress</h5>
-                      
-                      <!-- Completed -->
-                      <div class="d-flex align-items-center mb-3">
-                          <div class="flex-grow-1">
-                              <div class="d-flex justify-content-between small fw-bold mb-1">
-                                  <span class="text-success">COMPLETED</span>
-                                  <span class="text-dark">{{ monthly_completed|default('1,250') }}</span>
-                              </div>
-                              <div class="progress" style="height: 10px;">
-                                  <div class="progress-bar bg-success" role="progressbar" style="width: 70%"></div>
-                              </div>
-                          </div>
-                      </div>
+          {# 3. DUE SOON (Top Right, Standard) #}
+          <div class="bento-card theme-warning">
+              <div>
+                  <h6 class="card-label">Due < 3 Days</h6>
+                  <div class="display-value">{{ due_soon_orders|default('18') }}</div>
+              </div>
+              <div class="progress-pill">
+                  <div class="bar" style="width: 65%"></div>
+              </div>
+              <i class="fas fa-stopwatch sticker-icon"></i>
+          </div>
   
-                      <!-- In Progress -->
-                      <div class="d-flex align-items-center mb-3">
-                          <div class="flex-grow-1">
-                              <div class="d-flex justify-content-between small fw-bold mb-1">
-                                  <span style="color: #25374e;">IN PROGRESS</span>
-                                  <span class="text-dark">{{ monthly_in_progress|default('320') }}</span>
-                              </div>
-                              <div class="progress" style="height: 10px;">
-                                  <div class="progress-bar" role="progressbar" style="width: 20%; background-color: #25374e;"></div>
-                              </div>
-                          </div>
-                      </div>
-  
-                      <!-- To Do -->
-                      <div class="d-flex align-items-center">
-                          <div class="flex-grow-1">
-                              <div class="d-flex justify-content-between small fw-bold mb-1">
-                                  <span class="text-muted">TO DO</span>
-                                  <span class="text-dark">{{ monthly_todo|default('145') }}</span>
-                              </div>
-                              <div class="progress" style="height: 10px;">
-                                  <div class="progress-bar bg-secondary" role="progressbar" style="width: 10%"></div>
-                              </div>
-                          </div>
-                      </div>
-  
+          {# 4. CRITICAL OVERDUE (Middle Left, Large Square) #}
+          <div class="bento-card theme-critical span-row-2 span-col-2">
+              <div class="mt-2">
+                  <div class="d-flex align-items-center mb-2">
+                      <span class="badge bg-white text-danger px-3 py-2 rounded-pill fw-bold shadow-sm">CRITICAL ALERT</span>
                   </div>
+                  <h1 class="display-value" style="font-size: 8rem;">{{ overdue_orders|default('5') }}</h1>
+                  <h3 class="card-label fs-3">Overdue Orders</h3>
+                  <p class="text-white-50 mt-2 fs-5" style="max-width: 80%;">These items require immediate action to prevent delivery delays.</p>
+              </div>
+              <i class="fas fa-exclamation-triangle sticker-icon" style="font-size: 16rem; right: -60px; bottom: -60px; rotate: -20deg;"></i>
+          </div>
+  
+          {# 5. MONTHLY STATS (Bottom, Wide Bar) #}
+          <div class="bento-card theme-clean span-col-2 span-row-2">
+              <div class="d-flex flex-column h-100 justify-content-center">
+                  <h5 class="fw-bold text-dark mb-4 ls-1 text-uppercase">Monthly Production</h5>
+                  
+                  {# Large Progress Bars with Icons #}
+                  
+                  <!-- Completed -->
+                  <div class="mb-4">
+                      <div class="d-flex justify-content-between align-items-end mb-2">
+                          <span class="text-success fw-bold"><i class="fas fa-check-circle me-2"></i> Completed</span>
+                          <span class="h4 mb-0 fw-black">{{ monthly_completed|default('1,250') }}</span>
+                      </div>
+                      <div class="progress" style="height: 12px; border-radius: 99px; background: #dcfce7;">
+                          <div class="progress-bar bg-success" style="width: 70%; border-radius: 99px;"></div>
+                      </div>
+                  </div>
+  
+                  <!-- In Progress -->
+                  <div class="mb-4">
+                      <div class="d-flex justify-content-between align-items-end mb-2">
+                          <span class="text-primary fw-bold"><i class="fas fa-cog fa-spin me-2"></i> In Progress</span>
+                          <span class="h4 mb-0 fw-black">{{ monthly_in_progress|default('320') }}</span>
+                      </div>
+                      <div class="progress" style="height: 12px; border-radius: 99px; background: #dbeafe;">
+                          <div class="progress-bar bg-primary" style="width: 25%; border-radius: 99px;"></div>
+                      </div>
+                  </div>
+  
+                   <!-- To Do -->
+                   <div>
+                      <div class="d-flex justify-content-between align-items-end mb-2">
+                          <span class="text-secondary fw-bold"><i class="fas fa-box me-2"></i> To Do</span>
+                          <span class="h4 mb-0 fw-black">{{ monthly_todo|default('145') }}</span>
+                      </div>
+                      <div class="progress" style="height: 12px; border-radius: 99px; background: #e5e7eb;">
+                          <div class="progress-bar bg-secondary" style="width: 10%; border-radius: 99px;"></div>
+                      </div>
+                  </div>
+  
               </div>
           </div>
   
