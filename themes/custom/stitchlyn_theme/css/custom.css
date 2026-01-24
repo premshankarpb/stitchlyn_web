@@ -377,3 +377,61 @@ em.placeholder {
   
   /* Override Masonry specificity */
   .masonry-grid { display: none !important; }
+  
+  /* ==========================================================================
+     GLOBAL FORM FIXES & ALIGNMENT
+     ========================================================================== */
+  
+  /* 1. Fix Height Mismatch: Make inputs as tall as the custom buttons */
+  .form-control, 
+  .form-select {
+      padding: 12px 16px; /* Match button vertical padding (12px) */
+      height: auto; /* Let padding define height */
+      min-height: 48px; /* Ensure optical match with buttons */
+      border-radius: 10px; /* Match button border-radius */
+      border: 1px solid #cccbcd;
+  }
+  
+  .form-control:focus, 
+  .form-select:focus {
+      border-color: #25374e;
+      box-shadow: 0 0 0 4px rgba(37, 55, 78, 0.1); /* Brand color focus ring */
+  }
+  
+  /* 2. Z-Index Conflict Resolution */
+  /* Normalize z-indexes to avoid "wars". 
+     Bootstrap Modals are 1050/1060.
+     Sticky headers usually 1000-1030.
+  */
+  
+  /* Search Autocomplete should be ABOVE everything else */
+  .ui-autocomplete {
+      z-index: 9999 !important; /* Safe high value */
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 0;
+  }
+  
+  .ui-menu-item-wrapper {
+      padding: 8px 16px;
+  }
+  
+  .ui-state-active,
+  .ui-widget-content .ui-state-active {
+      border: none;
+      background: #f8f9fa;
+      color: #25374e;
+  }
+  
+  /* Ensure Modals behave */
+  .modal-backdrop { z-index: 1050; }
+  .modal { z-index: 1060; }
+  
+  /* Fix vertical alignment in inline forms */
+  .form-inline .form-control,
+  .d-flex .form-control,
+  .input-group .form-control,
+  .input-group .btn {
+      align-self: stretch; /* Forces equal height matching in flex containers */
+  }

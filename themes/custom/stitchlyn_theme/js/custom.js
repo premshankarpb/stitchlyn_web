@@ -7,30 +7,50 @@
     attach: function (context, settings) {
 
       function adjustHeaderForToolbar() {
-        const $toolbar = $('#toolbar-administration');
-        const $header = $('.site-header');
-        const $navbar = $('.navbar.fixed-top');
+        const $toolbar = $('#toolbar-bar'); // The main administration toolbar
+        const $tray = $('#toolbar-item-administration-tray.toolbar-tray-horizontal'); // Horizontal secondary toolbar (if any)
+        const $header = $('.site-header, .navbar.fixed-top, .admin-layout .admin-header'); // Target all potential headers
         const $body = $('body');
 
+        let totalOffset = 0;
+
+        // Check if main toolbar is present and visible
         if ($toolbar.length && $toolbar.is(':visible')) {
-          const toolbarHeight = $toolbar.outerHeight();
+          totalOffset += $toolbar.outerHeight() || 0;
+        }
 
-          // Adjust UI
-          $navbar.css('top', '3%');
-          $body.css('padding-top', '5%');
+        // Check if secondary tray is visible and horizontal
+        if ($tray.length && $tray.is(':visible')) {
+          totalOffset += $tray.outerHeight() || 0;
+        }
 
+        // Apply Offset
+        if (totalOffset > 0) {
+          $header.css({
+            'top': totalOffset + 'px',
+            'transition': 'top 0.2s ease' // Smooth adjustment
+          });
+          
+          // Optionally push body down if header is fixed
+          // $body.css('padding-top', (totalOffset + 80) + 'px'); 
         } else {
-          // Reset
-          $header.css('padding-top', '');
-          $navbar.css('top', '0');
-          $body.css('padding-top', '5%');
+          // Reset if no toolbar
+          $header.css('top', '0');
         }
       }
 
-      // Run only ONCE on ready
+      // Run on ready, resize, and scroll (in case of dynamic toolbar changes)
+      // Also observe mutation to catch Drupal toolbar loading late
+      const observer = new MutationObserver(adjustHeaderForToolbar);
+      if (document.body) {
+        observer.observe(document.body, { childList: true, subtree: false });
+      }
+
       once('toolbarAdjustReady', 'html', context).forEach(() => {
         $(document).ready(adjustHeaderForToolbar);
         $(window).on('resize', adjustHeaderForToolbar);
+        // Drupal's own toolbar event
+        $(document).on('drupalToolbarOrientationChange toolbar-drawer-change', adjustHeaderForToolbar);
       });
 
     },
