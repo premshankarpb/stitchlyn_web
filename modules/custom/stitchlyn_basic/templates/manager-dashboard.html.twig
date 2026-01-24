@@ -1,0 +1,166 @@
+<div class="dashboard-summary">
+  
+  <!-- 🔹 Financial Overview Title -->
+  <div class="financial-header">
+    <h2 class="financial-title">Financial Overview</h2>
+    <p class="financial-subtitle">A quick glance at total, collected, and pending amounts for all Quotations and Purchase Orders.</p>
+  </div>
+
+  <!-- 🔹 Financial Summary Row -->
+  <div class="financial-summary">
+    <div class="dashboard-grid financial-grid">
+
+      <!-- Quotation Financials -->
+      <div class="dashboard-box box-quotation financial">
+        <div class="box-title">Quotation: Total Amount</div>
+        <div class="box-count">₹54,280.00</div>
+      </div>
+      <div class="dashboard-box box-quotation financial">
+        <div class="box-title">Quotation: Amount Collected</div>
+        <div class="box-count text-success">₹6,960.00</div>
+      </div>
+      <div class="dashboard-box box-quotation financial">
+        <div class="box-title">Quotation: Amount Pending</div>
+        <div class="box-count text-danger">₹47,320.00</div>
+      </div>
+
+      <!-- Purchase Order Financials -->
+      <div class="dashboard-box box-purchase financial">
+        <div class="box-title">Purchase Order: Total Amount</div>
+        <div class="box-count">₹53,719.50</div>
+      </div>
+      <div class="dashboard-box box-purchase financial">
+        <div class="box-title">Purchase Order: Amount Paid</div>
+        <div class="box-count text-success">₹5,428.00</div>
+      </div>
+      <div class="dashboard-box box-purchase financial">
+        <div class="box-title">Purchase Order: Amount Pending</div>
+        <div class="box-count text-danger">₹0.00</div>
+      </div>
+
+    </div>
+  </div>
+
+  <h2>Quotations</h2>
+  <div class="dashboard-grid">
+    <div class="dashboard-box box-quotation">
+      <div class="box-title">Draft Quotations</div>
+      <div class="box-count">5</div>
+    </div>
+    <div class="dashboard-box box-quotation">
+      <div class="box-title">Pending Quotations</div>
+      <div class="box-count">0</div>
+    </div>
+    <div class="dashboard-box box-quotation">
+      <div class="box-title">Follow up Quotations</div>
+      <div class="box-count">0</div>
+    </div>
+    <div class="dashboard-box box-quotation">
+      <div class="box-title">Approved Quotations</div>
+      <div class="box-count">2</div>
+    </div>
+  </div>
+  <div class="section-footer">
+    <a href="/dashboard/quotations" class="view-link">View Details →</a>
+  </div>
+
+  <h2>Work Orders</h2>
+  <div class="dashboard-grid">
+    <div class="dashboard-box box-work">
+      <div class="box-title">Total Work Orders</div>
+      <div class="box-count">17</div>
+    </div>
+    <div class="dashboard-box box-work">
+      <div class="box-title">Done</div>
+      <div class="box-count">5</div>
+    </div>
+    <div class="dashboard-box box-work">
+      <div class="box-title">In Progress Due</div>
+      <div class="box-count">15</div>
+    </div>
+    <div class="dashboard-box box-work">
+      <div class="box-title">In Progress</div>
+      <div class="box-count">0</div>
+    </div>
+    <div class="dashboard-box box-work">
+      <div class="box-title">Pending</div>
+      <div class="box-count">8</div>
+    </div>
+    <div class="dashboard-box box-work">
+      <div class="box-title">Rejected</div>
+      <div class="box-count">0</div>
+    </div>
+  </div>
+  <div class="section-footer">
+    <a href="/dashboard/work-orders" class="view-link">View Details →</a>
+  </div>
+
+  <h2>Purchase Orders</h2>
+  <div class="dashboard-grid">
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Total POs</div>
+      <div class="box-count">8</div>
+    </div>
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Paid</div>
+      <div class="box-count">4</div>
+    </div>
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Issued</div>
+      <div class="box-count">0</div>
+    </div>
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Shipment In Progress</div>
+      <div class="box-count">0</div>
+    </div>
+    <div class="dashboard-box box-purchase">
+      <div class="box-title">Fullfilled</div>
+      <div class="box-count">3</div>
+    </div>
+  </div>
+  <div class="section-footer">
+    <a href="/dashboard/purchase-orders" class="view-link">View Details →</a>
+  </div>
+
+  <h2>Inventory</h2>
+  <div class="dashboard-grid">
+    <div class="dashboard-box box-inventory">
+      <div class="box-title">Finished Products</div>
+      <a href="/dashboard/inventory_list?field_inventory_type_target_id=7"><div class="box-count">2</div></a>
+    </div>
+    <div class="dashboard-box box-inventory">
+      <div class="box-title">Raw Materials</div>
+      <a href="/dashboard/inventory_list?field_inventory_type_target_id=5"><div class="box-count">5</div></a>
+    </div>
+    <div class="dashboard-box box-inventory">
+      <div class="box-title">Tools</div>
+      <a href="/dashboard/inventory_list?field_inventory_type_target_id=6"><div class="box-count">2</div></a>
+    </div>
+  </div>
+  <div class="section-footer">
+    <a href="/dashboard/inventory_list" class="view-link">View Details →</a>
+  </div>
+
+</div>
+
+<style>
+  .financial-header {
+    text-align: left;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.5rem;
+  }
+
+  .financial-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+  }
+
+  .financial-subtitle {
+    font-size: 0.95rem;
+    color: #666;
+    margin-top: 0.2rem;
+  }
+</style>

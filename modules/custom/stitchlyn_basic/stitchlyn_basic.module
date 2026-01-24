@@ -17,6 +17,11 @@ function stitchlyn_basic_theme($existing, $type, $theme, $path) {
       'template' => 'dashboard',
       'path' => $path . '/templates',
     ],
+    'stitchlyn_manager_dashboard' => [
+      'variables' => ['counts' => []],
+      'template' => 'manager-dashboard',
+      'path' => $path . '/templates',
+    ],
   ];
 }
 
