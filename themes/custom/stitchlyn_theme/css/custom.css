@@ -221,12 +221,23 @@ em.placeholder {
      MANAGER DASHBOARD - BENTO GRID & STICKER UI
      ========================================================================== */
   
+  /* Apply background to the whole page body for this path */
+  body.path-manager-dashboard {
+      background-color: #fafafa;
+  }
+  
   .dashboard-container {
       font-family: 'Lato', sans-serif;
       max-width: 1400px;
       margin: 0 auto;
       padding: 2rem;
-      background-color: #fafafa; /* Clean canvas */
+      background-color: transparent;
+      
+      /* Force full viewport height (minus nav height approx 90px) to push footer down */
+      min-height: calc(100vh - 90px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Vertically center the dashboard content */
   }
   
   /* --- Grid Layout --- */
