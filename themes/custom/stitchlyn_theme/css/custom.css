@@ -17,6 +17,20 @@ body {
 	display: none !important;
 }
 
+/* Fix Homepage Banner Gap: Overlay Tabs Block instead of hiding */
+/* This removes it from flow (closing the gap) but keeps it visible if content exists */
+.path-frontpage #block-stitchlyn-theme-tabs {
+    position: absolute;
+    z-index: 20; /* Above banner */
+    top: 90px; /* Adjust to sit below header (approx header height) */
+    right: 20px; /* Position to right side */
+    width: auto;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5px 15px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
 .product-card img{
   height: 220px;
   width: -webkit-fill-available;
