@@ -1,86 +1,152 @@
 {# 
     Manager Dashboard Template 
-    Designed for TV / Large Screen Display
+    Integrated with Stitchlyn Theme (Light Mode)
   #}
   
-  <div class="dashboard-page-wrapper">
+  <div class="dashboard-container py-4">
       
-      {# --- Top Header --- #}
-      <header class="dashboard-header">
-          <div class="dashboard-brand">
-              <h1>STITCHLYN <span>OPS</span></h1>
+      {# --- Action Toolbar (Clock & Tools) --- #}
+      <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="mb-0 fw-bold text-primary">Production Status</h2>
+          <div class="dashboard-clock bg-white px-4 py-2 rounded shadow-sm border d-flex align-items-center">
+              <i class="far fa-clock me-2 text-secondary"></i>
+              <span id="clock-time" class="fw-bold fs-5 me-2">--:--</span>
+              <span id="clock-date" class="text-muted small border-start ps-2">...</span>
           </div>
-          <div class="dashboard-clock">
-              <div id="clock-time">--:--</div>
-              <div id="clock-date">LOADING...</div>
-          </div>
-      </header>
+      </div>
   
-      {# --- Section 1: Critical KPIs (Row 1) --- #}
-      {# 
-          Logic:
-          - Total Orders: General workload.
-          - Due Soon (<= 3 Days): Immediate focus required.
-          - Overdue: Critical alerts.
-      #}
-      <div class="kpi-grid">
+      {# --- Section 1: Work Order KPIs --- #}
+      <div class="row g-4 mb-5">
           
           {# Card 1: Total Pending #}
-          <div class="dash-card neutral">
-              <span class="kpi-label">Total Outstanding Work Orders</span>
-              <span class="kpi-value">{{ total_pending_orders|default('42') }}</span>
-              <div class="progress" style="height: 4px; background: rgba(255,255,255,0.1);">
-                  <div class="progress-bar bg-primary" role="progressbar" style="width: 60%"></div>
+          <div class="col-md-4">
+              <div class="card h-100 border-0 shadow-sm kpi-card neutral">
+                  <div class="card-body p-4">
+                      <div class="d-flex justify-content-between align-items-start">
+                          <div>
+                              <p class="text-uppercase text-muted fw-bold small mb-2">Pending Orders</p>
+                              <h2 class="display-4 fw-bold mb-0 text-dark">{{ total_pending_orders|default('42') }}</h2>
+                          </div>
+                          <div class="icon-circle bg-light text-primary">
+                              <i class="fas fa-clipboard-list fa-2x"></i>
+                          </div>
+                      </div>
+                      <div class="mt-3">
+                        <span class="badge bg-light text-dark border">Total Load</span>
+                      </div>
+                  </div>
+                  <div class="card-footer bg-transparent border-0 pb-3">
+                      <div class="progress" style="height: 6px;">
+                          <div class="progress-bar" role="progressbar" style="width: 75%; background-color: #25374e;"></div>
+                      </div>
+                  </div>
               </div>
           </div>
   
-          {# Card 2: Due Soon (Warning) #}
-          <div class="dash-card warning">
-              <span class="kpi-label">Due Within 3 Days</span>
-              <span class="kpi-value">{{ due_soon_orders|default('18') }}</span>
-              <small class="text-warning"><i class="fas fa-exclamation-triangle"></i> High Priority</small>
+          {# Card 2: Due Soon #}
+          <div class="col-md-4">
+              <div class="card h-100 border-0 shadow-sm kpi-card warning">
+                  <div class="card-body p-4">
+                      <div class="d-flex justify-content-between align-items-start">
+                          <div>
+                              <p class="text-uppercase text-muted fw-bold small mb-2">Due < 3 Days</p>
+                              <h2 class="display-4 fw-bold mb-0 text-warning">{{ due_soon_orders|default('18') }}</h2>
+                          </div>
+                          <div class="icon-circle bg-warning-subtle text-warning">
+                              <i class="fas fa-clock fa-2x"></i>
+                          </div>
+                      </div>
+                      <div class="mt-3">
+                          <span class="badge bg-warning text-dark">Priority High</span>
+                      </div>
+                  </div>
+                  <div class="card-footer bg-transparent border-0 pb-3">
+                      <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-warning" role="progressbar" style="width: 45%"></div>
+                      </div>
+                  </div>
+              </div>
           </div>
   
-          {# Card 3: Overdue (Critical) #}
-          <div class="dash-card critical">
-              <span class="kpi-label">Orders Overdue</span>
-              <span class="kpi-value">{{ overdue_orders|default('5') }}</span>
-              <small class="text-danger"><i class="fas fa-bell"></i> Immediate Action Required</small>
+          {# Card 3: Overdue #}
+          <div class="col-md-4">
+              <div class="card h-100 border-0 shadow-sm kpi-card critical">
+                  <div class="card-body p-4">
+                      <div class="d-flex justify-content-between align-items-start">
+                          <div>
+                              <p class="text-uppercase text-muted fw-bold small mb-2">Overdue</p>
+                              <h2 class="display-4 fw-bold mb-0 text-danger">{{ overdue_orders|default('5') }}</h2>
+                          </div>
+                          <div class="icon-circle bg-danger-subtle text-danger">
+                              <i class="fas fa-exclamation-circle fa-2x"></i>
+                          </div>
+                      </div>
+                      <div class="mt-3">
+                          <span class="badge bg-danger">Action Required</span>
+                      </div>
+                  </div>
+                  <div class="card-footer bg-transparent border-0 pb-3">
+                      <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-danger" role="progressbar" style="width: 100%"></div>
+                      </div>
+                  </div>
+              </div>
           </div>
   
       </div>
   
-      {# --- Section 2: Monthly Status (Row 2) --- #}
-      <h2 class="section-title">Monthly Production Status</h2>
-      <div class="monthly-stats-container">
-          
-          {# Completed #}
-          <div class="stat-block completed">
-              <div class="stat-info">
-                  <h3>Table Cut / Completed</h3>
-                  <div class="count">{{ monthly_completed|default('1250') }}</div>
-              </div>
-              <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-          </div>
+      {# --- Section 2: Monthly Progress (Simple Graphs) --- #}
+      <div class="row">
+          <div class="col-12">
+              <div class="card border-0 shadow-sm">
+                  <div class="card-header bg-white border-bottom py-3">
+                      <h5 class="mb-0 fw-bold">Monthly Work Log</h5>
+                  </div>
+                  <div class="card-body p-4">
+                      
+                      {# Horizontal Bar Chart Style #}
+                      <div class="row align-items-center mb-4">
+                          <div class="col-md-3">
+                              <h6 class="mb-1 text-success fw-bold">Completed</h6>
+                              <div class="h3 mb-0">{{ monthly_completed|default('1,250') }}</div>
+                              <small class="text-muted">Orders Shipped</small>
+                          </div>
+                          <div class="col-md-9">
+                              <div class="progress" style="height: 24px;">
+                                  <div class="progress-bar bg-success" role="progressbar" style="width: 70%">70%</div>
+                              </div>
+                          </div>
+                      </div>
   
-          {# In Progress #}
-          <div class="stat-block process">
-              <div class="stat-info">
-                  <h3>In Production</h3>
-                  <div class="count">{{ monthly_in_progress|default('320') }}</div>
-              </div>
-              <div class="stat-icon"><i class="fas fa-cog fa-spin"></i></div>
-          </div>
+                      <div class="row align-items-center mb-4">
+                          <div class="col-md-3">
+                              <h6 class="mb-1 text-primary fw-bold">In Progress</h6>
+                              <div class="h3 mb-0">{{ monthly_in_progress|default('320') }}</div>
+                              <small class="text-muted">On Cutting Table</small>
+                          </div>
+                          <div class="col-md-9">
+                              <div class="progress" style="height: 24px;">
+                                  <div class="progress-bar bg-primary" role="progressbar" style="width: 20%; background-color: #25374e !important;">20%</div>
+                              </div>
+                          </div>
+                      </div>
   
-          {# To Do #}
-          <div class="stat-block todo">
-              <div class="stat-info">
-                  <h3>Not Started</h3>
-                  <div class="count">{{ monthly_todo|default('145') }}</div>
-              </div>
-              <div class="stat-icon"><i class="far fa-clipboard"></i></div>
-          </div>
+                      <div class="row align-items-center">
+                          <div class="col-md-3">
+                              <h6 class="mb-1 text-secondary fw-bold">To Do</h6>
+                              <div class="h3 mb-0">{{ monthly_todo|default('145') }}</div>
+                              <small class="text-muted">Not Started</small>
+                          </div>
+                          <div class="col-md-9">
+                              <div class="progress" style="height: 24px;">
+                                  <div class="progress-bar bg-secondary" role="progressbar" style="width: 10%">10%</div>
+                              </div>
+                          </div>
+                      </div>
   
+                  </div>
+              </div>
+          </div>
       </div>
   
   </div>
