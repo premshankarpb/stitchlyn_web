@@ -11,7 +11,7 @@ stitchlyn_basic.manager-dashboard:
     _controller: '\Drupal\stitchlyn_basic\Controller\DashboardController::manager_view'
     _title: 'Manager Dashboard'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'access content'
 stitchlyn_basic.profile_form:
   path: '/user/{user}/profiles/{profile_type}/update'
   defaults:
