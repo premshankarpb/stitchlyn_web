@@ -1,166 +1,86 @@
-<div class="dashboard-summary">
+{# 
+    Manager Dashboard Template 
+    Designed for TV / Large Screen Display
+  #}
   
-  <!-- 🔹 Financial Overview Title -->
-  <div class="financial-header">
-    <h2 class="financial-title">Financial Overview</h2>
-    <p class="financial-subtitle">A quick glance at total, collected, and pending amounts for all Quotations and Purchase Orders.</p>
-  </div>
-
-  <!-- 🔹 Financial Summary Row -->
-  <div class="financial-summary">
-    <div class="dashboard-grid financial-grid">
-
-      <!-- Quotation Financials -->
-      <div class="dashboard-box box-quotation financial">
-        <div class="box-title">Quotation: Total Amount</div>
-        <div class="box-count">₹54,280.00</div>
+  <div class="dashboard-page-wrapper">
+      
+      {# --- Top Header --- #}
+      <header class="dashboard-header">
+          <div class="dashboard-brand">
+              <h1>STITCHLYN <span>OPS</span></h1>
+          </div>
+          <div class="dashboard-clock">
+              <div id="clock-time">--:--</div>
+              <div id="clock-date">LOADING...</div>
+          </div>
+      </header>
+  
+      {# --- Section 1: Critical KPIs (Row 1) --- #}
+      {# 
+          Logic:
+          - Total Orders: General workload.
+          - Due Soon (<= 3 Days): Immediate focus required.
+          - Overdue: Critical alerts.
+      #}
+      <div class="kpi-grid">
+          
+          {# Card 1: Total Pending #}
+          <div class="dash-card neutral">
+              <span class="kpi-label">Total Outstanding Work Orders</span>
+              <span class="kpi-value">{{ total_pending_orders|default('42') }}</span>
+              <div class="progress" style="height: 4px; background: rgba(255,255,255,0.1);">
+                  <div class="progress-bar bg-primary" role="progressbar" style="width: 60%"></div>
+              </div>
+          </div>
+  
+          {# Card 2: Due Soon (Warning) #}
+          <div class="dash-card warning">
+              <span class="kpi-label">Due Within 3 Days</span>
+              <span class="kpi-value">{{ due_soon_orders|default('18') }}</span>
+              <small class="text-warning"><i class="fas fa-exclamation-triangle"></i> High Priority</small>
+          </div>
+  
+          {# Card 3: Overdue (Critical) #}
+          <div class="dash-card critical">
+              <span class="kpi-label">Orders Overdue</span>
+              <span class="kpi-value">{{ overdue_orders|default('5') }}</span>
+              <small class="text-danger"><i class="fas fa-bell"></i> Immediate Action Required</small>
+          </div>
+  
       </div>
-      <div class="dashboard-box box-quotation financial">
-        <div class="box-title">Quotation: Amount Collected</div>
-        <div class="box-count text-success">₹6,960.00</div>
+  
+      {# --- Section 2: Monthly Status (Row 2) --- #}
+      <h2 class="section-title">Monthly Production Status</h2>
+      <div class="monthly-stats-container">
+          
+          {# Completed #}
+          <div class="stat-block completed">
+              <div class="stat-info">
+                  <h3>Table Cut / Completed</h3>
+                  <div class="count">{{ monthly_completed|default('1250') }}</div>
+              </div>
+              <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          </div>
+  
+          {# In Progress #}
+          <div class="stat-block process">
+              <div class="stat-info">
+                  <h3>In Production</h3>
+                  <div class="count">{{ monthly_in_progress|default('320') }}</div>
+              </div>
+              <div class="stat-icon"><i class="fas fa-cog fa-spin"></i></div>
+          </div>
+  
+          {# To Do #}
+          <div class="stat-block todo">
+              <div class="stat-info">
+                  <h3>Not Started</h3>
+                  <div class="count">{{ monthly_todo|default('145') }}</div>
+              </div>
+              <div class="stat-icon"><i class="far fa-clipboard"></i></div>
+          </div>
+  
       </div>
-      <div class="dashboard-box box-quotation financial">
-        <div class="box-title">Quotation: Amount Pending</div>
-        <div class="box-count text-danger">₹47,320.00</div>
-      </div>
-
-      <!-- Purchase Order Financials -->
-      <div class="dashboard-box box-purchase financial">
-        <div class="box-title">Purchase Order: Total Amount</div>
-        <div class="box-count">₹53,719.50</div>
-      </div>
-      <div class="dashboard-box box-purchase financial">
-        <div class="box-title">Purchase Order: Amount Paid</div>
-        <div class="box-count text-success">₹5,428.00</div>
-      </div>
-      <div class="dashboard-box box-purchase financial">
-        <div class="box-title">Purchase Order: Amount Pending</div>
-        <div class="box-count text-danger">₹0.00</div>
-      </div>
-
-    </div>
+  
   </div>
-
-  <h2>Quotations</h2>
-  <div class="dashboard-grid">
-    <div class="dashboard-box box-quotation">
-      <div class="box-title">Draft Quotations</div>
-      <div class="box-count">5</div>
-    </div>
-    <div class="dashboard-box box-quotation">
-      <div class="box-title">Pending Quotations</div>
-      <div class="box-count">0</div>
-    </div>
-    <div class="dashboard-box box-quotation">
-      <div class="box-title">Follow up Quotations</div>
-      <div class="box-count">0</div>
-    </div>
-    <div class="dashboard-box box-quotation">
-      <div class="box-title">Approved Quotations</div>
-      <div class="box-count">2</div>
-    </div>
-  </div>
-  <div class="section-footer">
-    <a href="/dashboard/quotations" class="view-link">View Details →</a>
-  </div>
-
-  <h2>Work Orders</h2>
-  <div class="dashboard-grid">
-    <div class="dashboard-box box-work">
-      <div class="box-title">Total Work Orders</div>
-      <div class="box-count">17</div>
-    </div>
-    <div class="dashboard-box box-work">
-      <div class="box-title">Done</div>
-      <div class="box-count">5</div>
-    </div>
-    <div class="dashboard-box box-work">
-      <div class="box-title">In Progress Due</div>
-      <div class="box-count">15</div>
-    </div>
-    <div class="dashboard-box box-work">
-      <div class="box-title">In Progress</div>
-      <div class="box-count">0</div>
-    </div>
-    <div class="dashboard-box box-work">
-      <div class="box-title">Pending</div>
-      <div class="box-count">8</div>
-    </div>
-    <div class="dashboard-box box-work">
-      <div class="box-title">Rejected</div>
-      <div class="box-count">0</div>
-    </div>
-  </div>
-  <div class="section-footer">
-    <a href="/dashboard/work-orders" class="view-link">View Details →</a>
-  </div>
-
-  <h2>Purchase Orders</h2>
-  <div class="dashboard-grid">
-    <div class="dashboard-box box-purchase">
-      <div class="box-title">Total POs</div>
-      <div class="box-count">8</div>
-    </div>
-    <div class="dashboard-box box-purchase">
-      <div class="box-title">Paid</div>
-      <div class="box-count">4</div>
-    </div>
-    <div class="dashboard-box box-purchase">
-      <div class="box-title">Issued</div>
-      <div class="box-count">0</div>
-    </div>
-    <div class="dashboard-box box-purchase">
-      <div class="box-title">Shipment In Progress</div>
-      <div class="box-count">0</div>
-    </div>
-    <div class="dashboard-box box-purchase">
-      <div class="box-title">Fullfilled</div>
-      <div class="box-count">3</div>
-    </div>
-  </div>
-  <div class="section-footer">
-    <a href="/dashboard/purchase-orders" class="view-link">View Details →</a>
-  </div>
-
-  <h2>Inventory</h2>
-  <div class="dashboard-grid">
-    <div class="dashboard-box box-inventory">
-      <div class="box-title">Finished Products</div>
-      <a href="/dashboard/inventory_list?field_inventory_type_target_id=7"><div class="box-count">2</div></a>
-    </div>
-    <div class="dashboard-box box-inventory">
-      <div class="box-title">Raw Materials</div>
-      <a href="/dashboard/inventory_list?field_inventory_type_target_id=5"><div class="box-count">5</div></a>
-    </div>
-    <div class="dashboard-box box-inventory">
-      <div class="box-title">Tools</div>
-      <a href="/dashboard/inventory_list?field_inventory_type_target_id=6"><div class="box-count">2</div></a>
-    </div>
-  </div>
-  <div class="section-footer">
-    <a href="/dashboard/inventory_list" class="view-link">View Details →</a>
-  </div>
-
-</div>
-
-<style>
-  .financial-header {
-    text-align: left;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 0.5rem;
-  }
-
-  .financial-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #333;
-    margin: 0;
-  }
-
-  .financial-subtitle {
-    font-size: 0.95rem;
-    color: #666;
-    margin-top: 0.2rem;
-  }
-</style>
