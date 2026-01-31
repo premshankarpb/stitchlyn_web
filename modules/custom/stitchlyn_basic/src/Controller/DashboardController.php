@@ -121,14 +121,14 @@ class DashboardController extends ControllerBase {
     ];
 
     $current_month = $today->format('Y-m');
-
+    
+    $qty = 0;
     foreach ($work_orders as $wo) {
       if ($wo->isPublished() === FALSE) {
         continue;
       }
 
       $status = $wo->get('field_order_status')->entity?->label();
-      $qty = (float) ($wo->get('field_quantity')->value ?? 0);
       $due_date_raw = $wo->get('field_expected_due_date')->value;
 
       $due_date = $due_date_raw ? new DrupalDateTime($due_date_raw) : NULL;
@@ -139,7 +139,7 @@ class DashboardController extends ControllerBase {
       }
 
       // ---- Due logic ----
-      if ($due_date && $status !== 'Done') {
+      if ($due_date && in_array($status, ['In Progress', 'To Do'], TRUE)) {
         if ($due_date < $today) {
           $overdue++;
         }
@@ -149,8 +149,8 @@ class DashboardController extends ControllerBase {
       }
 
       // ---- Monthly production ----
-      $created_date = DrupalDateTime::createFromTimestamp($wo->getCreatedTime());
-      if ($created_date->format('Y-m') === $current_month) {
+      $duedata_date_format = DrupalDateTime::createFromTimestamp($due_date_raw);
+      if ($duedata_date_format->format('Y-m') === $current_month) {
         $monthly['total'] += $qty;
         switch ($status) {
           case 'Done':
