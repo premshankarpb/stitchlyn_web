@@ -141,7 +141,7 @@ class DashboardController extends ControllerBase {
       $query->condition('nid', 0);
     }
 
-    $nids = $query->execute();
+    $nids = $query->accessCheck(FALSE)->execute();
     $work_orders = $storage->loadMultiple($nids);
 
     // ---- COUNTERS ----
