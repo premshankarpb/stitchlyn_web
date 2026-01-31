@@ -5,7 +5,8 @@ namespace Drupal\stitchlyn_basic\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Datetime\DrupalDateTime;
-
+use Drupal\user\Entity\User;
+use Drupal\profile\Entity\Profile;
 
 /**
  * Provides the Dashboard page controller.
@@ -102,10 +103,46 @@ class DashboardController extends ControllerBase {
     $today = new DrupalDateTime('today');
     $plus3 = new DrupalDateTime('+3 days');
 
+    $account = \Drupal::currentUser();
+    $user = User::load($account->id());
+
+    $unit_tids = [];
+
+    // Load Unit Manager profile
+    $profiles = \Drupal::entityTypeManager()
+      ->getStorage('profile')
+      ->loadByProperties([
+        'uid' => $user->id(),
+        'type' => 'unit_manager',
+      ]);
+
+    if (!empty($profiles)) {
+      /** @var \Drupal\profile\Entity\Profile $profile */
+      $profile = reset($profiles);
+
+      if (!$profile->get('field_unit')->isEmpty()) {
+        foreach ($profile->get('field_unit')->getValue() as $item) {
+          $unit_tids[] = $item['target_id'];
+        }
+      }
+    }
+
     // Load all work orders (manager dashboard = overview)
-    $work_orders = $storage->loadByProperties([
-      'type' => 'work_order',
-    ]);
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'work_order')
+      ->condition('status', 1);
+
+    // Apply unit filtering ONLY if units exist
+    if (!empty($unit_tids)) {
+      $query->condition('field_unit_assigned', $unit_tids, 'IN');
+    }
+    else {
+      // No units → force empty result
+      $query->condition('nid', 0);
+    }
+
+    $nids = $query->execute();
+    $work_orders = $storage->loadMultiple($nids);
 
     // ---- COUNTERS ----
     $pending = 0;
