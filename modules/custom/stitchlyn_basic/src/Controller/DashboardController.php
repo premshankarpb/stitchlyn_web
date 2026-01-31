@@ -200,6 +200,9 @@ class DashboardController extends ControllerBase {
       '#attached' => [
         'library' => ['stitchlyn_basic/dashboard'],
       ],
+      '#cache' => [
+        'max-age' => 0,
+      ],
     ];
   }
 
