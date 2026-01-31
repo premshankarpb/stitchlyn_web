@@ -121,8 +121,7 @@ class DashboardController extends ControllerBase {
     ];
 
     $current_month = $today->format('Y-m');
-    
-    $qty = 0;
+
     foreach ($work_orders as $wo) {
       if ($wo->isPublished() === FALSE) {
         continue;
@@ -149,20 +148,19 @@ class DashboardController extends ControllerBase {
       }
 
       // ---- Monthly production ----
-      $duedata_date_format = new DrupalDateTime($due_date_raw);
       if ($due_date && $due_date->format('Y-m') === $current_month) {
-        $monthly['total'] += $qty;
+        $monthly['total']++;
         switch ($status) {
           case 'Done':
-            $monthly['completed'] += $qty;
+            $monthly['completed']++;
             break;
 
           case 'In Progress':
-            $monthly['in_progress'] += $qty;
+            $monthly['in_progress']++;
             break;
 
           case 'To Do':
-            $monthly['to_do'] += $qty;
+            $monthly['to_do']++;
             break;
         }
       }
