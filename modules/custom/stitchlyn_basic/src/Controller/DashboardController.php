@@ -117,6 +117,7 @@ class DashboardController extends ControllerBase {
       'completed' => 0,
       'in_progress' => 0,
       'to_do' => 0,
+      'total' => 0,
     ];
 
     $current_month = $today->format('Y-m');
@@ -133,7 +134,7 @@ class DashboardController extends ControllerBase {
       $due_date = $due_date_raw ? new DrupalDateTime($due_date_raw) : NULL;
 
       // ---- Pending ----
-      if ($status !== 'Done') {
+      if (in_array($status, ['In Progress', 'To Do'], TRUE)) {
         $pending++;
       }
 
@@ -148,7 +149,9 @@ class DashboardController extends ControllerBase {
       }
 
       // ---- Monthly production ----
-      if ($due_date && $due_date->format('Y-m') === $current_month) {
+      $created_date = DrupalDateTime::createFromTimestamp($wo->getCreatedTime());
+      if ($created_date->format('Y-m') === $current_month) {
+        $monthly['total'] += $qty;
         switch ($status) {
           case 'Done':
             $monthly['completed'] += $qty;
@@ -163,6 +166,19 @@ class DashboardController extends ControllerBase {
             break;
         }
       }
+
+    }
+
+    $percent = [
+      'completed' => 0,
+      'in_progress' => 0,
+      'to_do' => 0,
+    ];
+
+    if ($monthly['total'] > 0) {
+      $percent['completed'] = round(($monthly['completed'] / $monthly['total']) * 100);
+      $percent['in_progress'] = round(($monthly['in_progress'] / $monthly['total']) * 100);
+      $percent['to_do'] = round(($monthly['to_do'] / $monthly['total']) * 100);
     }
 
     $counts = [
@@ -174,6 +190,7 @@ class DashboardController extends ControllerBase {
         'completed' => $monthly['completed'],
         'in_progress' => $monthly['in_progress'],
         'to_do' => $monthly['to_do'],
+        'percent' => $percent,
       ],
     ];
 

@@ -68,7 +68,7 @@
                           <span class="h4 mb-0 fw-black">{{ counts.monthly_production.completed }}</span>
                       </div>
                       <div class="progress" style="height: 12px; border-radius: 99px; background: #dcfce7;">
-                          <div class="progress-bar bg-success" style="width: 70%; border-radius: 99px;"></div>
+                          <div class="progress-bar bg-success" style="width: {{ counts.monthly_production.percent.completed }}%; border-radius: 99px;"></div>
                       </div>
                   </div>
   
@@ -79,7 +79,7 @@
                           <span class="h4 mb-0 fw-black">{{ counts.monthly_production.in_progress }}</span>
                       </div>
                       <div class="progress" style="height: 12px; border-radius: 99px; background: #dbeafe;">
-                          <div class="progress-bar bg-primary" style="width: 25%; border-radius: 99px;"></div>
+                          <div class="progress-bar bg-primary" style="width: {{ counts.monthly_production.percent.in_progress }}%; border-radius: 99px;"></div>
                       </div>
                   </div>
   
@@ -90,7 +90,7 @@
                           <span class="h4 mb-0 fw-black">{{ counts.monthly_production.to_do }}</span>
                       </div>
                       <div class="progress" style="height: 12px; border-radius: 99px; background: #e5e7eb;">
-                          <div class="progress-bar bg-secondary" style="width: 10%; border-radius: 99px;"></div>
+                          <div class="progress-bar bg-secondary" style="width: {{ counts.monthly_production.percent.to_do }}%; border-radius: 99px;"></div>
                       </div>
                   </div>
   
