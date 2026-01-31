@@ -150,7 +150,7 @@ class DashboardController extends ControllerBase {
 
       // ---- Monthly production ----
       $duedata_date_format = new DrupalDateTime($due_date_raw);
-      if ($duedata_date_format->format('Y-m') === $current_month) {
+      if ($due_date && $due_date->format('Y-m') === $current_month) {
         $monthly['total'] += $qty;
         switch ($status) {
           case 'Done':
