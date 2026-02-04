@@ -11,6 +11,10 @@ body {
 .admin-layout .admin-main {
 	margin: 0;
 	margin-left: 2%;
+  padding: 0;
+}
+.dashboard-summary{
+  padding: 0px;
 }
 
 .path-frontpage .page-banner-section {
@@ -440,3 +444,63 @@ em.placeholder {
   .input-group .btn {
       align-self: stretch; /* Forces equal height matching in flex containers */
   }
+
+  .dashboard-summary h2{
+    margin-top: 20px;
+  }
+
+/* ==========================================================================
+   VIEW FILTERS ALIGNMENT FIX
+   ========================================================================== */
+
+/* 1. Flex container for the exposed form */
+.view-filters form, 
+.view-filters .views-exposed-form {
+    display: flex;
+    align-items: flex-end; /* Aligns labels/inputs with the button */
+    flex-wrap: wrap;       /* Allows wrapping on smaller screens */
+    gap: 16px;             /* Consistent spacing between fields/buttons */
+}
+
+/* 2. Reset margins on individual form items inside filters */
+.view-filters .form-item,
+.view-filters .form-actions {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 0; /* Let gap handle spacing */
+}
+
+/* 3. Ensure generic "Apply" button margin is removed if present */
+.view-filters .form-actions {
+    margin: 0;
+}
+
+/* 4. Force Inputs and Buttons to Match Height strictly */
+.view-filters .form-control,
+.view-filters .form-select,
+.view-filters .form-submit,
+.view-filters .btn {
+    height: 54px !important;     /* Force strict equality */
+    min-height: 54px !important; 
+    line-height: normal;         /* Prevent line-height shifts */
+    display: inline-flex;        /* centering content for flex items */
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+/* Adjust button specifically if it needs text centering */
+.view-filters .form-submit,
+.view-filters .btn {
+    justify-content: center;
+}
+@media (min-width: 43.75rem) {
+    .view, .view-content {
+        gap: 15px;
+    }
+}
+.views-table {
+    margin-block-start: 15px;
+    margin-block-end: 15px;
+}

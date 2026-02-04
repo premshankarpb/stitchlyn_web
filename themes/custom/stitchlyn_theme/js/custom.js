@@ -41,15 +41,15 @@
           }
           
           // Adjust Main Content margin if needed (prevent cut-off)
-           if ($main.length) {
-             $main.css('margin-top', (totalOffset + 70) + 'px'); // 70px is original header height
-           }
+           // if ($main.length) {
+           //   $main.css('margin-top', (totalOffset + 70) + 'px'); // 70px is original header height
+           // }
           
         } else {
           // Reset
           $header.css('top', '0');
           if ($sidebar.length) $sidebar.css('top', '70px'); // Default header height
-          if ($main.length) $main.css('margin-top', '70px');
+// if ($main.length) $main.css('margin-top', '70px');
         }
       }
 
