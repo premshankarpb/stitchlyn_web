@@ -103,7 +103,11 @@ class WorkOrderController extends ControllerBase {
     $quantity = (float) trim($request->get('quantity'));
     $due_date = trim($request->get('due_date'));
     $status_id = trim($request->get('status'));
+    $date_of_completion = trim($request->get('date_of_completion'));
+    $assignee = trim($request->get('assignee'));
     $remarks = trim($request->get('remarks'));
+    $assignee = trim($request->get('assignee'));
+    $date_of_completion = trim($request->get('date_of_completion'));
 
     // --- Validation ---
     if (empty($quotation) || empty($line_item_id) || empty($unit_id) || empty($quantity) || empty($status_id)) {
@@ -119,6 +123,7 @@ class WorkOrderController extends ControllerBase {
     $line_item = $em->getStorage('node')->load($line_item_id);
     $unit = $em->getStorage('taxonomy_term')->load($unit_id);
     $status_term = $em->getStorage('taxonomy_term')->load($status_id);
+    $assignee_term = $em->getStorage('taxonomy_term')->load($assignee);
 
     if (!$line_item || !$unit || !$status_term) {
         return new JsonResponse([
@@ -171,6 +176,16 @@ class WorkOrderController extends ControllerBase {
         }
     }
 
+    // --- Format date of completion ---
+    $formatted_date_of_completion = NULL;
+    if (!empty($date_of_completion)) {
+        try {
+            $formatted_date_of_completion = (new \DateTime($date_of_completion))->format('Y-m-d');
+        } catch (\Exception $e) {
+            $formatted_date_of_completion = NULL;
+        }
+    }
+
     // --- Create the Work Order node ---
     $node_storage = $em->getStorage('node');
     $work_order = $node_storage->create([
@@ -182,6 +197,8 @@ class WorkOrderController extends ControllerBase {
         'field_quantity' => $quantity,
         'field_order_status' => ['target_id' => $status_id],
         'field_expected_due_date' => $formatted_due_date ?: NULL,
+        'field_date_of_completion' => $formatted_date_of_completion ?: NULL,
+        'field_assignee' => ['target_id' => $assignee],
         'body' => ['value' => $remarks, 'format' => 'basic_html'],
         'status' => 1,
     ]);
@@ -216,6 +233,8 @@ class WorkOrderController extends ControllerBase {
                 'unit' => $wo->get('field_unit_assigned')->entity->label() ?? '',
                 'quantity' => $wo->get('field_quantity')->value ?? '',
                 'expected_due' => $wo->get('field_expected_due_date')->value ?? '',
+                'date_of_completion' => $wo->get('field_date_of_completion')->value ?? '',
+                'assignee' => $wo->get('field_assignee')->entity->label() ?? '',
                 'order_status' => $wo->get('field_order_status')->entity->label() ?? '',
             ];
         }
@@ -224,7 +243,7 @@ class WorkOrderController extends ControllerBase {
     // --- Generate updated table HTML ---
     $html = '<table class="table table-bordered table-striped align-middle" id="workorder-table">';
     $html .= '<thead class="table-light"><tr>';
-    $html .= '<th>Work Order #</th><th>Line Item</th><th>Unit Assigned</th><th>Quantity</th><th>Due Date</th><th>Status</th><th>Actions</th>';
+    $html .= '<th>Work Order #</th><th>Line Item</th><th>Unit Assigned</th><th>Date of Completion</th><th>Assignee</th><th>Quantity</th><th>Due Date</th><th>Status</th><th>Actions</th>';
     $html .= '</tr></thead><tbody>';
 
     if (!empty($work_orders_data)) {
@@ -233,6 +252,8 @@ class WorkOrderController extends ControllerBase {
             $html .= '<td>' . $wo['title'] . '</td>';
             $html .= '<td>' . $wo['line_item'] . '</td>';
             $html .= '<td>' . $wo['unit'] . '</td>';
+            $html .= '<td>' . $wo['date_of_completion'] . '</td>';
+            $html .= '<td>' . $wo['assignee'] . '</td>';
             $html .= '<td>' . $wo['quantity'] . '</td>';
             $html .= '<td>' . $wo['expected_due'] . '</td>';
             $html .= '<td>' . $wo['order_status'] . '</td>';
@@ -286,8 +307,10 @@ class WorkOrderController extends ControllerBase {
 
     $status = trim($request->request->get('status'));
     $remarks = trim($request->request->get('remarks'));
+    $date_of_completion = trim($request->request->get('date_of_completion'));
+    $assignee = trim($request->request->get('assignee'));
 
-    // --- Update taxonomy status ---
+    // --- Update order status ---
     if ($status) {
       $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
         'name' => $status,
@@ -297,6 +320,16 @@ class WorkOrderController extends ControllerBase {
         $term = reset($terms);
         $node->set('field_order_status', ['target_id' => $term->id()]);
       }
+    }
+
+    // --- Update date of completion ---
+    if ($date_of_completion) {
+      $node->set('field_date_of_completion', $date_of_completion);
+    }
+
+    // --- Update assignee ---
+    if ($assignee) {
+      $node->set('field_assignee', ['target_id' => $assignee]);
     }
 
     // --- Update remarks ---
@@ -332,6 +365,8 @@ class WorkOrderController extends ControllerBase {
           <td>' . $wo->label() . '</td>
           <td>' . ($wo->get('field_linked_line_item')->entity->label() ?? '') . '</td>
           <td>' . ($wo->get('field_unit_assigned')->entity->label() ?? '') . '</td>
+          <td>' . $wo->get('field_date_of_completion')->value . '</td>
+          <td>' . ($wo->get('field_assignee')->entity->label() ?? '') . '</td>
           <td>' . $wo->get('field_quantity')->value . '</td>
           <td>' . $wo->get('field_expected_due_date')->value . '</td>
           <td>' . $wo->get('field_order_status')->entity->label() . '</td>
@@ -352,6 +387,8 @@ class WorkOrderController extends ControllerBase {
             <th>Work Order #</th>
             <th>Linked Line Item</th>
             <th>Unit Assigned</th>
+            <th>Date of Completion</th>
+            <th>Assignee</th>
             <th>Quantity</th>
             <th>Expected Due Date</th>
             <th>Status</th>
@@ -401,6 +438,8 @@ class WorkOrderController extends ControllerBase {
       'unit' => $node->get('field_unit_assigned')->entity->label() ?? '',
       'quantity' => $node->get('field_quantity')->value ?? '',
       'expected_due_date' => $node->get('field_expected_due_date')->value ?? '',
+      'date_of_completion' => $node->get('field_date_of_completion')->value ?? '',
+      'assignee' => isset($node->get('field_assignee')->entity) ? $node->get('field_assignee')->entity->label() : '',
       'order_status' => $node->get('field_order_status')->entity->label() ?? '',
       'remarks' => $node->get('body')->value ?? '',
       'work_order_logs' => $wo_log_data,

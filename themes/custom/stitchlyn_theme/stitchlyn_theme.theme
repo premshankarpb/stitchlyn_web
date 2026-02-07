@@ -435,6 +435,15 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
         'label' => $order_status_term->label(),
       ];
     }
+    $order_assignee_terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties(['vid' => 'wo_assignee']);
+    foreach ($order_assignee_terms as $order_assignee_term) {
+      $variables['assignees'][] = [
+        'value' => $order_assignee_term->id(),
+        'label' => $order_assignee_term->label(),
+      ];
+    }
 
     // Fetch linked Payment Records.
     $query = \Drupal::entityQuery('node')
