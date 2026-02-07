@@ -1,0 +1,21 @@
+uuid: dfd7bfb9-a60b-46fb-b97b-8ec99cf3bcbd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_date_of_completion
+    - node.type.work_order
+  module:
+    - datetime
+id: node.work_order.field_date_of_completion
+field_name: field_date_of_completion
+entity_type: node
+bundle: work_order
+label: 'Date of completion'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime
