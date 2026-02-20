@@ -30,6 +30,8 @@ module:
   help: 0
   history: 0
   image: 0
+  jquery_ui: 0
+  jquery_ui_datepicker: 0
   link: 0
   mailer_transport: 0
   menu_item_role_access: 0

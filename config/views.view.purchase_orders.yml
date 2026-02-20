@@ -14,6 +14,7 @@ dependencies:
     - node.type.purchase_order
     - taxonomy.vocabulary.payment_status
   module:
+    - better_exposed_filters
     - csv_serialization
     - datetime
     - node
@@ -867,7 +868,7 @@ display:
             offset_label: Offset
           quantity: 9
       exposed_form:
-        type: basic
+        type: bef
         options:
           submit_button: Apply
           reset_button: false
@@ -876,6 +877,29 @@ display:
           expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: null
+          bef:
+            general:
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_textfield_minimum_length: 3
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+              reset_button_always_show: false
+            sort:
+              plugin_id: default
+            filter:
+              nid:
+                plugin_id: default
+              field_payment_status_target_id:
+                plugin_id: default
+              field_date_of_purchase_value:
+                plugin_id: default
       access:
         type: perm
         options:
@@ -1043,7 +1067,7 @@ display:
           exposed: true
           expose:
             operator_id: field_date_of_purchase_value_op
-            label: 'From Date'
+            label: 'Date of purchase'
             description: ''
             use_operator: false
             operator: field_date_of_purchase_value_op
@@ -1060,21 +1084,46 @@ display:
               administrator: '0'
               vendor: '0'
               unit_manager: '0'
+              admin: '0'
             min_placeholder: ''
             max_placeholder: ''
             placeholder: ''
           is_grouped: false
           group_info:
-            label: ''
+            label: 'Date of purchase  (field_date_of_purchase)'
             description: ''
-            identifier: ''
+            identifier: field_date_of_purchase_value
             optional: true
             widget: select
-            multiple: false
+            multiple: true
             remember: false
             default_group: All
             default_group_multiple: {  }
-            group_items: {  }
+            group_items:
+              1:
+                title: ''
+                operator: '>='
+                value:
+                  min: ''
+                  max: ''
+                  value: ''
+                  type: date
+              2:
+                title: ''
+                operator: '<='
+                value:
+                  min: ''
+                  max: ''
+                  value: ''
+                  type: date
+              3:
+                title: ''
+                operator: '>='
+                value:
+                  min: ''
+                  max: ''
+                  value: ''
+                  type: date
       filter_groups:
         operator: AND
         groups:
@@ -2767,137 +2816,62 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: false
-      filters:
-        status:
-          id: status
-          table: node_field_data
-          field: status
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
-          value: '1'
-          group: 1
-          expose:
-            operator: ''
-        type:
-          id: type
-          table: node_field_data
-          field: type
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
-          value:
-            purchase_order: purchase_order
-          group: 1
-        nid:
-          id: nid
-          table: node_field_data
-          field: nid
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          entity_field: nid
-          plugin_id: numeric
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: nid_op
-            label: 'Order Id'
-            description: ''
-            use_operator: false
-            operator: nid_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: nid
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              content_editor: '0'
-              administrator: '0'
-              vendor: '0'
-              unit_manager: '0'
-            min_placeholder: ''
-            max_placeholder: ''
-            placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-        field_payment_status_target_id:
-          id: field_payment_status_target_id
-          table: node__field_payment_status
-          field: field_payment_status_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: taxonomy_index_tid
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_payment_status_target_id_op
-            label: 'Payment Status'
-            description: ''
-            use_operator: false
-            operator: field_payment_status_target_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_payment_status_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              content_editor: '0'
-              administrator: '0'
-              vendor: '0'
-              unit_manager: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          vid: payment_status
-          type: select
-          hierarchy: false
-          limit: true
-          error_message: true
-      filter_groups:
-        operator: AND
-        groups:
-          1: AND
+      exposed_form:
+        type: bef
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: basic_html
+          bef:
+            general:
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_textfield_minimum_length: 3
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+              reset_button_always_show: false
+            filter:
+              nid:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                  hide_label: false
+              field_payment_status_target_id:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                  hide_label: false
+              field_date_of_purchase_value:
+                plugin_id: bef_datepicker
+                advanced:
+                  collapsible: true
+                  collapsible_disable_automatic_open: false
+                  is_secondary: false
+                  hide_label: false
       defaults:
+        exposed_form: false
         fields: false
-        filters: false
-        filter_groups: false
+        filters: true
+        filter_groups: true
         header: false
       display_description: ''
       header:
