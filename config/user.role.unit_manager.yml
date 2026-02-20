@@ -5,6 +5,7 @@ dependencies:
   config:
     - node.type.work_order
   module:
+    - content_moderation
     - node
     - profile
 id: unit_manager
@@ -16,4 +17,5 @@ permissions:
   - 'create unit_manager profile'
   - 'edit any work_order content'
   - 'update own unit_manager profile'
+  - 'view any unpublished content'
   - 'view own unit_manager profile'

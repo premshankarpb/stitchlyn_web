@@ -227,7 +227,7 @@
                 $('#edit-wo-quantity').val(d.quantity);
                 $('#edit-wo-due').val(d.expected_due_date);
                 $('#edit-wo-date-of-completion').val(d.date_of_completion);
-                $('#edit-wo-assignee').val(d.assignee);
+                $('#edit-wo-assignee').val(d.assignee_id);
                 $('#edit-wo-status').val(d.order_status);
                 $('#edit-wo-remarks').val(d.remarks);
 
@@ -256,12 +256,14 @@
           const id = $(this).data('id');
           const status = $('#edit-wo-status').val();
           const remarks = $('#edit-wo-remarks').val();
+          const dateOfCompletion = $('#edit-wo-date-of-completion').val();
+          const assignee = $('#edit-wo-assignee').val();
 
           $.ajax({
             url: `/quotation/work-order/${id}/update`,
             type: 'POST',
             dataType: 'json',
-            data: { status: status, remarks: remarks },
+            data: { status: status, remarks: remarks,date_of_completion: dateOfCompletion, assignee: assignee },
             success: function (res) {
 
               if (res.status === 'success') {

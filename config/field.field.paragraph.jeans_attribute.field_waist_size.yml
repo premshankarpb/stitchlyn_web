@@ -1,0 +1,23 @@
+uuid: 72ee31d3-9ff6-41bc-8734-4f0c68167152
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_waist_size
+    - paragraphs.paragraphs_type.jeans_attribute
+id: paragraph.jeans_attribute.field_waist_size
+field_name: field_waist_size
+entity_type: paragraph
+bundle: jeans_attribute
+label: 'Waist size'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

@@ -1,4 +1,4 @@
-uuid: 7acb59f0-5843-438a-ad31-ae9b3606823c
+uuid: bb627cdf-280b-43b6-bbc8-e8745829135c
 langcode: en
 status: true
 dependencies:
@@ -6,13 +6,12 @@ dependencies:
     - menu_ui
 third_party_settings:
   menu_ui:
-    available_menus:
-      - main
-    parent: 'main:'
+    available_menus: {  }
+    parent: ''
 name: 'Order Logs'
 type: order_logs
 description: null
 help: null
-new_revision: true
+new_revision: false
 preview_mode: 1
 display_submitted: false

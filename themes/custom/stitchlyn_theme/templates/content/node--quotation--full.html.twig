@@ -528,13 +528,16 @@
 
                 <div class="mb-3">
                   <label class="form-label fw-bold">Date of Completion</label>
-                  <input type="text" class="form-control" id="edit-wo-date-of-completion">
+                  <input type="date" class="form-control" id="edit-wo-date-of-completion">
                 </div>
 
                 <div class="mb-3">
                   <label class="form-label fw-bold">Order Assignee</label>
                   <select class="form-select" id="edit-wo-assignee">
                     <option value="">Select Assignee</option>
+                    {% for assignee in assignees %}
+                      <option value="{{ assignee.value }}">{{ assignee.label }}</option>
+                    {% endfor %}
                   </select>
                 </div>
 

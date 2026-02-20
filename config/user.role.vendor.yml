@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - content_moderation
     - profile
 id: vendor
 label: Vendor
@@ -11,4 +12,5 @@ is_admin: null
 permissions:
   - 'create vendor profile'
   - 'update own vendor profile'
+  - 'view any unpublished content'
   - 'view own vendor profile'

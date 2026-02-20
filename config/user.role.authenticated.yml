@@ -41,6 +41,7 @@ permissions:
   - 'use quotation_workflow transition quation_requested'
   - 'use text format basic_html'
   - 'use text format webform_default'
+  - 'view any unpublished content'
   - 'view own customer profile'
   - 'view own profile'
   - 'view own unpublished content'

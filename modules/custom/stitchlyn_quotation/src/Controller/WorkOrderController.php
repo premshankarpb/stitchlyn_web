@@ -322,14 +322,21 @@ class WorkOrderController extends ControllerBase {
       }
     }
 
+    // --- Update assignee ---
+    if ($assignee) {
+      $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+        'name' => $assignee,
+        'vid' => 'assignee',
+      ]);
+      if ($terms) {
+        $term = reset($terms);
+        $node->set('field_assignee', ['target_id' => $term->id()]);
+      }
+    }
+
     // --- Update date of completion ---
     if ($date_of_completion) {
       $node->set('field_date_of_completion', $date_of_completion);
-    }
-
-    // --- Update assignee ---
-    if ($assignee) {
-      $node->set('field_assignee', ['target_id' => $assignee]);
     }
 
     // --- Update remarks ---
@@ -366,9 +373,9 @@ class WorkOrderController extends ControllerBase {
           <td>' . ($wo->get('field_linked_line_item')->entity->label() ?? '') . '</td>
           <td>' . ($wo->get('field_unit_assigned')->entity->label() ?? '') . '</td>
           <td>' . $wo->get('field_date_of_completion')->value . '</td>
-          <td>' . ($wo->get('field_assignee')->entity->label() ?? '') . '</td>
+          <td>' . (isset($wo->get('field_assignee')->entity) ? $wo->get('field_assignee')->entity->label() : '') . '</td>
           <td>' . $wo->get('field_quantity')->value . '</td>
-          <td>' . $wo->get('field_expected_due_date')->value . '</td>
+          <td>' . ($wo->get('field_expected_due_date')->value ?? '') . '</td>
           <td>' . $wo->get('field_order_status')->entity->label() . '</td>
           <td>
             <button class="btn btn-outline-primary btn-sm view-workorder" data-id="' . $wo->id() . '">View</button>
@@ -416,6 +423,7 @@ class WorkOrderController extends ControllerBase {
     if (!$node || $node->bundle() !== 'work_order') {
       return new JsonResponse(['status' => 'error', 'message' => 'Work order not found.']);
     }
+
     $work_order_logs = \Drupal::entityTypeManager()
       ->getStorage('node')
       ->loadByProperties([
@@ -440,6 +448,7 @@ class WorkOrderController extends ControllerBase {
       'expected_due_date' => $node->get('field_expected_due_date')->value ?? '',
       'date_of_completion' => $node->get('field_date_of_completion')->value ?? '',
       'assignee' => isset($node->get('field_assignee')->entity) ? $node->get('field_assignee')->entity->label() : '',
+      'assignee_id' => isset($node->get('field_assignee')->entity) ? $node->get('field_assignee')->entity->id() : '',
       'order_status' => $node->get('field_order_status')->entity->label() ?? '',
       'remarks' => $node->get('body')->value ?? '',
       'work_order_logs' => $wo_log_data,

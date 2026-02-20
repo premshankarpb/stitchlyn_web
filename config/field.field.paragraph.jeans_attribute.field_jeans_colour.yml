@@ -1,16 +1,16 @@
-uuid: 61907b99-6c04-47ba-aaaf-910cbf8e3edb
+uuid: e673a607-63ad-4cba-8900-a14acac733a9
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_assignee
-    - node.type.work_order
-    - taxonomy.vocabulary.wo_assignee
-id: node.work_order.field_assignee
-field_name: field_assignee
-entity_type: node
-bundle: work_order
-label: Assignee
+    - field.storage.paragraph.field_jeans_colour
+    - paragraphs.paragraphs_type.jeans_attribute
+    - taxonomy.vocabulary.color
+id: paragraph.jeans_attribute.field_jeans_colour
+field_name: field_jeans_colour
+entity_type: paragraph
+bundle: jeans_attribute
+label: 'Jeans colour'
 description: ''
 required: false
 translatable: false
@@ -20,7 +20,7 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      wo_assignee: wo_assignee
+      color: color
     sort:
       field: name
       direction: asc

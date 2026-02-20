@@ -533,6 +533,22 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
           $order_status = $term->label();
         }
       }
+
+      // ✅ assignee (safe check)
+      $assignee_id = '';
+      $assignee_label = '';
+
+      if (
+        $wo->hasField('field_assignee') &&
+        !$wo->get('field_assignee')->isEmpty()
+      ) {
+        $term = $wo->get('field_assignee')->entity;
+        if ($term) {
+          $assignee_id = $term->id();
+          $assignee_label = $term->label();
+        }
+      }
+
       $serial = $wo->get('field_work_order_number')->value ?? '';
       $expected_due = $wo->get('field_expected_due_date')->value ?? '';
       $wo_title = $wo->label();
@@ -560,6 +576,8 @@ function stitchlyn_theme_preprocess_node(array &$variables) {
         'serial' => $serial,
         'line_item' => $line_item_label,
         'unit' => $unit_label,
+        'date_of_completion' => $wo->get('field_date_of_completion')->value ?? '',
+        'assignee' => $assignee_label,
         'quantity' => $qty,
         'remarks' => $remarks,
         'expected_due' => $expected_due,

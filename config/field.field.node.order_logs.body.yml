@@ -1,4 +1,4 @@
-uuid: c8f16514-7514-43b5-b0bd-30679b332cce
+uuid: 0891c1fb-ba5e-487b-98a7-b59cffbf3031
 langcode: en
 status: true
 dependencies:
@@ -11,7 +11,7 @@ id: node.order_logs.body
 field_name: body
 entity_type: node
 bundle: order_logs
-label: Body
+label: 'Order Log'
 description: ''
 required: false
 translatable: true

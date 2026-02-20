@@ -1,13 +1,13 @@
-uuid: 8bafc11e-7e0b-4a21-a1d8-4431b9c82e60
+uuid: c177bab8-0a26-4c09-821a-e6d8b08e4b28
 langcode: en
 status: true
 dependencies:
   module:
-    - node
+    - paragraphs
     - taxonomy
-id: node.field_assignee
-field_name: field_assignee
-entity_type: node
+id: paragraph.field_jeans_colour
+field_name: field_jeans_colour
+entity_type: paragraph
 type: entity_reference
 settings:
   target_type: taxonomy_term

@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.inventory_item.field_unit_of_measure
     - node.type.inventory_item
   module:
+    - content_moderation
     - path
     - text
 id: node.inventory_item.default
@@ -37,14 +38,10 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_category:
-    type: entity_reference_autocomplete
+    type: options_select
     weight: 125
     region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
   field_cost_price:
     type: number
@@ -54,14 +51,10 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_inventory_type:
-    type: entity_reference_autocomplete
+    type: options_select
     weight: 124
     region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
   field_opening_stock:
     type: number
@@ -86,14 +79,16 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_unit_of_measure:
-    type: entity_reference_autocomplete
+    type: options_select
     weight: 126
     region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+    settings: {  }
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path

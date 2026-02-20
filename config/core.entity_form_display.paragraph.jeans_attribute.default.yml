@@ -1,0 +1,38 @@
+uuid: 015e4aea-9ece-4c05-8073-551c71e32404
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.jeans_attribute.field_jeans_colour
+    - field.field.paragraph.jeans_attribute.field_patched
+    - field.field.paragraph.jeans_attribute.field_waist_size
+    - paragraphs.paragraphs_type.jeans_attribute
+id: paragraph.jeans_attribute.default
+targetEntityType: paragraph
+bundle: jeans_attribute
+mode: default
+content:
+  field_jeans_colour:
+    type: options_select
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_patched:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_waist_size:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

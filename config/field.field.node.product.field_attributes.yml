@@ -6,6 +6,7 @@ dependencies:
     - field.storage.node.field_attributes
     - node.type.product
     - paragraphs.paragraphs_type.candle_attribute
+    - paragraphs.paragraphs_type.jeans_attribute
     - paragraphs.paragraphs_type.kaappa
     - paragraphs.paragraphs_type.kappa_attribute
     - paragraphs.paragraphs_type.shirt_attribute
@@ -28,6 +29,7 @@ settings:
     target_bundles:
       candle_attribute: candle_attribute
       shirt_attribute: shirt_attribute
+      jeans_attribute: jeans_attribute
       kappa_attribute: kappa_attribute
       umbrella_attributes: umbrella_attributes
       kaappa: kaappa
@@ -54,6 +56,9 @@ settings:
       home_banner:
         weight: 18
         enabled: false
+      jeans_attribute:
+        weight: 24
+        enabled: true
       kaappa:
         weight: 25
         enabled: true

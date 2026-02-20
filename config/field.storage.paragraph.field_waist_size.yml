@@ -1,15 +1,16 @@
-uuid: e9cc77a0-2cea-48cb-90e6-ffd4c4544a60
+uuid: 26ffedad-e523-4b97-ac32-e926a9fe1aab
 langcode: en
 status: true
 dependencies:
   module:
-    - node
-id: node.field_order_reference
-field_name: field_order_reference
-entity_type: node
-type: entity_reference
+    - paragraphs
+id: paragraph.field_waist_size
+field_name: field_waist_size
+entity_type: paragraph
+type: decimal
 settings:
-  target_type: node
+  precision: 10
+  scale: 2
 module: core
 locked: false
 cardinality: 1

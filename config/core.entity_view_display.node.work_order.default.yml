@@ -37,7 +37,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 118
+    weight: 119
     region: content
   field_date_of_completion:
     type: datetime_default
@@ -46,7 +46,7 @@ content:
       timezone_override: ''
       format_type: medium
     third_party_settings: {  }
-    weight: 119
+    weight: 118
     region: content
   field_expected_due_date:
     type: datetime_default

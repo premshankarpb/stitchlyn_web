@@ -1,0 +1,42 @@
+uuid: 428b5211-0ef1-4793-91d9-854d8cd1f592
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.jeans_attribute.field_jeans_colour
+    - field.field.paragraph.jeans_attribute.field_patched
+    - field.field.paragraph.jeans_attribute.field_waist_size
+    - paragraphs.paragraphs_type.jeans_attribute
+id: paragraph.jeans_attribute.default
+targetEntityType: paragraph
+bundle: jeans_attribute
+mode: default
+content:
+  field_jeans_colour:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_patched:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_waist_size:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

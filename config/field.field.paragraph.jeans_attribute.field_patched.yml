@@ -1,0 +1,19 @@
+uuid: d9791967-8618-4fc9-b520-e07a9e3c65fb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_patched
+    - paragraphs.paragraphs_type.jeans_attribute
+id: paragraph.jeans_attribute.field_patched
+field_name: field_patched
+entity_type: paragraph
+bundle: jeans_attribute
+label: Patched
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

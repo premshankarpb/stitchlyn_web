@@ -1,0 +1,10 @@
+uuid: adfeb9b8-aaa6-433c-b91f-98e5bdd9d99e
+langcode: en
+status: true
+dependencies: {  }
+id: jeans_attribute
+label: 'Jeans Attribute'
+icon_uuid: null
+icon_default: null
+description: "this is the sdlgkslfsdj'fjs"
+behavior_plugins: {  }
