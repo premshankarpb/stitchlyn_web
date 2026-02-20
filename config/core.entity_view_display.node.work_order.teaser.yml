@@ -5,6 +5,8 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.work_order.body
+    - field.field.node.work_order.field_assignee
+    - field.field.node.work_order.field_date_of_completion
     - field.field.node.work_order.field_expected_due_date
     - field.field.node.work_order.field_linked_line_item
     - field.field.node.work_order.field_linked_quotation
@@ -35,6 +37,8 @@ content:
     weight: 100
     region: content
 hidden:
+  field_assignee: true
+  field_date_of_completion: true
   field_expected_due_date: true
   field_linked_line_item: true
   field_linked_quotation: true

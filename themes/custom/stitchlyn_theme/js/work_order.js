@@ -11,6 +11,8 @@
         $('#wo-unit').val('');
         $('#wo-quantity').val('');
         $('#wo-due-date').val('');
+        $('#wo-date-of-completion').val('');
+        $('#wo-assignee').val('');
         $('#wo-status').val('');
         $('#wo-remarks').val('');
 
@@ -83,6 +85,8 @@
           const unitId = $('#wo-unit').val();
           const statusId = $('#wo-status').val();
           const quantity = $('#wo-quantity').val();
+          const assignee = $('#wo-assignee').val();
+          const dateOfCompletion = $('#wo-date-of-completion').val();
           const dueDate = $('#wo-due-date').val();
           const remarks = $('#wo-remarks').val();
 
@@ -101,7 +105,11 @@
               status: statusId,
               quantity: quantity,
               due_date: dueDate,
+              date_of_completion: dateOfCompletion,
+              assignee: assignee,
               remarks: remarks,
+              assignee: assignee,
+              date_of_completion: dateOfCompletion,
             },
             success: function (res) {
               if (res.status === 'success') {
@@ -148,6 +156,8 @@
                 $('#view-wo-unit').text(d.unit);
                 $('#view-wo-quantity').text(d.quantity);
                 $('#view-wo-due').text(d.expected_due_date);
+                $('#view-wo-date-of-completion').text(d.date_of_completion);
+                $('#view-wo-assignee').text(d.assignee);
                 $('#view-wo-status').text(d.order_status);
                 $('#view-wo-remarks').html(d.remarks || '—');
                  // ---- Work order logs ----
@@ -216,6 +226,8 @@
                 $('#edit-wo-unit').val(d.unit);
                 $('#edit-wo-quantity').val(d.quantity);
                 $('#edit-wo-due').val(d.expected_due_date);
+                $('#edit-wo-date-of-completion').val(d.date_of_completion);
+                $('#edit-wo-assignee').val(d.assignee);
                 $('#edit-wo-status').val(d.order_status);
                 $('#edit-wo-remarks').val(d.remarks);
 

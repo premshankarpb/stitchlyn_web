@@ -5,7 +5,8 @@ namespace Drupal\stitchlyn_basic\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Datetime\DrupalDateTime;
-
+use Drupal\user\Entity\User;
+use Drupal\profile\Entity\Profile;
 
 /**
  * Provides the Dashboard page controller.
@@ -90,6 +91,152 @@ class DashboardController extends ControllerBase {
       '#counts' => $counts,
       '#attached' => [
         'library' => ['stitchlyn_basic/dashboard'],
+      ],
+    ];
+  }
+
+  /**
+   * Manager dashboard page callback.
+   */
+  public function manager_view() {
+    $storage = \Drupal::entityTypeManager()->getStorage('node');
+    $today = new DrupalDateTime('today');
+    $plus3 = new DrupalDateTime('+3 days');
+
+    $account = \Drupal::currentUser();
+    $user = User::load($account->id());
+
+    $unit_tids = [];
+
+    // Load Unit Manager profile
+    $profiles = \Drupal::entityTypeManager()
+      ->getStorage('profile')
+      ->loadByProperties([
+        'uid' => $user->id(),
+        'type' => 'unit_manager',
+      ]);
+
+    if (!empty($profiles)) {
+      /** @var \Drupal\profile\Entity\Profile $profile */
+      $profile = reset($profiles);
+
+      if (!$profile->get('field_unit')->isEmpty()) {
+        foreach ($profile->get('field_unit')->getValue() as $item) {
+          $unit_tids[] = $item['target_id'];
+        }
+      }
+    }
+
+    // Load all work orders (manager dashboard = overview)
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'work_order')
+      ->condition('status', 1);
+
+    // Apply unit filtering ONLY if units exist
+    if (!empty($unit_tids)) {
+      $query->condition('field_unit_assigned', $unit_tids, 'IN');
+    }
+    else {
+      // No units → force empty result
+      $query->condition('nid', 0);
+    }
+
+    $nids = $query->accessCheck(FALSE)->execute();
+    $work_orders = $storage->loadMultiple($nids);
+
+    // ---- COUNTERS ----
+    $pending = 0;
+    $due_3_days = 0;
+    $overdue = 0;
+
+    // Monthly production (quantity based)
+    $monthly = [
+      'completed' => 0,
+      'in_progress' => 0,
+      'to_do' => 0,
+      'total' => 0,
+    ];
+
+    $current_month = $today->format('Y-m');
+
+    foreach ($work_orders as $wo) {
+      if ($wo->isPublished() === FALSE) {
+        continue;
+      }
+
+      $status = $wo->get('field_order_status')->entity?->label();
+      $due_date_raw = $wo->get('field_expected_due_date')->value;
+
+      $due_date = $due_date_raw ? new DrupalDateTime($due_date_raw) : NULL;
+
+      // ---- Pending ----
+      if (in_array($status, ['In Progress', 'To Do'], TRUE)) {
+        $pending++;
+      }
+
+      // ---- Due logic ----
+      if ($due_date && in_array($status, ['In Progress', 'To Do'], TRUE)) {
+        if ($due_date < $today) {
+          $overdue++;
+        }
+        elseif ($due_date <= $plus3) {
+          $due_3_days++;
+        }
+      }
+
+      // ---- Monthly production ----
+      if ($due_date && $due_date->format('Y-m') === $current_month) {
+        $monthly['total']++;
+        switch ($status) {
+          case 'Done':
+            $monthly['completed']++;
+            break;
+
+          case 'In Progress':
+            $monthly['in_progress']++;
+            break;
+
+          case 'To Do':
+            $monthly['to_do']++;
+            break;
+        }
+      }
+
+    }
+
+    $percent = [
+      'completed' => 0,
+      'in_progress' => 0,
+      'to_do' => 0,
+    ];
+
+    if ($monthly['total'] > 0) {
+      $percent['completed'] = round(($monthly['completed'] / $monthly['total']) * 100);
+      $percent['in_progress'] = round(($monthly['in_progress'] / $monthly['total']) * 100);
+      $percent['to_do'] = round(($monthly['to_do'] / $monthly['total']) * 100);
+    }
+
+    $counts = [
+      'pending' => $pending,
+      'due_3_days' => $due_3_days,
+      'overdue' => $overdue,
+
+      'monthly_production' => [
+        'completed' => $monthly['completed'],
+        'in_progress' => $monthly['in_progress'],
+        'to_do' => $monthly['to_do'],
+        'percent' => $percent,
+      ],
+    ];
+
+    return [
+      '#theme' => 'stitchlyn_manager_dashboard',
+      '#counts' => $counts,
+      '#attached' => [
+        'library' => ['stitchlyn_basic/dashboard'],
+      ],
+      '#cache' => [
+        'max-age' => 0,
       ],
     ];
   }

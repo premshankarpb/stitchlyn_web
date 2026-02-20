@@ -1,0 +1,9 @@
+uuid: 6774573e-dc9c-4b84-af98-73bc668231bf
+langcode: en
+status: true
+dependencies: {  }
+name: 'WO Assignee'
+vid: wo_assignee
+description: 'Assignee for the work orders'
+weight: 0
+new_revision: false

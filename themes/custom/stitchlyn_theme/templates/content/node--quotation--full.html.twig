@@ -259,6 +259,8 @@
                     <th>Work Order #</th>
                     <th>Linked Line Item</th>
                     <th>Unit Assigned</th>
+                    <th>Date of Completion</th>
+                    <th>Assignee</th>
                     <th>Quantity</th>
                     <th>Expected Due Date</th>
                     <th>Status</th>
@@ -271,6 +273,8 @@
                       <td>{{ wo.title }}</td>
                       <td>{{ wo.line_item }}</td>
                       <td>{{ wo.unit }}</td>
+                      <td>{{ wo.date_of_completion }}</td>
+                      <td>{{ wo.assignee }}</td>
                       <td>{{ wo.quantity }}</td>
                       <td>{{ wo.expected_due }}</td>
                       <td>{{ wo.order_status }}</td>
@@ -394,6 +398,21 @@
               </div>
 
               <div class="mb-3">
+                <label for="wo-date-of-completion" class="form-label fw-bold">Date of Completion</label>
+                <input type="date" id="wo-date-of-completion" class="form-control">
+              </div>
+
+              <div class="mb-3">
+                <label for="wo-assignee" class="form-label fw-bold">Assignee</label>
+                <select id="wo-assignee" class="form-select">
+                  <option value="">Select Assignee</option>
+                  {% for assignee in assignees %}
+                    <option value="{{ assignee.value }}">{{ assignee.label }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="mb-3">
                 <label for="wo-status" class="form-label fw-bold">Order Status</label>
                 <!-- <input type="text" id="wo-status" class="form-control" placeholder="Start typing status..." data-autocomplete-path="/order-status/autocomplete"> -->
                 <select id="wo-status" class="form-select">
@@ -450,6 +469,14 @@
                     <td id="view-wo-due">—</td>
                   </tr>
                   <tr>
+                    <th>Date of Completion</th>
+                    <td id="view-wo-date-of-completion">—</td>
+                  </tr>
+                  <tr>
+                    <th>Assignee</th>
+                    <td id="view-wo-assignee">—</td>
+                  </tr>
+                  <tr>
                     <th>Status</th>
                     <td id="view-wo-status">—</td>
                   </tr>
@@ -497,6 +524,18 @@
                 <div class="mb-3">
                   <label class="form-label fw-bold">Expected Due Date</label>
                   <input type="text" class="form-control" id="edit-wo-due" readonly>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Date of Completion</label>
+                  <input type="text" class="form-control" id="edit-wo-date-of-completion">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Order Assignee</label>
+                  <select class="form-select" id="edit-wo-assignee">
+                    <option value="">Select Assignee</option>
+                  </select>
                 </div>
 
                 <div class="mb-3">
