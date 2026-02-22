@@ -266,3 +266,109 @@ function stitchlyn_quotation_form_node_work_order_edit_form_alter(&$form, \Drupa
     }
   }
 }
+
+/**
+ * Implements hook_entity_update().
+ */
+function stitchlyn_quotation_entity_update(EntityInterface $entity) {
+
+  // Only act on work_order nodes
+  if ($entity->getEntityTypeId() !== 'node' || $entity->bundle() !== 'work_order') {
+    return;
+  }
+
+  // Prevent recursion if order_logs node is being saved
+  if ($entity->bundle() === 'order_logs') {
+    return;
+  }
+
+  // Ensure original exists
+  if (!isset($entity->original)) {
+    return;
+  }
+
+  $original = $entity->original;
+
+  // Fields to track (taxonomy reference fields)
+  $fields_to_track = [
+    'field_order_status',
+    'field_assignee',
+    'field_unit_assigned',
+  ];
+
+  foreach ($fields_to_track as $field_name) {
+
+    $old_tid = $original->get($field_name)->target_id ?? NULL;
+    $new_tid = $entity->get($field_name)->target_id ?? NULL;
+
+    // Only log if value changed
+    if ($old_tid != $new_tid) {
+
+      $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+      $old_label = $old_tid ? $term_storage->load($old_tid)?->label() : 'None';
+      $new_label = $new_tid ? $term_storage->load($new_tid)?->label() : 'None';
+
+      // Get human readable field label
+      $field_definition = $entity->getFieldDefinition($field_name);
+      $field_label = $field_definition->getLabel();
+
+      // Create Order Log node
+      $log = Node::create([
+        'type' => 'order_logs',
+        'title' => 'Work Order #' . $entity->id() . ' updated',
+        'field_order_reference' => ['target_id' => $entity->id()],
+        'body' => [
+          'value' => $field_label . ' changed from "' . $old_label . '" to "' . $new_label . '"',
+          'format' => 'basic_html',
+        ],
+        'status' => 1,
+      ]);
+
+      $log->save();
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function stitchlyn_quotation_entity_insert(EntityInterface $entity) {
+
+  // Only for work_order content type
+  if ($entity->getEntityTypeId() !== 'node' || $entity->bundle() !== 'work_order') {
+    return;
+  }
+
+  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  // Get taxonomy labels safely
+  $status_label = $entity->get('field_order_status')->target_id
+    ? $term_storage->load($entity->get('field_order_status')->target_id)?->label()
+    : 'None';
+
+  $assignee_label = $entity->get('field_assignee')->target_id
+    ? $term_storage->load($entity->get('field_assignee')->target_id)?->label()
+    : 'None';
+
+  $unit_label = $entity->get('field_unit_assigned')->target_id
+    ? $term_storage->load($entity->get('field_unit_assigned')->target_id)?->label()
+    : 'None';
+
+  // Create a single log entry
+  $log = Node::create([
+    'type' => 'order_logs',
+    'title' => 'Work Order #' . $entity->id() . ' created',
+    'field_order_reference' => ['target_id' => $entity->id()],
+    'body' => [
+      'value' => 'Work Order created with:
+        <br>Status: "' . $status_label . '"
+        <br>Assignee: "' . $assignee_label . '"
+        <br>Unit Assigned: "' . $unit_label . '"',
+      'format' => 'basic_html',
+    ],
+    'status' => 1,
+  ]);
+
+  $log->save();
+}
