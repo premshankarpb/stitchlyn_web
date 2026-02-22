@@ -104,7 +104,6 @@ class WorkOrderController extends ControllerBase {
     $due_date = trim($request->get('due_date'));
     $status_id = trim($request->get('status'));
     $date_of_completion = trim($request->get('date_of_completion'));
-    $assignee = trim($request->get('assignee'));
     $remarks = trim($request->get('remarks'));
     $assignee = trim($request->get('assignee'));
     $date_of_completion = trim($request->get('date_of_completion'));
@@ -188,21 +187,43 @@ class WorkOrderController extends ControllerBase {
 
     // --- Create the Work Order node ---
     $node_storage = $em->getStorage('node');
-    $work_order = $node_storage->create([
-        'type' => 'work_order',
-        'title' => 'Temporary',
-        'field_linked_quotation' => ['target_id' => $quotation],
-        'field_linked_line_item' => ['target_id' => $line_item_id],
-        'field_unit_assigned' => ['target_id' => $unit_id],
-        'field_quantity' => $quantity,
-        'field_order_status' => ['target_id' => $status_id],
-        'field_expected_due_date' => $formatted_due_date ?: NULL,
-        'field_date_of_completion' => $formatted_date_of_completion ?: NULL,
-        'field_assignee' => ['target_id' => $assignee],
-        'body' => ['value' => $remarks, 'format' => 'basic_html'],
-        'status' => 1,
-    ]);
 
+    $values = [
+      'type' => 'work_order',
+      'title' => 'Temporary',
+      'field_linked_quotation' => ['target_id' => $quotation],
+      'field_linked_line_item' => ['target_id' => $line_item_id],
+      'field_quantity' => $quantity,
+      'body' => [
+        'value' => $remarks,
+        'format' => 'basic_html',
+      ],
+      'status' => 1,
+    ];
+
+    // Optional Entity Reference Fields
+    if (!empty($unit_id)) {
+      $values['field_unit_assigned'] = ['target_id' => $unit_id];
+    }
+
+    if (!empty($status_id)) {
+      $values['field_order_status'] = ['target_id' => $status_id];
+    }
+
+    if (!empty($assignee)) {
+      $values['field_assignee'] = ['target_id' => $assignee];
+    }
+
+    // Optional Date Fields
+    if (!empty($formatted_due_date)) {
+      $values['field_expected_due_date'] = $formatted_due_date;
+    }
+
+    if (!empty($formatted_date_of_completion)) {
+      $values['field_date_of_completion'] = $formatted_date_of_completion;
+    }
+
+    $work_order = $node_storage->create($values);
     $work_order->save();
 
     // --- Update title with Serial Number ---
@@ -225,18 +246,44 @@ class WorkOrderController extends ControllerBase {
     if (!empty($nids)) {
         $nodes = $node_storage->loadMultiple($nids);
         foreach ($nodes as $wo) {
-            $work_orders_data[] = [
-                'id' => $wo->id(),
-                'title' => $wo->label(),
-                'serial' => $wo->get('field_work_order_number')->value ?? '',
-                'line_item' => $wo->get('field_linked_line_item')->entity->label() ?? '',
-                'unit' => $wo->get('field_unit_assigned')->entity->label() ?? '',
-                'quantity' => $wo->get('field_quantity')->value ?? '',
-                'expected_due' => $wo->get('field_expected_due_date')->value ?? '',
-                'date_of_completion' => $wo->get('field_date_of_completion')->value ?? '',
-                'assignee' => $wo->get('field_assignee')->entity->label() ?? '',
-                'order_status' => $wo->get('field_order_status')->entity->label() ?? '',
-            ];
+           // Unit
+           $unit_label = '';
+          if ($wo->hasField('field_unit_assigned') && !$wo->get('field_unit_assigned')->isEmpty()) {
+            $unit_term = $wo->get('field_unit_assigned')->entity;
+            if ($unit_term) {
+              $unit_label = $unit_term->label();
+            }
+          }
+
+          // ✅ Order Status (safe check)
+          $order_status = '';
+          if ($wo->hasField('field_order_status') && !$wo->get('field_order_status')->isEmpty()) {
+            $term = $wo->get('field_order_status')->entity;
+            if ($term) {
+              $order_status = $term->label();
+            }
+          }
+
+          $assignee_label = '';
+          // ✅ Assignee (safe check)
+          if ($wo->hasField('field_assignee') && !$wo->get('field_assignee')->isEmpty()) {
+            $term = $wo->get('field_assignee')->entity;
+            if ($term) {
+              $assignee_label = $term->label();
+            }
+          }
+          $work_orders_data[] = [
+            'id' => $wo->id(),
+            'title' => $wo->label(),
+            'serial' => $wo->get('field_work_order_number')->value ?? '',
+            'line_item' => $wo->get('field_linked_line_item')->entity->label() ?? '',
+            'unit' => $unit_label,
+            'quantity' => $wo->get('field_quantity')->value ?? '',
+            'expected_due' => $wo->get('field_expected_due_date')->value ?? '',
+            'date_of_completion' => $wo->get('field_date_of_completion')->value ?? '',
+            'assignee' => $assignee_label,
+            'order_status' => $order_status,
+          ];
         }
     }
 
@@ -324,14 +371,9 @@ class WorkOrderController extends ControllerBase {
 
     // --- Update assignee ---
     if ($assignee) {
-      $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
-        'name' => $assignee,
-        'vid' => 'assignee',
-      ]);
-      if ($terms) {
-        $term = reset($terms);
-        $node->set('field_assignee', ['target_id' => $term->id()]);
-      }
+      $node->set('field_assignee', ['target_id' => $assignee]);
+    } else {
+      $node->set('field_assignee', NULL);
     }
 
     // --- Update date of completion ---
@@ -352,7 +394,7 @@ class WorkOrderController extends ControllerBase {
 
     $quotation_id = $node->get('field_linked_quotation')->target_id ?? NULL;
     if (!$quotation_id) {
-      return new JsonResponse(['status' => 'success', 'html' => '', 'message' => 'Updated.']);
+      return new JsonResponse(['status' => 'Error', 'html' => '', 'message' => 'Quotation link failed.']);
     }
 
     // Load ALL work orders under this quotation
@@ -367,16 +409,31 @@ class WorkOrderController extends ControllerBase {
     $rows_html = '';
 
     foreach ($workorders as $wo) {
+      $assignee_label = $order_status = '';
+      // ✅ Assignee (safe check)
+      if ($wo->hasField('field_assignee') && !$wo->get('field_assignee')->isEmpty()) {
+        $term = $wo->get('field_assignee')->entity;
+        if ($term) {
+          $assignee_label = $term->label();
+        }
+      }
+      // ✅ Order Status (safe check)
+      if ($wo->hasField('field_order_status') && !$wo->get('field_order_status')->isEmpty()) {
+        $term = $wo->get('field_order_status')->entity;
+        if ($term) {
+          $order_status = $term->label();
+        }
+      }
       $rows_html .= '
         <tr>
           <td>' . $wo->label() . '</td>
           <td>' . ($wo->get('field_linked_line_item')->entity->label() ?? '') . '</td>
           <td>' . ($wo->get('field_unit_assigned')->entity->label() ?? '') . '</td>
           <td>' . $wo->get('field_date_of_completion')->value . '</td>
-          <td>' . (isset($wo->get('field_assignee')->entity) ? $wo->get('field_assignee')->entity->label() : '') . '</td>
+          <td>' . $assignee_label . '</td>
           <td>' . $wo->get('field_quantity')->value . '</td>
           <td>' . ($wo->get('field_expected_due_date')->value ?? '') . '</td>
-          <td>' . $wo->get('field_order_status')->entity->label() . '</td>
+          <td>' . $order_status . '</td>
           <td>
             <button class="btn btn-outline-primary btn-sm view-workorder" data-id="' . $wo->id() . '">View</button>
             <button class="btn btn-outline-secondary btn-sm edit-workorder" data-id="' . $wo->id() . '">Edit</button>
@@ -440,16 +497,43 @@ class WorkOrderController extends ControllerBase {
       ];
     }
 
+    // Unit
+    $unit_label = '';
+    if ($node->hasField('field_unit_assigned') && !$node->get('field_unit_assigned')->isEmpty()) {
+      $unit_term = $node->get('field_unit_assigned')->entity;
+      if ($unit_term) {
+        $unit_label = $unit_term->label();
+      }
+    }
+
+    // ✅ Order Status (safe check)
+    $order_status = '';
+    if ($node->hasField('field_order_status') && !$node->get('field_order_status')->isEmpty()) {
+      $term = $node->get('field_order_status')->entity;
+      if ($term) {
+        $order_status = $term->label();
+      }
+    }
+
+    // ✅ Assignee (safe check)
+    $assignee_label = '';
+    if ($node->hasField('field_assignee') && !$node->get('field_assignee')->isEmpty()) {
+      $term = $node->get('field_assignee')->entity;
+      if ($term) {
+        $assignee_label = $term->label();
+      }
+    }
+
     $data = [
       'title' => $node->label(),
       'line_item' => $node->get('field_linked_line_item')->entity->label() ?? '',
-      'unit' => $node->get('field_unit_assigned')->entity->label() ?? '',
+      'unit' => $unit_label,
       'quantity' => $node->get('field_quantity')->value ?? '',
       'expected_due_date' => $node->get('field_expected_due_date')->value ?? '',
       'date_of_completion' => $node->get('field_date_of_completion')->value ?? '',
       'assignee' => isset($node->get('field_assignee')->entity) ? $node->get('field_assignee')->entity->label() : '',
       'assignee_id' => isset($node->get('field_assignee')->entity) ? $node->get('field_assignee')->entity->id() : '',
-      'order_status' => $node->get('field_order_status')->entity->label() ?? '',
+      'order_status' => $order_status,
       'remarks' => $node->get('body')->value ?? '',
       'work_order_logs' => $wo_log_data,
     ];
