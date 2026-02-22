@@ -6,6 +6,7 @@ use Drupal\profile\Entity\Profile;
 use Drupal\Core\Url;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Implements hook_preprocess_paragraph__feature_item().
@@ -653,5 +654,18 @@ function stitchlyn_theme_page_attachments(array &$attachments) {
       $response->send();
       exit();
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function stitchlyn_theme_preprocess_html(&$variables) {
+
+  $current_user = \Drupal::currentUser();
+
+  // Check if user is logged in and has administrator role
+  if ($current_user->isAuthenticated() && in_array('administrator', $current_user->getRoles())) {
+    $variables['attributes']['class'][] = 'admin';
   }
 }
