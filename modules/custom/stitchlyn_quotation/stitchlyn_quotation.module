@@ -30,6 +30,11 @@ function stitchlyn_quotation_theme($existing, $type, $theme, $path) {
       ],
       'template' => 'quotation-pdf',
     ],
+    'stitchlyn_quotation_edit_form' => [
+      'render element' => 'form',
+      'template' => 'stitchlyn-quotation-edit-form',
+      'path' => $path . '/templates',
+    ],
   ];
 }
 

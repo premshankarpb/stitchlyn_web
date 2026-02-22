@@ -1,0 +1,81 @@
+<div class="quotation-form-wrapper">
+
+  <div class="quotation-info">
+    <details data-drupal-selector="edit-quotation-info" id="edit-quotation-info" class="js-form-wrapper form-wrapper olivero-details" data-once="details">
+      <summary role="button" aria-controls="edit-quotation-info" class="olivero-details__summary">
+        {{ form.quotation_info['#title'] }}
+      </summary>
+      <div class="olivero-details__wrapper details-wrapper">
+        <div class="quotation-title-block">
+          {{ form.quotation_info.title }}
+        </div>
+        <div class="quotation-customer-block">
+          {{ form.quotation_info.field_customer_reference }}
+        </div>
+        <div class="quotation-date-row">
+          <div class="quotation-date-col">
+            {{ form.quotation_info.field_quotation_date }}
+          </div>
+          <div class="quotation-due-col">
+            {{ form.quotation_info.field_expected_due_date }}
+          </div>
+        </div>
+        <div class="quotation-remarks-block">
+          {{ form.quotation_info.body }}
+        </div>
+      </div>
+    </details>
+  </div>
+
+
+  {{ form.product_section }}
+
+  {{ form.line_items }}
+
+  <fieldset data-drupal-selector="edit-totals" id="edit-totals" class="fieldset js-form-item form-item js-form-wrapper form-wrapper">
+    <legend class="fieldset__legend fieldset__legend--visible">
+      <span class="fieldset__label">Totals</span>
+    </legend>
+    <div class="fieldset__wrapper">
+      <div class="totals-wrapper">
+        {{ form.totals.field_subtotal_amount }}
+        {{ form.totals.hidden_subtotal }}
+        {{ form.totals.field_discount }}
+        {{ form.totals.field_tax_amount }}
+        {{ form.totals.hidden_tax }}
+        {{ form.totals.field_total_amount }}
+        {{ form.totals.hidden_total }}
+      </div>
+    </div>
+  </fieldset>
+  
+  
+  <div class="quotation-status">
+    <details data-drupal-selector="edit-quotation-workflow" id="edit-quotation-workflow" class="js-form-wrapper form-wrapper olivero-details" data-once="details">
+      <summary role="button" aria-controls="edit-quotation-workflow" class="olivero-details__summary">{{ form.quotation_workflow['#title'] }}</summary>
+      <div class="olivero-details__wrapper details-wrapper">
+        <div class="current-status-block">
+            {{ form.quotation_workflow.current_status }}
+        </div>
+        <div class="status-select-wrapper">
+            {{ form.quotation_workflow.moderation_state }}
+        </div>
+        <div class="payment-wrapper">
+            {{ form.quotation_workflow.field_payment_status }}
+        </div>
+      </div>
+    </details>
+  </div>
+
+  {{ form.actions }}
+
+  {{ form|without(
+    'quotation_info',
+    'product_section',
+    'line_items',
+    'totals',
+    'quotation_workflow',
+    'actions'
+  ) }}
+
+</div>
