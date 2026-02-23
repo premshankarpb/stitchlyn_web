@@ -611,7 +611,7 @@ function stitchlyn_theme_preprocess_views_view(&$variables) {
   if ($variables['view']->id() === 'inventory_list' && $variables['view']->current_display === 'page_1') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
   }
-  if ($variables['view']->id() === 'inventory_log' && $variables['view']->current_display === 'page_1  ') {
+  if ($variables['view']->id() === 'inventory_log' && $variables['view']->current_display === 'page_1') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
   }
   if ($variables['view']->id() === 'purchase_orders' && $variables['view']->current_display === 'page_1') {
@@ -623,7 +623,7 @@ function stitchlyn_theme_preprocess_views_view(&$variables) {
   if ($variables['view']->id() === 'unit_managers' && $variables['view']->current_display === 'page_2') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
   }
-  if ($variables['view']->id() === 'work_order' && $variables['view']->current_display === 'page_1  ') {
+  if ($variables['view']->id() === 'work_order' && $variables['view']->current_display === 'page_1') {
     $variables['export_query'] = \Drupal::request()->getQueryString();
   }
   if ($variables['view']->id() === 'payment_records' && $variables['view']->current_display === 'page_1') {
