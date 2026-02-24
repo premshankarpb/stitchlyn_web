@@ -39,17 +39,19 @@
           if ($sidebar.length) {
              $sidebar.css('top', totalOffset + 'px');
           }
-          
-          // Adjust Main Content margin if needed (prevent cut-off)
-           // if ($main.length) {
-           //   $main.css('margin-top', (totalOffset + 70) + 'px'); // 70px is original header height
-           // }
+
+          // Update body padding to account for toolbar + navbar
+          var navbarHeight = $('.navbar.fixed-top').outerHeight() || 87;
+          document.body.style.setProperty('--navbar-height', (totalOffset + navbarHeight) + 'px');
           
         } else {
           // Reset
           $header.css('top', '0');
           if ($sidebar.length) $sidebar.css('top', '70px'); // Default header height
-// if ($main.length) $main.css('margin-top', '70px');
+
+          // Reset body padding to just navbar height
+          var navbarHeight = $('.navbar.fixed-top').outerHeight() || 87;
+          document.body.style.setProperty('--navbar-height', navbarHeight + 'px');
         }
       }
 

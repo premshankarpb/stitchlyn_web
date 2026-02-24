@@ -5,6 +5,16 @@
 }
 
 body {
+	padding-top: var(--navbar-height, 87px);
+}
+
+/* Front page hero is full-bleed, no extra padding needed */
+body.path-frontpage {
+	padding-top: 0;
+}
+
+/* Admin dashboard uses its own grid layout for spacing */
+body.path-dashboard {
 	padding-top: 0;
 }
 
