@@ -35,7 +35,7 @@
         var navbarHeight = $navbar.outerHeight() || 0;
 
         // 4. Total offset = toolbar + navbar + small gap
-        var totalOffset = toolbarOffset + navbarHeight + 10;
+        var totalOffset = toolbarOffset + navbarHeight;
 
         // 5. Position content below navbar (and toolbar if present)
         if ($adminLayout.length) {
