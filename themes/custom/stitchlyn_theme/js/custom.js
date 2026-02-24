@@ -1,67 +1,61 @@
 (function ($, Drupal, once) {
 
   /*************************************************
-   * 1️⃣  CONTENT POSITION ADJUST BEHAVIOR
-   *    Ensures main content sits below the fixed navbar
-   *    (and admin toolbar, if present).
+   * 1️⃣  FIXED TOOLBAR + NAVBAR CONTENT OFFSET
    *************************************************/
-  Drupal.behaviors.stitchlynContentAdjust = {
+  Drupal.behaviors.stitchlynToolbarAdjust = {
     attach: function (context, settings) {
 
       function adjustContentPosition() {
-        var totalHeight = 0;
-        var SPACING = 10; // small gap below navbar
-
-        // 1. Admin toolbar (if present)
-        var $toolbar = $('#toolbar-bar');
-        if ($toolbar.length && $toolbar.is(':visible')) {
-          totalHeight += $toolbar.outerHeight() || 0;
-        }
-
-        // 2. Active toolbar tray (horizontal, can be multi-level)
-        var $activeTray = $('.toolbar-tray.toolbar-tray-horizontal.is-active');
-        if ($activeTray.length && $activeTray.is(':visible')) {
-          totalHeight += $activeTray.outerHeight() || 0;
-        }
-
-        // 3. Push the fixed navbar down by the toolbar offset
-        var $header = $('.site-header, .navbar.fixed-top, .admin-layout .admin-header');
-        if (totalHeight > 0) {
-          $header.css({ 'top': totalHeight + 'px', 'transition': 'top 0.2s ease' });
-        } else {
-          $header.css('top', '0');
-        }
-
-        // 4. Navbar height
         var $navbar = $('.navbar.fixed-top');
-        if ($navbar.length && $navbar.is(':visible')) {
-          totalHeight += $navbar.outerHeight() || 0;
-        }
+        var $toolbar = $('#toolbar-bar');
+        var $activeTray = $('.toolbar-tray.toolbar-tray-horizontal.is-active');
 
-        // 5. Apply padding-top to main content
+        var $sidebar = $('.admin-layout .admin-sidebar');
+        var $adminLayout = $('.admin-layout');
         var $mainContent = $('#main-content');
-        if ($mainContent.length) {
-          $mainContent.css('padding-top', (totalHeight + SPACING) + 'px');
+
+        // 1. Calculate admin toolbar total height (bar + any active trays)
+        var toolbarOffset = 0;
+        if ($toolbar.length && $toolbar.is(':visible')) {
+          toolbarOffset += $toolbar.outerHeight() || 0;
+        }
+        if ($activeTray.length && $activeTray.is(':visible')) {
+          toolbarOffset += $activeTray.outerHeight() || 0;
         }
 
-        // 6. For admin/dashboard pages, also adjust .admin-main and .admin-sidebar
-        var $adminMain = $('.admin-layout .admin-main');
-        var $adminSidebar = $('.admin-layout .admin-sidebar');
-        if ($adminMain.length) {
-          $adminMain.css('margin-top', totalHeight + 'px');
+        // 2. Push the fixed navbar below the admin toolbar
+        if (toolbarOffset > 0) {
+          $navbar.css({ 'top': toolbarOffset + 'px', 'transition': 'top 0.2s ease' });
+        } else {
+          $navbar.css('top', '0');
         }
-        if ($adminSidebar.length) {
-          $adminSidebar.css('top', totalHeight + 'px');
+
+        // 3. Get navbar height (after it's been positioned)
+        var navbarHeight = $navbar.outerHeight() || 0;
+
+        // 4. Total offset = toolbar + navbar + small gap
+        var totalOffset = toolbarOffset + navbarHeight + 10;
+
+        // 5. Apply padding-top to the correct content container
+        if ($adminLayout.length) {
+          $adminLayout.css('padding-top', totalOffset + 'px');
+          // Also adjust sidebar top position
+          if ($sidebar.length) {
+            $sidebar.css('top', totalOffset + 'px');
+          }
+        } else if ($mainContent.length) {
+          $mainContent.css('padding-top', totalOffset + 'px');
         }
       }
 
-      // Run on ready, resize, and toolbar changes
+      // Watch for toolbar DOM/class changes (tray open/close, orientation)
       var observer = new MutationObserver(adjustContentPosition);
       if (document.body) {
         observer.observe(document.body, { attributes: true, childList: true, subtree: false });
       }
 
-      once('contentAdjustReady', 'html', context).forEach(function () {
+      once('toolbarAdjustReady', 'html', context).forEach(function () {
         $(document).ready(adjustContentPosition);
         $(window).on('resize', adjustContentPosition);
         $(document).on('drupalToolbarOrientationChange toolbar-drawer-change', adjustContentPosition);
