@@ -8,10 +8,17 @@ body {
 	padding-top: 0;
 }
 
+/* Remove unused header/footer rows from admin grid */
+.admin-layout {
+	grid-template-rows: 1fr !important;
+	grid-template-areas: "sidebar main" !important;
+}
+
 .admin-layout .admin-main {
 	margin: 0;
 	margin-left: 2%;
-  padding: 0;
+	padding: 0;
+	height: 100% !important;
 }
 .dashboard-summary{
   padding: 0px;
@@ -199,6 +206,7 @@ em.placeholder {
 
 .admin-layout .admin-sidebar {
   top: 0;
+  bottom: 0;
 }
 
 .path-dashboard .navbar-nav{

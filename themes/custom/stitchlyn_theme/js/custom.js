@@ -37,15 +37,20 @@
         // 4. Total offset = toolbar + navbar + small gap
         var totalOffset = toolbarOffset + navbarHeight + 10;
 
-        // 5. Push ALL content below navbar (and toolbar if present)
-        document.body.style.paddingTop = totalOffset + 'px';
-
-        // 6. For admin pages, adjust the grid and fixed sidebar
+        // 5. Position content below navbar (and toolbar if present)
         if ($adminLayout.length) {
-          $adminLayout.css('height', 'calc(100vh - ' + totalOffset + 'px)');
+          // Admin pages: skip body padding, position the grid directly
+          document.body.style.paddingTop = '0px';
+          $adminLayout.css({
+            'margin-top': totalOffset + 'px',
+            'height': 'calc(100vh - ' + totalOffset + 'px)'
+          });
           if ($sidebar.length) {
             $sidebar.css('top', totalOffset + 'px');
           }
+        } else {
+          // Normal pages: push all content down via body padding
+          document.body.style.paddingTop = totalOffset + 'px';
         }
       }
 
