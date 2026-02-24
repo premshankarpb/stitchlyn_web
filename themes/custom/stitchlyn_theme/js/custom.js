@@ -40,18 +40,16 @@
              $sidebar.css('top', totalOffset + 'px');
           }
 
-          // Update body padding to account for toolbar + navbar
-          var navbarHeight = $('.navbar.fixed-top').outerHeight() || 87;
-          document.body.style.setProperty('--navbar-height', (totalOffset + navbarHeight) + 'px');
+          // Set toolbar offset so CSS can add it to the navbar padding
+          document.body.style.setProperty('--toolbar-offset', totalOffset + 'px');
           
         } else {
           // Reset
           $header.css('top', '0');
           if ($sidebar.length) $sidebar.css('top', '70px'); // Default header height
 
-          // Reset body padding to just navbar height
-          var navbarHeight = $('.navbar.fixed-top').outerHeight() || 87;
-          document.body.style.setProperty('--navbar-height', navbarHeight + 'px');
+          // No toolbar - reset offset to 0
+          document.body.style.setProperty('--toolbar-offset', '0px');
         }
       }
 
