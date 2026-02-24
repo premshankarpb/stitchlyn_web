@@ -192,9 +192,6 @@ em.placeholder {
   color: black;
 }
 
-.admin-layout .aesthetic-sidebar {
-  padding-top: 3rem !important;
-}
 
 .inv-edit-fields{
   width: auto !important;
@@ -214,7 +211,7 @@ em.placeholder {
 }
 
 .admin-layout .dark-sidebar .sidebar-content {
-  padding-top: 3rem !important;
+  padding-top: 1rem !important;
 }
 
 .vendor-phone{
