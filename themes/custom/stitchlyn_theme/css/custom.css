@@ -4,24 +4,8 @@
 	}
 }
 
-/* 
- * Content positioning below fixed navbar.
- * style.css sets body { padding-top: 87px } for the navbar height.
- * When the Drupal admin toolbar is active, JS sets --toolbar-offset 
- * and we add it on top of the navbar height.
- */
 body {
-	padding-top: calc(var(--toolbar-offset, 0px) + 87px);
-}
-
-/* Front page hero is full-bleed, no extra padding needed */
-body.path-frontpage {
-	padding-top: 0 !important;
-}
-
-/* Admin dashboard uses its own grid layout for spacing */
-body.path-dashboard {
-	padding-top: 0 !important;
+	padding-top: 0;
 }
 
 .admin-layout .admin-main {
