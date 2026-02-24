@@ -37,20 +37,15 @@
         // 4. Total offset = toolbar + navbar + small gap
         var totalOffset = toolbarOffset + navbarHeight + 10;
 
-        // 5. Apply offset to the correct content container
+        // 5. Push ALL content below navbar (and toolbar if present)
+        document.body.style.paddingTop = totalOffset + 'px';
+
+        // 6. For admin pages, adjust the grid and fixed sidebar
         if ($adminLayout.length) {
-          // Admin pages: adjust the fixed sidebar and scrollable main area
-          var $adminMain = $('.admin-layout .admin-main');
+          $adminLayout.css('height', 'calc(100vh - ' + totalOffset + 'px)');
           if ($sidebar.length) {
             $sidebar.css('top', totalOffset + 'px');
-            $sidebar.css('bottom', '0');
           }
-          if ($adminMain.length) {
-            $adminMain.css('margin-top', totalOffset + 'px');
-            $adminMain.css('height', 'calc(100vh - ' + totalOffset + 'px)');
-          }
-        } else if ($mainContent.length) {
-          $mainContent.css('padding-top', totalOffset + 'px');
         }
       }
 
