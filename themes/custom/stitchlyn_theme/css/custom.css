@@ -553,3 +553,11 @@ form .totals-wrapper {
 #edit-totals .fieldset__wrapper {
   padding-top: 0;
 }
+#edit-product-section,
+.quotation-date-row,
+olivero-details__wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 15px;
+}
