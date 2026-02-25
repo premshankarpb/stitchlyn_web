@@ -1,44 +1,44 @@
 @media (min-width: 75rem) {
-	.site-header {
-		min-height: 0;
-	}
+  .site-header {
+    min-height: 0;
+  }
 }
 
 body {
-	padding-top: 0;
+  padding-top: 0;
 }
 
 /* Remove unused header/footer rows from admin grid */
 .admin-layout {
-	grid-template-rows: 1fr !important;
-	grid-template-areas: "sidebar main" !important;
+  grid-template-rows: 1fr !important;
+  grid-template-areas: "sidebar main" !important;
 }
 
 .admin-layout .admin-main {
-	margin: 0;
-	margin-left: 2%;
-	padding: 0;
-	height: 100% !important;
+  margin: 0;
+  margin-left: 2%;
+  padding: 0;
+  height: 100% !important;
 }
-.dashboard-summary{
+.dashboard-summary {
   padding: 0px;
 }
 
 .path-frontpage .page-banner-section {
-	display: none !important;
+  display: none !important;
 }
 
 /* Fix Homepage Banner Gap: Hide Tabs Block */
 .path-frontpage #block-stitchlyn-theme-tabs {
-    display: none !important;
+  display: none !important;
 }
 
-.product-card img{
+.product-card img {
   height: 220px;
   width: -webkit-fill-available;
 }
 
-.card-title a{
+.card-title a {
   font-size: 1.25rem;
   text-decoration: none !important;
   color: inherit;
@@ -78,7 +78,8 @@ body {
   color: #666;
 }
 
-.quotation-item-view td, .quotation-item-view th {
+.quotation-item-view td,
+.quotation-item-view th {
   border: 1px solid #ddd;
   padding: 6px 10px;
 }
@@ -141,8 +142,8 @@ body {
   position: absolute !important;
 }
 .wo-suggest {
-  max-height: 260px; 
-  overflow-y: auto; 
+  max-height: 260px;
+  overflow-y: auto;
 }
 
 form#node-product-form .js-form-type-vertical-tabs {
@@ -159,12 +160,12 @@ em.placeholder {
   background-color: white;
 }
 
-.stichlyn-my-quote-nav{
+.stichlyn-my-quote-nav {
   display: none;
 }
 
-.my-quot-form-edit .form-item-field-payment-status{
-    display: none;
+.my-quot-form-edit .form-item-field-payment-status {
+  display: none;
 }
 
 .purchase-orders-full .my-quot-heading {
@@ -173,27 +174,26 @@ em.placeholder {
   font-size: x-large;
   font-weight: 800;
 }
-.purchase-orders-full .add-my-quot{
+.purchase-orders-full .add-my-quot {
   padding-bottom: 40px;
 }
 
-.node-product-edit-form .js-form-type-vertical-tabs{
+.node-product-edit-form .js-form-type-vertical-tabs {
   display: none;
 }
 
-.node-payment-record-edit-form .js-form-type-vertical-tabs{
+.node-payment-record-edit-form .js-form-type-vertical-tabs {
   display: none;
 }
 
-.node-payment-record-form .js-form-type-vertical-tabs{
+.node-payment-record-form .js-form-type-vertical-tabs {
   display: none;
 }
 .messages__wrapper .messages__content a {
   color: black;
 }
 
-
-.inv-edit-fields{
+.inv-edit-fields {
   width: auto !important;
 }
 
@@ -206,7 +206,7 @@ em.placeholder {
   bottom: 0;
 }
 
-.path-dashboard .navbar-nav{
+.path-dashboard .navbar-nav {
   visibility: hidden;
 }
 
@@ -214,270 +214,306 @@ em.placeholder {
   padding-top: 1rem !important;
 }
 
-.vendor-phone{
+.vendor-phone {
   visibility: hidden;
 }
 
-.log-header{
+.log-header {
   font-size: x-large;
   margin-bottom: 20px;
 }
 
-.add-logs{
-    float: right !important;
-  }
-  
-  /* ==========================================================================
+.add-logs {
+  float: right !important;
+}
+
+/* ==========================================================================
      MANAGER DASHBOARD - TV DISPLAY STYLES
      ========================================================================== */
-  
-  /* ==========================================================================
+
+/* ==========================================================================
      MANAGER DASHBOARD - BENTO GRID & STICKER UI
      ========================================================================== */
-  
-  /* Apply background to the whole page body for this path */
-  body.path-manager-dashboard {
-      background-color: #fafafa;
-  }
-  
-  .dashboard-container {
-      font-family: 'Lato', sans-serif;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-      background-color: transparent;
-      
-      /* Force full viewport height (minus nav height approx 90px) to push footer down */
-      min-height: calc(100vh - 90px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center; /* Vertically center the dashboard content */
-  }
-  
-  /* --- Grid Layout --- */
+
+/* Apply background to the whole page body for this path */
+body.path-manager-dashboard {
+  background-color: #fafafa;
+}
+
+.dashboard-container {
+  font-family: "Lato", sans-serif;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: transparent;
+
+  /* Force full viewport height (minus nav height approx 90px) to push footer down */
+  min-height: calc(100vh - 90px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertically center the dashboard content */
+}
+
+/* --- Grid Layout --- */
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  grid-auto-rows: min-content;
+}
+
+@media (min-width: 768px) {
   .bento-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-      grid-auto-rows: min-content;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 240px; /* Fixed height rows for bento feel */
   }
-  
-  @media (min-width: 768px) {
-      .bento-grid {
-          grid-template-columns: repeat(2, 1fr);
-          grid-auto-rows: 240px; /* Fixed height rows for bento feel */
-      }
+}
+
+@media (min-width: 1200px) {
+  .bento-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 160px 240px 240px; /* Specific row, main row, footer row */
   }
-  
-  @media (min-width: 1200px) {
-      .bento-grid {
-          grid-template-columns: repeat(4, 1fr);
-          grid-template-rows: 160px 240px 240px; /* Specific row, main row, footer row */
-      }
-  }
-  
-  /* --- Spanning Classes --- */
-  .span-col-2 { grid-column: span 2; }
-  .span-col-3 { grid-column: span 3; }
-  .span-col-4 { grid-column: span 4; }
-  
-  .span-row-2 { grid-row: span 2; }
-  
-  /* --- Card Styling --- */
-  .bento-card {
-      border-radius: 32px; /* Super rounded */
-      padding: 2rem;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      border: 0;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-  
-  .bento-card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      z-index: 10;
-  }
-  
-  /* --- Semantic Themes (Pastels) --- */
-  
-  /* Critical / Overdue -> Rose/Purple */
-  .theme-critical {
-      background: linear-gradient(135deg, #f9a8d4 0%, #c084fc 100%);
-      color: #581c87;
-  }
-  .theme-critical .sticker-icon { color: #7e22ce; opacity: 0.15; }
-  .theme-critical .display-value { color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-  .theme-critical .card-label { color: rgba(255,255,255,0.9); }
-  
-  /* Warning / Due Soon -> Peach/Orange */
-  .theme-warning {
-      background: linear-gradient(135deg, #fdba74 0%, #fb923c 100%);
-      color: #7c2d12;
-  }
-  .theme-warning .sticker-icon { color: #c2410c; opacity: 0.15; }
-  .theme-warning .display-value { color: #fff; }
-  .theme-warning .card-label { color: rgba(255,255,255,0.9); }
-  
-  /* Info / Pending -> Light Blue/Cyan */
-  .theme-info {
-      background: linear-gradient(135deg, #a5f3fc 0%, #67e8f9 100%);
-      color: #0e7490;
-  }
-  .theme-info .sticker-icon { color: #0891b2; opacity: 0.2; }
-  .theme-info .display-value { color: #164e63; }
-  
-  /* Stats -> White/Clean */
-  .theme-clean {
-      background: #ffffff;
-      color: #334155;
-      border: 1px solid #e2e8f0;
-  }
-  
-  /* Clock -> Dark Midnight */
-  .theme-clock {
-      background: #1e293b;
-      color: #fff;
-  }
-  
-  /* --- Typography --- */
-  .display-value {
-      font-size: 4.5rem;
-      font-weight: 800;
-      line-height: 1;
-      letter-spacing: -2px;
-      margin-bottom: 0.5rem;
-  }
-  
-  .card-label {
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-  }
-  
-  /* --- Sticker Icons (The "Art") --- */
-  .sticker-icon {
-      position: absolute;
-      right: -20px;
-      bottom: -30px;
-      font-size: 10rem;
-      transform: rotate(-15deg);
-      pointer-events: none;
-      transition: transform 0.4s ease;
-  }
-  
-  .bento-card:hover .sticker-icon {
-      transform: rotate(0deg) scale(1.1);
-  }
-  
-  /* --- Progress Bars Custom --- */
-  .progress-pill {
-      height: 12px;
-      border-radius: 99px;
-      background: rgba(255,255,255,0.3);
-      overflow: hidden;
-      margin-top: auto;
-  }
-  .progress-pill .bar {
-      height: 100%;
-      border-radius: 99px;
-      background: white;
-  }
-  
-  /* Override Masonry specificity */
-  .masonry-grid { display: none !important; }
-  
-  /* ==========================================================================
+}
+
+/* --- Spanning Classes --- */
+.span-col-2 {
+  grid-column: span 2;
+}
+.span-col-3 {
+  grid-column: span 3;
+}
+.span-col-4 {
+  grid-column: span 4;
+}
+
+.span-row-2 {
+  grid-row: span 2;
+}
+
+/* --- Card Styling --- */
+.bento-card {
+  border-radius: 32px; /* Super rounded */
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.bento-card:hover {
+  transform: scale(1.02);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  z-index: 10;
+}
+
+/* --- Semantic Themes (Pastels) --- */
+
+/* Critical / Overdue -> Rose/Purple */
+.theme-critical {
+  background: linear-gradient(135deg, #f9a8d4 0%, #c084fc 100%);
+  color: #581c87;
+}
+.theme-critical .sticker-icon {
+  color: #7e22ce;
+  opacity: 0.15;
+}
+.theme-critical .display-value {
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.theme-critical .card-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Warning / Due Soon -> Peach/Orange */
+.theme-warning {
+  background: linear-gradient(135deg, #fdba74 0%, #fb923c 100%);
+  color: #7c2d12;
+}
+.theme-warning .sticker-icon {
+  color: #c2410c;
+  opacity: 0.15;
+}
+.theme-warning .display-value {
+  color: #fff;
+}
+.theme-warning .card-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Info / Pending -> Light Blue/Cyan */
+.theme-info {
+  background: linear-gradient(135deg, #a5f3fc 0%, #67e8f9 100%);
+  color: #0e7490;
+}
+.theme-info .sticker-icon {
+  color: #0891b2;
+  opacity: 0.2;
+}
+.theme-info .display-value {
+  color: #164e63;
+}
+
+/* Stats -> White/Clean */
+.theme-clean {
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+/* Clock -> Dark Midnight */
+.theme-clock {
+  background: #1e293b;
+  color: #fff;
+}
+
+/* --- Typography --- */
+.display-value {
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 0.5rem;
+}
+
+.card-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Sticker Icons (The "Art") --- */
+.sticker-icon {
+  position: absolute;
+  right: -20px;
+  bottom: -30px;
+  font-size: 10rem;
+  transform: rotate(-15deg);
+  pointer-events: none;
+  transition: transform 0.4s ease;
+}
+
+.bento-card:hover .sticker-icon {
+  transform: rotate(0deg) scale(1.1);
+}
+
+/* --- Progress Bars Custom --- */
+.progress-pill {
+  height: 12px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  margin-top: auto;
+}
+.progress-pill .bar {
+  height: 100%;
+  border-radius: 99px;
+  background: white;
+}
+
+/* Override Masonry specificity */
+.masonry-grid {
+  display: none !important;
+}
+
+/* ==========================================================================
      GLOBAL FORM FIXES & ALIGNMENT
      ========================================================================== */
-  
-  /* 1. Fix Height Mismatch: Make inputs as tall as the custom buttons */
-  .form-control, 
-  .form-select {
-      padding: 12px 16px; /* Match button vertical padding (12px) */
-      height: auto; /* Let padding define height */
-      min-height: 48px; /* Ensure optical match with buttons */
-      border-radius: 10px; /* Match button border-radius */
-      border: 1px solid #cccbcd;
-  }
-  
-  .form-control:focus, 
-  .form-select:focus {
-      border-color: #25374e;
-      box-shadow: 0 0 0 4px rgba(37, 55, 78, 0.1); /* Brand color focus ring */
-  }
-  
-  /* 2. Z-Index Conflict Resolution */
-  /* Normalize z-indexes to avoid "wars". 
+
+/* 1. Fix Height Mismatch: Make inputs as tall as the custom buttons */
+.form-control,
+.form-select {
+  padding: 12px 16px; /* Match button vertical padding (12px) */
+  height: auto; /* Let padding define height */
+  min-height: 48px; /* Ensure optical match with buttons */
+  border-radius: 10px; /* Match button border-radius */
+  border: 1px solid #cccbcd;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #25374e;
+  box-shadow: 0 0 0 4px rgba(37, 55, 78, 0.1); /* Brand color focus ring */
+}
+
+/* 2. Z-Index Conflict Resolution */
+/* Normalize z-indexes to avoid "wars". 
      Bootstrap Modals are 1050/1060.
      Sticky headers usually 1000-1030.
   */
-  
-  /* Search Autocomplete should be ABOVE everything else */
-  .ui-autocomplete {
-      z-index: 9999 !important; /* Safe high value */
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      border: 0;
-      border-radius: 8px;
-      padding: 8px 0;
-  }
-  
-  .ui-menu-item-wrapper {
-      padding: 8px 16px;
-  }
-  
-  .ui-state-active,
-  .ui-widget-content .ui-state-active {
-      border: none;
-      background: #f8f9fa;
-      color: #25374e;
-  }
-  
-  /* Ensure Modals behave */
-  .modal-backdrop { z-index: 1050; }
-  .modal { z-index: 1060; }
-  
-  /* Fix vertical alignment in inline forms */
-  .form-inline .form-control,
-  .d-flex .form-control,
-  .input-group .form-control,
-  .input-group .btn {
-      align-self: stretch; /* Forces equal height matching in flex containers */
-  }
 
-  .dashboard-summary h2{
-    margin-top: 20px;
-  }
+/* Search Autocomplete should be ABOVE everything else */
+.ui-autocomplete {
+  z-index: 9999 !important; /* Safe high value */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 0;
+}
+
+.ui-menu-item-wrapper {
+  padding: 8px 16px;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active {
+  border: none;
+  background: #f8f9fa;
+  color: #25374e;
+}
+
+/* Ensure Modals behave */
+.modal-backdrop {
+  z-index: 1050;
+}
+.modal {
+  z-index: 1060;
+}
+
+/* Fix vertical alignment in inline forms */
+.form-inline .form-control,
+.d-flex .form-control,
+.input-group .form-control,
+.input-group .btn {
+  align-self: stretch; /* Forces equal height matching in flex containers */
+}
+
+.dashboard-summary h2 {
+  margin-top: 20px;
+}
 
 /* ==========================================================================
    VIEW FILTERS ALIGNMENT FIX
    ========================================================================== */
 
 /* 1. Flex container for the exposed form */
-.view-filters form, 
+.view-filters form,
 .view-filters .views-exposed-form {
-    display: flex;
-    align-items: flex-end; /* Aligns labels/inputs with the button */
-    flex-wrap: wrap;       /* Allows wrapping on smaller screens */
-    gap: 16px;             /* Consistent spacing between fields/buttons */
+  display: flex;
+  align-items: flex-end; /* Aligns labels/inputs with the button */
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+  gap: 16px; /* Consistent spacing between fields/buttons */
 }
 
 /* 2. Reset margins on individual form items inside filters */
 .view-filters .form-item,
 .view-filters .form-actions {
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-right: 0; /* Let gap handle spacing */
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 0; /* Let gap handle spacing */
 }
 
 /* 3. Ensure generic "Apply" button margin is removed if present */
 .view-filters .form-actions {
-    margin: 0;
+  margin: 0;
 }
 
 /* 4. Force Inputs and Buttons to Match Height strictly */
@@ -485,27 +521,35 @@ em.placeholder {
 .view-filters .form-select,
 .view-filters .form-submit,
 .view-filters .btn {
-    height: 54px !important;     /* Force strict equality */
-    min-height: 54px !important; 
-    line-height: normal;         /* Prevent line-height shifts */
-    display: inline-flex;        /* centering content for flex items */
-    align-items: center;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-bottom: 0;
+  height: 54px !important; /* Force strict equality */
+  min-height: 54px !important;
+  line-height: normal; /* Prevent line-height shifts */
+  display: inline-flex; /* centering content for flex items */
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* Adjust button specifically if it needs text centering */
 .view-filters .form-submit,
 .view-filters .btn {
-    justify-content: center;
+  justify-content: center;
 }
 @media (min-width: 43.75rem) {
-    .view, .view-content {
-        gap: 15px;
-    }
+  .view,
+  .view-content {
+    gap: 15px;
+  }
 }
 .views-table {
-    margin-block-start: 15px;
-    margin-block-end: 15px;
+  margin-block-start: 15px;
+  margin-block-end: 15px;
+}
+form .totals-wrapper {
+  display: flex;
+  gap: 15px;
+}
+#edit-totals .fieldset__wrapper {
+  padding-top: 0;
 }

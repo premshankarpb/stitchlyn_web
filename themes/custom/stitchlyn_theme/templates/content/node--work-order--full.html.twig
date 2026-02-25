@@ -2,98 +2,118 @@
 {{ attach_library('stitchlyn_theme/work_order') }}
 
 <div class="container">
-<article class="po-detail">
+	<article class="po-detail">
 
-  {% set current_date = "now"|date("d M Y") %}
-  {% set due_date = node.field_expected_due_date.value|date("d M Y") %}
-  {% if due_date <= current_date %}
-    {% set pay_class = 'bg-danger' %}
-    {% set status = 'Due' %}
-  {% else %}
-    {% set pay_class = 'bg-success' %}
-     {% set status = 'In Progress' %}
-  {% endif %}
-  <main class="admin-main">
-    <div class="mb-4">
-      <h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
-      <span class="badge {{ pay_class }} mb-3">{{ status }}</span>
-    </div>
-    <div class="row g-4 mb-5">
-      <div class="col-md-6 col-lg-5">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title mb-3">{{ node.label }} Details</h5>
-            <span class="badge {{ pay_class }} mb-3">Status : {{ status }}</span>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><i class="fas fa-calendar-alt text-primary me-2"></i>
-                <strong>Date:</strong> {{ node.field_expected_due_date.value|date("d M Y") }} </li>
-              <li class="list-group-item"><i class="fas fa-circle text-primary me-2"></i>
-                <strong>Product:</strong> {{ node.field_product.entity.label }} </li>
-              <li class="list-group-item"><i class="fas fa-money-check-alt text-warning me-2"></i>
-                <strong>Quantity:</strong> {{ node.field_quantity.value }} </li>
-              <li class="list-group-item"><i class="fas fa-envelope-open text-warning me-2"></i>
-                <strong>Quotation:</strong> {{ node.field_linked_quotation.entity.label }} </li>
-              <li class="list-group-item"><i class="fas fa fa-angle-double-right text-warning me-2"></i>
-                <strong>Quotation Item:</strong> {{ node.field_linked_line_item.entity.label }} </li>
-              <li class="list-group-item"><i class="fa fa-building text-primary me-2"></i>
-                <strong>Unit Assigned:</strong> {{ node.field_unit_assigned.entity.label }} </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+		{% set current_date = "now"|date("d M Y") %}
+		{% set due_date = node.field_expected_due_date.value|date("d M Y") %}
+		{% if due_date <= current_date %}
+			{% set pay_class = 'bg-danger' %}
+			{% set status = 'Due' %}
+		{% else %}
+			{% set pay_class = 'bg-success' %}
+			{% set status = 'In Progress' %}
+		{% endif %}
+		<main class="admin-main">
+			<div class="mb-4">
+				<h1 class="display-5 fw-bold text-primary mb-3">{{ node.label }}</h1>
+				<span class="badge {{ pay_class }} mb-3">{{ status }}</span>
+			</div>
+			<div class="row g-4 mb-5">
+				<div class="col-md-6 col-lg-5">
+					<div class="card h-100">
+						<div class="card-body">
+							<h5 class="card-title mb-3">{{ node.label }}
+								Details</h5>
+							<span class="badge {{ pay_class }} mb-3">Status :
+								{{ status }}</span>
+							<ul class="list-group list-group-flush">
+								<li class="list-group-item">
+									<i class="fas fa-calendar-alt text-primary me-2"></i>
+									<strong>Date:</strong>
+									{{ node.field_expected_due_date.value|date("d M Y") }}
+								</li>
+								<li class="list-group-item">
+									<i class="fas fa-circle text-primary me-2"></i>
+									<strong>Product:</strong>
+									{{ node.field_product.entity.label }}
+								</li>
+								<li class="list-group-item">
+									<i class="fas fa-money-check-alt text-warning me-2"></i>
+									<strong>Quantity:</strong>
+									{{ node.field_quantity.value }}
+								</li>
+								<li class="list-group-item">
+									<i class="fas fa-envelope-open text-warning me-2"></i>
+									<strong>Quotation:</strong>
+									{{ node.field_linked_quotation.entity.label }}
+								</li>
+								<li class="list-group-item">
+									<i class="fas fa fa-angle-double-right text-warning me-2"></i>
+									<strong>Quotation Item:</strong>
+									{{ node.field_linked_line_item.entity.label }}
+								</li>
+								<li class="list-group-item">
+									<i class="fa fa-building text-primary me-2"></i>
+									<strong>Unit Assigned:</strong>
+									{{ node.field_unit_assigned.entity.label }}
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
 
-      {% if node.body.value is not empty %}
-      <div class="col-md-6 col-lg-7">
-        <div class="card h-100">
-          <div class="card-body">
-            {% if node.body.value is not empty %}
-              <h5 class="card-title mb-3">Remarks</h5>
-              <p>{{ node.body.value|raw }}</p>
-            {% endif %}
-            {% if customer_profile.field_remarks.value is not empty %}
-              <h5 class="card-title mb-3">About Customer</h5>
-              <p>{{ customer_profile.field_remarks.value|raw }}</p>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      {% endif %}
-    </div>
-  </main>
+				{% if node.body.value is not empty %}
+					<div class="col-md-6 col-lg-7">
+						<div class="card">
+							<div class="card-body">
+								{% if node.body.value is not empty %}
+									<h5 class="card-title mb-3">Remarks</h5>
+									<p>{{ node.body.value|raw }}</p>
+								{% endif %}
+								{% if customer_profile.field_remarks.value is not empty %}
+									<h5 class="card-title mb-3">About Customer</h5>
+									<p>{{ customer_profile.field_remarks.value|raw }}</p>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</main>
 
-  <hr>
+		<hr>
 
-  {# Wrapper for dynamic table replacement #}
-  <div id="workorder-wrapper">
-    <div class="log-header">
-      <strong>Work Order Log</strong>
-      <span class="add-logs">
-        <a href="/node/add/order_logs?workorder={{ node.id() }}" target="_blank" class="btn btn-outline-success">Add Logs</a>
-      </span>
-    </div>
-    {% if work_orders_logs|length > 0 %}
-      <table class="table table-bordered table-striped align-middle" id="workorder-table">
-        <thead class="table-light">
-          <tr>
-            <th>Log ID</th>
-            <th>Remarks</th>
-            <th>Generated on</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for wo in work_orders_logs %}
-            <tr>
-              <td>{{ wo.id }}</td>
-              <td>{{ wo.log_data|striptags }}</td>
-              <td>{{ wo.created }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p>No work orders logs found.</p>
-    {% endif %}
-  </div>
+		{# Wrapper for dynamic table replacement #}
+		<div id="workorder-wrapper">
+			<div class="log-header">
+				<strong>Work Order Log</strong>
+				<span class="add-logs">
+					<a href="/node/add/order_logs?workorder={{ node.id() }}" target="_blank" class="btn btn-outline-success">Add Logs</a>
+				</span>
+			</div>
+			{% if work_orders_logs|length > 0 %}
+				<table class="table table-bordered table-striped align-middle" id="workorder-table">
+					<thead class="table-light">
+						<tr>
+							<th>Log ID</th>
+							<th>Remarks</th>
+							<th>Generated on</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for wo in work_orders_logs %}
+							<tr>
+								<td>{{ wo.id }}</td>
+								<td>{{ wo.log_data|striptags }}</td>
+								<td>{{ wo.created }}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<p>No work orders logs found.</p>
+			{% endif %}
+		</div>
 
-</article>
+	</article>
 </div>
