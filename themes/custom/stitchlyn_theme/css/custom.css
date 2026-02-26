@@ -16,7 +16,6 @@ body {
 
 .admin-layout .admin-main {
   margin: 0;
-  padding: 0;
   padding-left: 2%;
   height: 100% !important;
 }
@@ -556,10 +555,25 @@ form .totals-wrapper,
 }
 #edit-product-section,
 .quotation-date-row,
-.olivero-details__wrapper,
+.quotation-status .olivero-details__wrapper,
 .olivero-details__summary .po-date-status-row {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 15px;
+}
+
+.quotation-form-wrapper .form-text {
+  margin-top: 0;
+}
+
+.add-product-btn {
+  margin-top: auto;
+}
+.po-date-status-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.po-date-status-row > * {
+  flex-grow: 1;
 }
