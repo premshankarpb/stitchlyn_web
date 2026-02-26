@@ -1,100 +1,123 @@
-{#
-  Custom theme for Purchase Order Edit Form
-  Linked to stitchlyn_vendor_theme() and attached via $form['#theme'] = 'purchase_order_form';
-#}
+<div class="po-form-wrapper">
 
-<div id="stitchlyn-po-edit-form"
-     class="stitchlyn-po-edit-container"
-     data-po-nid="{{ form['#nid']|default('') }}">
+  {# ================= PURCHASE ORDER DETAILS ================= #}
+  <div class="po-details">
+    <details data-drupal-selector="edit-po-details"
+             id="edit-po-details"
+             class="js-form-wrapper form-wrapper olivero-details"
+             data-once="details"
+             open>
 
-  <h2 class="po-title mb-3">Edit Purchase Order</h2>
+      <summary role="button"
+               aria-controls="edit-po-details"
+               class="olivero-details__summary">
+        {{ form.po_details['#title'] }}
+      </summary>
 
-  {# --- Header / Basic Fields --- #}
-  <div class="po-header mb-4">
-    <div class="row g-3">
-      <div class="col-md-6">{{ form.title }}</div>
-      <div class="col-md-6">{{ form.field_vendor }}</div>
-      <div class="col-md-4">{{ form.field_date_of_purchase }}</div>
-      <div class="col-md-4">{{ form.order_status }}</div>
-      <div class="col-md-12">{{ form.body }}</div>
-    </div>
+      <div class="olivero-details__wrapper details-wrapper">
+
+        <div class="po-title-block">
+          {{ form.po_details.title }}
+        </div>
+
+        <div class="po-vendor-block">
+          {{ form.po_details.field_vendor }}
+        </div>
+
+        <div class="po-date-status-row">
+
+          <div class="po-date-col">
+            {{ form.po_details.field_date_of_purchase }}
+          </div>
+
+          <div class="po-status-col">
+            {{ form.po_details.order_status }}
+          </div>
+
+          <div class="po-payment-col">
+            {{ form.po_details.payment_status }}
+          </div>
+
+        </div>
+
+        <div class="po-remarks-block">
+          {{ form.po_details.body }}
+        </div>
+
+      </div>
+    </details>
   </div>
 
-  {# --- Purchase Items Section --- #}
-  <div class="po-items-section card shadow-sm mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h4 class="mb-0">Purchase Order Items</h4>
-      <button type="button" class="btn btn-primary po-add-item">
-        <i class="bi bi-plus-lg"></i> Add Item
-      </button>
-    </div>
-    <div class="card-body" id="po-items-wrapper">
-      <div class="text-center text-muted">Loading items...</div>
-    </div>
+
+
+  {# ================= PURCHASE ITEMS SECTION ================= #}
+  <div class="po-items">
+    <details data-drupal-selector="edit-po-items"
+             id="edit-po-items"
+             class="js-form-wrapper form-wrapper olivero-details"
+             data-once="details"
+             open>
+
+      <summary role="button"
+               aria-controls="edit-po-items"
+               class="olivero-details__summary">
+        {{ form.po_items['#title'] }}
+      </summary>
+
+      <div class="olivero-details__wrapper details-wrapper">
+        {{ form.po_items.content }}
+      </div>
+
+    </details>
   </div>
 
-  {# --- Purchase Summary Section --- #}
-  <div class="po-summary card shadow-sm mb-4">
-    <div class="card-header">
-      <h4 class="mb-0">Purchase Summary</h4>
-    </div>
-    <div class="card-body row">
-      <div class="col-md-4">{{ form.field_subtotal_amount }}</div>
-      <div class="col-md-4">{{ form.field_tax_amount }}</div>
-      <div class="col-md-4">{{ form.field_total_amount }}</div>
-    </div>
-  </div>
 
-  {# --- Submit --- #}
-  <div class="po-actions text-center mt-4">
+
+  {# ================= PURCHASE SUMMARY ================= #}
+  <fieldset data-drupal-selector="edit-po-summary"
+            id="edit-po-summary"
+            class="fieldset js-form-item form-item js-form-wrapper form-wrapper">
+
+    <legend class="fieldset__legend fieldset__legend--visible">
+      <span class="fieldset__label">
+        {{ form.po_summary['#title'] }}
+      </span>
+    </legend>
+
+    <div class="fieldset__wrapper">
+      <div class="po-summary-row">
+
+        <div class="po-subtotal">
+          {{ form.po_summary.field_subtotal_amount }}
+        </div>
+
+        <div class="po-tax">
+          {{ form.po_summary.field_tax_amount }}
+        </div>
+
+        <div class="po-total">
+          {{ form.po_summary.field_total_amount }}
+        </div>
+
+      </div>
+    </div>
+  </fieldset>
+
+
+
+  {# ================= ACTIONS ================= #}
+  <div class="po-actions">
     {{ form.actions }}
   </div>
 
-  {{ form.form_build_id }}
-  {{ form.form_token }}
-  {{ form.form_id }}
-</div>
 
-{# --- Modal for Add/Edit Item --- #}
-<div id="po-item-modal" class="po-modal" style="display:none;">
-  <div class="po-modal-content">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <h4 id="po-item-modal-title" class="mb-0">Add Item</h4>
-      <span class="po-close" id="po-item-cancel">&times;</span>
-    </div>
 
-    <form id="po-item-form" class="mb-2">
-      <input type="hidden" name="item_id" value="">
+  {# VERY IMPORTANT: keep hidden elements #}
+  {{ form|without(
+    'po_details',
+    'po_items',
+    'po_summary',
+    'actions'
+  ) }}
 
-      <div class="mb-2">
-        <label>Item Reference</label>
-        <input type="text" name="item_reference" class="form-control" required>
-      </div>
-
-      <div class="row mb-2">
-        <div class="col-md-4">
-          <label>Rate</label>
-          <input type="number" step="0.01" name="rate" class="form-control" required>
-        </div>
-        <div class="col-md-4">
-          <label>Quantity</label>
-          <input type="number" step="0.01" name="quantity" class="form-control" required>
-        </div>
-        <div class="col-md-4">
-          <label>Total</label>
-          <input type="number" name="total" class="form-control" readonly>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label>Remarks</label>
-        <textarea name="remarks" rows="2" class="form-control"></textarea>
-      </div>
-
-      <div class="text-end">
-        <button type="button" class="btn btn-secondary me-2" id="po-item-cancel">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="po-item-save">Save</button>
-      </div>
-    </form>
-  </div>
 </div>
