@@ -16,8 +16,8 @@ body {
 
 .admin-layout .admin-main {
   margin: 0;
-  margin-left: 2%;
   padding: 0;
+  padding-left: 2%;
   height: 100% !important;
 }
 .dashboard-summary {
@@ -546,7 +546,8 @@ body.path-manager-dashboard {
   margin-block-start: 15px;
   margin-block-end: 15px;
 }
-form .totals-wrapper {
+form .totals-wrapper,
+#edit-po-summary .po-summary-row {
   display: flex;
   gap: 15px;
 }
@@ -555,7 +556,8 @@ form .totals-wrapper {
 }
 #edit-product-section,
 .quotation-date-row,
-olivero-details__wrapper {
+.olivero-details__wrapper,
+.olivero-details__summary .po-date-status-row {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
