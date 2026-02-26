@@ -221,6 +221,7 @@ class PurchaseOrderEditForm extends FormBase {
     $form['#submit'][] = [$this, 'submitForm'];
     $form['#action'] = \Drupal::request()->getRequestUri();
     $form['#method'] = 'post';
+    $form['#theme'] = 'purchase_order_form';
 
     return $form;
   }
