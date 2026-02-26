@@ -582,3 +582,8 @@ form .totals-wrapper,
   border: 1px solid #cccbcd;
   border-radius: 5px;
 }
+
+.view-filters .views-exposed-form .js-form-wrapper .fieldset__wrapper {
+  display: flex;
+  gap: 15px;
+}

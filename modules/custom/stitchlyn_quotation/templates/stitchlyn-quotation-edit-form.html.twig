@@ -6,11 +6,17 @@
 				{{ form.quotation_info['#title'] }}
 			</summary>
 			<div class="olivero-details__wrapper details-wrapper">
-				<div class="quotation-title-block">
-					{{ form.quotation_info.title }}
-				</div>
-				<div class="quotation-customer-block">
-					{{ form.quotation_info.field_customer_reference }}
+				<div class="row">
+					<div class="col-md-6 col-12">
+						<div class="quotation-title-block">
+							{{ form.quotation_info.title }}
+						</div>
+					</div>
+					<div class="col-md-6 col-12">
+						<div class="quotation-customer-block">
+							{{ form.quotation_info.field_customer_reference }}
+						</div>
+					</div>
 				</div>
 				<div class="quotation-date-row">
 					<div class="quotation-date-col">
