@@ -126,6 +126,7 @@ class QuotationEditForm extends FormBase {
     // Subtotal (readonly + hidden mirror)
     $form['totals']['field_subtotal_amount'] = [
       '#type' => 'number',
+      '#step' => '0.01',
       '#title' => $this->t('Subtotal'),
       '#default_value' => $totals['subtotal'],
       '#attributes' => ['readonly' => 'readonly'],
@@ -138,6 +139,7 @@ class QuotationEditForm extends FormBase {
 
     $form['totals']['field_discount'] = [
       '#type' => 'number',
+      '#step' => '0.01',
       '#title' => $this->t('Discount'),
       '#default_value' => $node->get('field_discount')->value ?? 0,
       '#step' => 0.01,
@@ -146,6 +148,7 @@ class QuotationEditForm extends FormBase {
     // Tax (readonly + hidden mirror)
     $form['totals']['field_tax_amount'] = [
       '#type' => 'number',
+      '#step' => '0.01',
       '#title' => $this->t('Tax'),
       '#default_value' => $totals['tax'],
       '#attributes' => ['readonly' => 'readonly'],
@@ -159,6 +162,7 @@ class QuotationEditForm extends FormBase {
     // Total (readonly + hidden mirror)
     $form['totals']['field_total_amount'] = [
       '#type' => 'number',
+      '#step' => '0.01',
       '#title' => $this->t('Total'),
       '#default_value' => $totals['total'],
       '#attributes' => ['readonly' => 'readonly'],
