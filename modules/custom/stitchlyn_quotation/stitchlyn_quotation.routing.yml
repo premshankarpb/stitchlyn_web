@@ -258,3 +258,10 @@ stitchlyn_quotation.payment_delete:
     _format: 'json'
   requirements:
     _permission: 'access content'
+stitchlyn_quotation.customer_popup:
+  path: '/quotation/customer-popup'
+  defaults:
+    _form: '\Drupal\stitchlyn_quotation\Form\CustomerQuickCreateForm'
+    _title: 'Add Customer'
+  requirements:
+    _permission: 'access content'

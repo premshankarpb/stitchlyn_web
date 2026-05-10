@@ -35,6 +35,11 @@ function stitchlyn_quotation_theme($existing, $type, $theme, $path) {
       'template' => 'stitchlyn-quotation-edit-form',
       'path' => $path . '/templates',
     ],
+    'stitchlyn_quotation_customer_add_form' => [
+      'render element' => 'form',
+      'template' => 'stitchlyn-quotation-customer-add-form',
+      'path' => $path . '/templates',
+    ],
   ];
 }
 

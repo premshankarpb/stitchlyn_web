@@ -8,6 +8,11 @@ use Drupal\node\NodeInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\user\Entity\User;
+use Drupal\profile\Entity\Profile;
 
 /**
  * Custom quotation edit form.
@@ -33,6 +38,7 @@ class QuotationEditForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
     $form['#attached']['library'][] = 'stitchlyn_quotation/quotation';
+    $form['#attached']['library'][] = 'stitchlyn_quotation/customer_modal';
     $form_state->set('node', $node);
     $quotation_id = $node->id();
 
@@ -56,11 +62,49 @@ class QuotationEditForm extends FormBase {
       '#required' => TRUE,
     ];
 
-    $form['quotation_info']['field_customer_reference'] = [
+    // $form['quotation_info']['field_customer_reference'] = [
+    //   '#type' => 'entity_autocomplete',
+    //   '#title' => $this->t('Customer'),
+    //   '#target_type' => 'user',
+    //   '#default_value' => $node->get('field_customer_reference')->entity ?? NULL,
+    // ];
+
+    $form['quotation_info']['customer_wrapper'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['d-flex', 'align-items-end'],
+        'style' => 'gap:10px;',
+      ],
+      '#prefix' => '<div id="customer-wrapper">',
+      '#suffix' => '</div>',
+    ];
+
+    $form['quotation_info']['customer_wrapper']['field_customer_reference'] = [
       '#type' => 'entity_autocomplete',
       '#title' => $this->t('Customer'),
       '#target_type' => 'user',
       '#default_value' => $node->get('field_customer_reference')->entity ?? NULL,
+      '#attributes' => [
+        'style' => 'min-width:350px;',
+      ],
+    ];
+
+    $form['quotation_info']['customer_wrapper']['add_customer'] = [
+      '#type' => 'link',
+      '#title' => $this->t('+ Add Customer'),
+      '#url' => \Drupal\Core\Url::fromRoute('stitchlyn_quotation.customer_popup'),
+
+      '#attributes' => [
+        'class' => [
+          'use-ajax',
+          'button',
+          'button--primary',
+        ],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => json_encode([
+          'width' => 900,
+        ]),
+      ],
     ];
 
     $form['quotation_info']['field_quotation_date'] = [

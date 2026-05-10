@@ -6,3 +6,14 @@ quotation:
     - core/drupal
     - core/drupal.dialog
     - core/once
+customer_modal:
+  css:
+    theme:
+      https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.min.css: { type: external, minified: true }
+  js:
+    https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js: { type: external, minified: true }
+    js/customer-modal.js: {}
+    js/intl-phone.js: {}
+  dependencies:
+    - core/drupal.dialog.ajax
+    - core/jquery

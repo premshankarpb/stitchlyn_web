@@ -11,19 +11,21 @@
 						<div class="quotation-title-block">
 							{{ form.quotation_info.title }}
 						</div>
+						<div class="quotation-date-row">
+							<div class="quotation-date-col">
+								{{ form.quotation_info.field_quotation_date }}
+							</div>
+							<div class="quotation-due-col">
+								{{ form.quotation_info.field_expected_due_date }}
+							</div>
+						</div>
 					</div>
 					<div class="col-md-6 col-12">
 						<div class="quotation-customer-block">
-							{{ form.quotation_info.field_customer_reference }}
+							{{ form.quotation_info.customer_wrapper.field_customer_reference }}
+							{{ form.quotation_info.customer_wrapper.add_customer }}
+							<div id="customer-create-message"></div>
 						</div>
-					</div>
-				</div>
-				<div class="quotation-date-row">
-					<div class="quotation-date-col">
-						{{ form.quotation_info.field_quotation_date }}
-					</div>
-					<div class="quotation-due-col">
-						{{ form.quotation_info.field_expected_due_date }}
 					</div>
 				</div>
 				<div class="quotation-remarks-block">
@@ -80,5 +82,6 @@
     'line_items',
     'totals',
     'quotation_workflow',
-    'actions'
+    'actions',
+		'customer_wrapper'
   ) }}</div>
